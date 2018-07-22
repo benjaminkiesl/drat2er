@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <initializer_list>
 
 namespace drat2er
 {
@@ -17,7 +18,10 @@ class Clause
   Clause(Clause&& other);
   Clause& operator=(Clause other);
 
+  int GetIndex() const;
+  void SetIndex(int index);
   void AddLiteral(int literal);
+  int GetMaxVariable() const;
   bool ContainsLiteral(int literal) const;
   operator std::string() const;
 
@@ -33,12 +37,10 @@ class Clause
     return literals_.end();
   }
 
-  auto& operator[] (size_t index) {
-    return literals_[index];
-  }
-
  private:
+  int index_;
   std::vector<int> literals_;
+  int max_variable_;
 };
 
 } // namespace

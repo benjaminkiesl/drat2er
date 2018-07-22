@@ -5,9 +5,6 @@
 #include "clause.h"
 
 using std::vector;
-using std::unique_ptr;
-using std::make_unique;
-using std::shared_ptr;
 using std::cout;
 using std::endl;
 
@@ -26,30 +23,32 @@ vector<int>& ResolutionPartner::Hints()
   return hints_;
 }
 
-RatClause::RatClause(int index) : index_(index)
-{
-  clause_ = make_unique<Clause>();
+RatClause::RatClause() : clause_{} { 
 }
 
 int RatClause::GetIndex() const
 {
-  return index_;
+  return clause_.GetIndex();
 }
 
-const shared_ptr<Clause> RatClause::GetClause() const
+void RatClause::SetClause(Clause clause){
+  clause_ = clause;
+}
+
+const Clause& RatClause::GetClause() const
 {
   return clause_;
 }
 
 void RatClause::AddLiteral(int literal)
 {
-  clause_->AddLiteral(literal);
+  clause_.AddLiteral(literal);
 }
 
 int RatClause::GetPivot() const
 {
-  if(clause_->size() != 0) {
-    return *clause_->begin();
+  if(clause_.size() != 0) {
+    return *(clause_.begin());
   }
   return 0;
 }
@@ -66,11 +65,11 @@ void RatClause::AddResolutionPartner(ResolutionPartner resolution_partner)
 
 void RatClause::Print() const {
   cout << "RAT " << GetIndex() << " = '";
-  for(auto literal : *GetClause()){
+  for(auto literal : clause_){
     cout << literal << " ";
   } 
   cout << "' with partners: ";
-  for(auto partner : GetResolutionPartners()){
+  for(auto partner : resolution_partners_){
     cout << partner.GetIndex() << " (";
     for(auto hint : partner.Hints()){
       cout << hint << " ";

@@ -79,14 +79,14 @@ FormulaProperties FormulaParser::ParseHeader(const string& header_line)
   return formula_properties;
 }
 
-std::unique_ptr<Clause> FormulaParser::ParseClause(const string& clause_line)
+Clause FormulaParser::ParseClause(const string& clause_line)
 {
-  auto clause = make_unique<Clause>();
+  Clause clause;
   stringstream line_stream {clause_line};
   int literal = 0;
   line_stream >> literal;
   while(literal != 0) {
-    clause->AddLiteral(literal);
+    clause.AddLiteral(literal);
     line_stream >> literal;
   }
 

@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <memory>
+#include "clause.h"
 
 namespace drat2er
 {
 
-class Clause;
 
 class ResolutionPartner
 {
@@ -24,17 +24,17 @@ class ResolutionPartner
 class RatClause
 {
  public:
-  RatClause(int index);
+  RatClause();
   int GetIndex() const;
-  const std::shared_ptr<Clause> GetClause() const;
+  void SetClause(Clause clause);
+  const Clause& GetClause() const;
   int GetPivot() const;
   void AddLiteral(int literal);
   const std::vector<ResolutionPartner>& GetResolutionPartners() const;
   void AddResolutionPartner(ResolutionPartner resolution_partner);
   void Print() const;
  private:
-  int index_;
-  std::shared_ptr<Clause> clause_;
+  Clause clause_;
   std::vector<ResolutionPartner> resolution_partners_;
 };
 

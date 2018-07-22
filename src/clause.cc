@@ -4,18 +4,25 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
+#include <initializer_list>
 
 using std::string;
 using std::stringstream;
 using std::cout;
 using std::endl;
+using std::max;
+using std::max_element;
+using std::abs;
 
 namespace drat2er
 {
 
-Clause::Clause() : literals_{} { }
+Clause::Clause() : index_{-1}, literals_{}, max_variable_{0} { }
 
-Clause::Clause(const Clause& other) : literals_(other.literals_) { }
+Clause::Clause(const Clause& other) : index_(other.index_),
+                                      literals_(other.literals_),
+                                      max_variable_(other.max_variable_) { }
 
 Clause::Clause(Clause&& other) : Clause()
 {
@@ -28,9 +35,22 @@ Clause& Clause::operator=(Clause other)
   return *this;
 }
 
+int Clause::GetIndex() const {
+  return index_;
+}
+
+void Clause::SetIndex(int index){
+  index_ = index;
+}
+
 void Clause::AddLiteral(const int literal)
 {
   literals_.emplace_back(literal);
+  max_variable_ = max(max_variable_, abs(literal));
+}
+
+int Clause::GetMaxVariable() const {
+  return max_variable_;
 }
 
 bool Clause::ContainsLiteral(const int literal) const
@@ -51,7 +71,9 @@ Clause::operator string() const
 void swap(Clause& lhs, Clause& rhs)
 {
   using std::swap;
+  swap(lhs.index_, rhs.index_);
   swap(lhs.literals_, rhs.literals_);
+  swap(lhs.max_variable_, rhs.max_variable_);
 }
 
 } // namespace

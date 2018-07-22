@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5.1)
 project (ci)
 
 set (CMAKE_CXX_STANDARD 14)
+set(CMAKE_BUILD_TYPE Debug)
 
 # General options
 include_directories(include)
@@ -18,6 +19,9 @@ add_library(lib_drat2er STATIC
 	src/clause.cc
 	src/rat_eliminator.cc
 	src/rat_clause.cc
+	src/rup_clause.cc
+	src/lrat_parser.cc
+  	src/proof_stat_collector.cc
 	)
 
 # Build the executable for the main program

@@ -3,35 +3,48 @@
 
 #include <string>
 #include <memory>
+#include <fstream>
 #include <vector>
+#include <unordered_map>
+#include "lrat_parser.h"
 
 namespace drat2er
 {
 
 class Formula;
 class Clause;
+class RupClause;
 class RatClause;
 
-std::unique_ptr<RatClause> ParseRat(const std::string& proof_line);
-
-bool IsProperRatAddition(const std::string& proof_line);
-
-std::vector<std::unique_ptr<Clause>> GetCorrespondingDefinition(
-    const RatClause& rat, const int new_variable);
-
-class RatEliminator
+class RatEliminator : public LratParserObserver
 {
  public:
-  void Apply(Formula& formula, const std::string& input_proof_file,
-             const std::string& output_proof_file);
+  RatEliminator(std::string output_file, std::shared_ptr<Formula> formula,
+                int max_variable, int max_instruction);
+  virtual void HandleProperRatAddition(const RatClause& rat) override;
+  virtual void HandleRupAddition(const RupClause& rup) override;
+  virtual void HandleDeletion(const std::vector<int>& clause_indices,
+                              int instruction_index) override;
+  virtual void HandleComment(const std::string& comment_line) override;
+
  private:
-  void AddDefinitionsForRatClause(const RatClause& clause, Formula& formula);
-  void ReplaceOldLiteralByNew(const int old_literal, const int new_literal);
-  void DeleteClausesWithOldLiteral(const int old_literal);
-  void RenameLiteralInRemainingProof(const int old_literal,
-                                     const int new_literal);
+  int AddDefinitionsForRatClause(const RatClause& clause);
+  std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
+                                              const int new_variable);
+  void ReplaceOldLiteralByNew(const RatClause& rat, const int new_literal, 
+      const int index_of_first_extension, const int index_of_last_extension);
+  void DeleteClausesWithOldVariable(const int old_variable);
+  int ActualLiteral(int literal);
+  void WriteRupToOutput(const RupClause& rup);
+  void WriteDefinitionToOutput(const std::vector<Clause>& definition);
+  void WriteDeletionToOutput(const std::vector<int>& clause_indices,
+                             int instruction_index);
 
-
+  std::shared_ptr<Formula> formula_;
+  int max_variable_;
+  int max_instruction_;
+  std::ofstream output_stream_;
+  std::unordered_map<int,int> old_to_new_literal_;
 };
 
 }// namespace

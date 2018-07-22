@@ -23,7 +23,7 @@ class FormulaParser
  public:
   FormulaParser() {};
   std::unique_ptr<Formula> ParseFormula(const std::string& file_name);
-  std::unique_ptr<Clause> ParseClause(const std::string& clause_line);
+  Clause ParseClause(const std::string& clause_line);
 
  private:
   FormulaParser(const FormulaParser& other);
