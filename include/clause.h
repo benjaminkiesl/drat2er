@@ -20,6 +20,7 @@ class Clause
 
   int GetIndex() const;
   void SetIndex(int index);
+  void SetLiterals(const std::vector<int>& literals);
   void AddLiteral(int literal);
   int GetMaxVariable() const;
   bool ContainsLiteral(int literal) const;

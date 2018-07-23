@@ -31,12 +31,12 @@ class RatEliminator : public LratParserObserver
   int AddDefinitionsForRatClause(const RatClause& clause);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
-  void ReplaceOldLiteralByNew(const RatClause& rat, const int new_literal, 
-      const int index_of_first_extension, const int index_of_last_extension);
+  void ReplaceOldLiteralByNew(const RatClause& rat, 
+                              const std::vector<Clause>& definition);
   void DeleteClausesWithOldVariable(const int old_variable);
 
-  void ApplyRenaming(int& literal);
   void ApplyRenaming(Clause& clause);
+  int Rename(const int literal);
   void UpdateRenaming(int old_literal, int new_literal);
 
 

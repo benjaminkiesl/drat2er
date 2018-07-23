@@ -39,6 +39,14 @@ void Clause::SetIndex(int index){
   index_ = index;
 }
 
+void Clause::SetLiterals(const std::vector<int>& literals){
+  literals_.clear();
+  max_variable_ = 0;
+  for(auto literal : literals){
+    AddLiteral(literal);
+  }
+}
+
 void Clause::AddLiteral(const int literal)
 {
   literals_.emplace_back(literal);
