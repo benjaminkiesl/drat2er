@@ -18,7 +18,7 @@ using std::abs;
 namespace drat2er
 {
 
-Clause::Clause() : index_{-1}, literals_{}, max_variable_{0} { }
+Clause::Clause() : index_ {-1}, literals_ {}, max_variable_ {0} { }
 
 Clause::Clause(Clause&& other) : Clause()
 {
@@ -31,18 +31,21 @@ Clause& Clause::operator=(Clause other)
   return *this;
 }
 
-int Clause::GetIndex() const {
+int Clause::GetIndex() const
+{
   return index_;
 }
 
-void Clause::SetIndex(int index){
+void Clause::SetIndex(int index)
+{
   index_ = index;
 }
 
-void Clause::SetLiterals(const std::vector<int>& literals){
+void Clause::SetLiterals(const std::vector<int>& literals)
+{
   literals_.clear();
   max_variable_ = 0;
-  for(auto literal : literals){
+for(auto literal : literals) {
     AddLiteral(literal);
   }
 }
@@ -53,7 +56,8 @@ void Clause::AddLiteral(const int literal)
   max_variable_ = max(max_variable_, abs(literal));
 }
 
-int Clause::GetMaxVariable() const {
+int Clause::GetMaxVariable() const
+{
   return max_variable_;
 }
 
@@ -62,14 +66,21 @@ bool Clause::ContainsLiteral(const int literal) const
   return find(literals_.begin(), literals_.end(), literal) != literals_.end();
 }
 
-Clause::operator string() const
+string Clause::ToDimacs() const
 {
-  stringstream clause_stream;
-  for(auto literal : literals_){
-    clause_stream << literal << " ";
+  stringstream ss;
+  for(auto literal : literals_) {
+    ss << literal << ' ';
   }
-  clause_stream << "0";
-  return clause_stream.str();
+  ss << '0';
+  return ss.str();
+}
+
+string Clause::ToLrat() const
+{
+  stringstream ss;
+  ss << index_ << ' ' << ToDimacs();
+  return ss.str();
 }
 
 void swap(Clause& lhs, Clause& rhs)

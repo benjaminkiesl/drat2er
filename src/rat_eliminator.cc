@@ -123,7 +123,13 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
     for(int i = 2;i < definition.size();i++){
       rup.AddHint(definition[i].GetIndex());
     }
-    // TODO: Add missing hints
+    if(rat.GetHints().find(clause->GetIndex()) != rat.GetHints().end()){
+      for(auto hint : rat.GetHints().at(clause->GetIndex())){
+        rup.AddHint(hint);
+      }
+    }else{
+      //cout << "No hints for clause found." << endl;
+    }
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
   }
@@ -132,13 +138,12 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
 void RatEliminator::DeleteClausesWithOldVariable(const int old_variable){
   vector<int> clauses_to_delete{};
   for(auto clause : formula_->Occurrences(old_variable)){
-    formula_->DeleteClause(clause->GetIndex());
     clauses_to_delete.emplace_back(clause->GetIndex());
   }
   for(auto clause : formula_->Occurrences(-old_variable)){
-    formula_->DeleteClause(clause->GetIndex());
     clauses_to_delete.emplace_back(clause->GetIndex());
   }
+  formula_->DeleteClauses(clauses_to_delete);
   WriteDeletionToOutput(clauses_to_delete, ++max_instruction_);
 }
 
@@ -169,16 +174,12 @@ void RatEliminator::UpdateRenaming(int old_literal, int new_literal){
 }
 
 void RatEliminator::WriteRupToOutput(const RupClause& rup){
-  output_stream_ << rup.GetIndex() << ' ' << string(rup) << ' ';
-  for(auto hint : rup.GetHints()){
-    output_stream_ << hint << ' ';
-  }
-  output_stream_ << '0' << endl;
+  output_stream_ << rup.ToLrat() << endl;
 }
 
 void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition){
   for(auto clause : definition){
-    output_stream_ << clause.GetIndex() << " e " << string(clause) << endl;
+    output_stream_ << clause.GetIndex() << " e " << clause.ToDimacs() << endl;
   }
 }
 

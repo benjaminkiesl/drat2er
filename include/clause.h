@@ -24,7 +24,9 @@ class Clause
   void AddLiteral(int literal);
   int GetMaxVariable() const;
   bool ContainsLiteral(int literal) const;
-  operator std::string() const;
+  std::string ToDimacs() const;
+  virtual std::string ToLrat() const;
+
   auto size() const { return literals_.size(); }
   auto begin() const { return literals_.begin(); }
   auto end() const { return literals_.end(); }

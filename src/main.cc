@@ -8,6 +8,7 @@
 #include "rat_eliminator.h"
 #include "lrat_parser.h"
 #include "proof_stat_collector.h"
+#include "deletion_eliminator.h"
 
 using std::string;
 using std::shared_ptr;
@@ -22,7 +23,8 @@ const string kDratTrimPath = "/media/DATA/code/drat-trim/drat-trim";
 const string kInputFormula = "/home/benjamin/Documents/drat2er/test.cnf";
 const string kInputDratProof = "/media/DATA/Dropbox/papers/bc_rat/code/Cook/hole20.rat";
 //const string kLratProof = "/home/benjamin/Documents/drat2er/temp.lrat";
-const string kLratProof = "/home/benjamin/Documents/drat2er/test.lrat";
+const string kLratProof = "/home/benjamin/Documents/drat2er/hole20.lrat";
+const string kOutputERupProof = "/home/benjamin/Documents/drat2er/test.erup";
 const string kOutputErProof = "/home/benjamin/Documents/drat2er/test.er";
 
 int main()
@@ -40,10 +42,16 @@ int main()
   lrat_parser.RegisterObserver(stat_collector);
   lrat_parser.ParseFile(kLratProof);
 
-  auto rat_eliminator = std::make_shared<RatEliminator>(kOutputErProof, formula,
-      stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction());
+  auto rat_eliminator = 
+    std::make_shared<RatEliminator>(kOutputERupProof, formula, 
+        stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction());
   lrat_parser.RegisterObserver(rat_eliminator);
   lrat_parser.ParseFile(kLratProof);
+
+  auto deletion_eliminator = 
+    std::make_shared<DeletionEliminator>(kOutputErProof);
+  lrat_parser.RegisterObserver(deletion_eliminator);
+  lrat_parser.ParseFile(kOutputERupProof);
 
   cout << "DRAT2ER finished succcessfully." << endl;
   return 0;

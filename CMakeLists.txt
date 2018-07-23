@@ -22,6 +22,7 @@ add_library(lib_drat2er STATIC
 	src/rup_clause.cc
 	src/lrat_parser.cc
   	src/proof_stat_collector.cc
+	src/deletion_eliminator.cc
 	)
 
 # Build the executable for the main program

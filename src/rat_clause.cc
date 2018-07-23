@@ -1,32 +1,26 @@
 #include "rat_clause.h"
 #include <vector>
+#include <map>
 #include <memory>
+#include <string>
+#include <sstream>
 #include <iostream>
 #include "clause.h"
 
 using std::vector;
+using std::string;
+using std::stringstream;
+using std::map;
 using std::cout;
 using std::endl;
 
 namespace drat2er
 {
 
-ResolutionPartner::ResolutionPartner(int index) : index_ {index} {}
-
-int ResolutionPartner::GetIndex() const
-{
-  return index_;
-}
-
-vector<int>& ResolutionPartner::Hints()
-{
-  return hints_;
-}
-
 void swap(RatClause& lhs, RatClause& rhs){
   using std::swap;
   swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
-  swap(lhs.resolution_partners_, rhs.resolution_partners_);
+  swap(lhs.hints_, rhs.hints_);
 }
 
 RatClause::RatClause(RatClause&& other) : RatClause(){
@@ -46,14 +40,26 @@ int RatClause::GetPivot() const
   return 0;
 }
 
-const vector<ResolutionPartner>& RatClause::GetResolutionPartners() const
-{
-  return resolution_partners_;
+void RatClause::AddHint(int resolution_partner, const vector<int>& hints){
+  hints_[resolution_partner] = hints;
 }
 
-void RatClause::AddResolutionPartner(ResolutionPartner resolution_partner)
+const map<int, vector<int>>& RatClause::GetHints() const {
+  return hints_;
+}
+
+string RatClause::ToLrat() const
 {
-  resolution_partners_.emplace_back(resolution_partner);
+  stringstream ss;
+  ss << Clause::ToLrat() << ' ';
+  for(auto hint : hints_){
+    ss << -hint.first << ' ';
+    for(auto sub_hint : hint.second){
+      ss << sub_hint << ' ';
+    }
+  }
+  ss << '0';
+  return ss.str();
 }
 
 } // namespace
