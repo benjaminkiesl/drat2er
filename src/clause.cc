@@ -20,10 +20,6 @@ namespace drat2er
 
 Clause::Clause() : index_{-1}, literals_{}, max_variable_{0} { }
 
-Clause::Clause(const Clause& other) : index_(other.index_),
-                                      literals_(other.literals_),
-                                      max_variable_(other.max_variable_) { }
-
 Clause::Clause(Clause&& other) : Clause()
 {
   swap(*this, other);

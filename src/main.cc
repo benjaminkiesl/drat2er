@@ -18,11 +18,12 @@ using std::endl;
 using namespace drat2er;
 
 const string kDratTrimPath = "/media/DATA/code/drat-trim/drat-trim";
-const string kInputFormula = "/media/DATA/Dropbox/papers/bc_rat/code/cnf/hole20.cnf";
+//const string kInputFormula = "/media/DATA/Dropbox/papers/bc_rat/code/cnf/hole20.cnf";
+const string kInputFormula = "/home/benjamin/Documents/drat2er/test.cnf";
 const string kInputDratProof = "/media/DATA/Dropbox/papers/bc_rat/code/Cook/hole20.rat";
 //const string kLratProof = "/home/benjamin/Documents/drat2er/temp.lrat";
 const string kLratProof = "/home/benjamin/Documents/drat2er/test.lrat";
-const string kOutputErProof = "/home/benjamin/Documents/drat2er/hole20.er";
+const string kOutputErProof = "/home/benjamin/Documents/drat2er/test.er";
 
 int main()
 {

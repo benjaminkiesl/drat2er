@@ -10,11 +10,11 @@ namespace drat2er
 
 class Clause
 {
-  friend void swap(Clause&, Clause&);
+  friend void swap(Clause& lhs, Clause& rhs);
 
  public:
   Clause();
-  Clause(const Clause& other);
+  Clause(const Clause& other) = default;
   Clause(Clause&& other);
   Clause& operator=(Clause other);
 
@@ -24,22 +24,15 @@ class Clause
   int GetMaxVariable() const;
   bool ContainsLiteral(int literal) const;
   operator std::string() const;
+  auto size() const { return literals_.size(); }
+  auto begin() const { return literals_.begin(); }
+  auto end() const { return literals_.end(); }
 
-  auto size() const{
-    return literals_.size();
-  }
-
-  auto begin() const {
-    return literals_.begin();
-  }
-
-  auto end() const {
-    return literals_.end();
-  }
+ protected:
+  std::vector<int> literals_;
 
  private:
   int index_;
-  std::vector<int> literals_;
   int max_variable_;
 };
 

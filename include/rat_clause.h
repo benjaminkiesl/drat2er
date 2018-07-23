@@ -21,20 +21,18 @@ class ResolutionPartner
   std::vector<int> hints_;
 };
 
-class RatClause
+class RatClause : public Clause
 {
+  friend void swap(RatClause& lhs, RatClause& rhs);
  public:
-  RatClause();
-  int GetIndex() const;
-  void SetClause(Clause clause);
-  const Clause& GetClause() const;
+  RatClause() = default;
+  RatClause(const RatClause& other) = default;
+  RatClause(RatClause&& other);
+  RatClause& operator=(RatClause other);
   int GetPivot() const;
-  void AddLiteral(int literal);
   const std::vector<ResolutionPartner>& GetResolutionPartners() const;
   void AddResolutionPartner(ResolutionPartner resolution_partner);
-  void Print() const;
  private:
-  Clause clause_;
   std::vector<ResolutionPartner> resolution_partners_;
 };
 

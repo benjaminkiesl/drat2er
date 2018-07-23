@@ -23,32 +23,25 @@ vector<int>& ResolutionPartner::Hints()
   return hints_;
 }
 
-RatClause::RatClause() : clause_{} { 
+void swap(RatClause& lhs, RatClause& rhs){
+  using std::swap;
+  swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
+  swap(lhs.resolution_partners_, rhs.resolution_partners_);
 }
 
-int RatClause::GetIndex() const
-{
-  return clause_.GetIndex();
+RatClause::RatClause(RatClause&& other) : RatClause(){
+  swap(*this, other);
 }
 
-void RatClause::SetClause(Clause clause){
-  clause_ = clause;
-}
-
-const Clause& RatClause::GetClause() const
-{
-  return clause_;
-}
-
-void RatClause::AddLiteral(int literal)
-{
-  clause_.AddLiteral(literal);
+RatClause& RatClause::operator=(RatClause other){
+  swap(*this, other);
+  return *this;
 }
 
 int RatClause::GetPivot() const
 {
-  if(clause_.size() != 0) {
-    return *(clause_.begin());
+  if(literals_.size() != 0) {
+    return *(literals_.begin());
   }
   return 0;
 }
@@ -61,22 +54,6 @@ const vector<ResolutionPartner>& RatClause::GetResolutionPartners() const
 void RatClause::AddResolutionPartner(ResolutionPartner resolution_partner)
 {
   resolution_partners_.emplace_back(resolution_partner);
-}
-
-void RatClause::Print() const {
-  cout << "RAT " << GetIndex() << " = '";
-  for(auto literal : clause_){
-    cout << literal << " ";
-  } 
-  cout << "' with partners: ";
-  for(auto partner : resolution_partners_){
-    cout << partner.GetIndex() << " (";
-    for(auto hint : partner.Hints()){
-      cout << hint << " ";
-    }
-    cout << ")" << ", ";
-  }
-  cout << endl;
 }
 
 } // namespace

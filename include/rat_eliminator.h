@@ -34,7 +34,12 @@ class RatEliminator : public LratParserObserver
   void ReplaceOldLiteralByNew(const RatClause& rat, const int new_literal, 
       const int index_of_first_extension, const int index_of_last_extension);
   void DeleteClausesWithOldVariable(const int old_variable);
-  int ActualLiteral(int literal);
+
+  void ApplyRenaming(int& literal);
+  void ApplyRenaming(Clause& clause);
+  void UpdateRenaming(int old_literal, int new_literal);
+
+
   void WriteRupToOutput(const RupClause& rup);
   void WriteDefinitionToOutput(const std::vector<Clause>& definition);
   void WriteDeletionToOutput(const std::vector<int>& clause_indices,
@@ -45,6 +50,7 @@ class RatEliminator : public LratParserObserver
   int max_instruction_;
   std::ofstream output_stream_;
   std::unordered_map<int,int> old_to_new_literal_;
+  std::unordered_map<int,int> new_to_old_literal_;
 };
 
 }// namespace
