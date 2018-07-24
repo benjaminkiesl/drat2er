@@ -20,7 +20,7 @@ namespace drat2er
 void swap(RatClause& lhs, RatClause& rhs){
   using std::swap;
   swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
-  swap(lhs.hints_, rhs.hints_);
+  swap(lhs.negative_hints_, rhs.negative_hints_);
 }
 
 RatClause::RatClause(RatClause&& other) : RatClause(){
@@ -40,19 +40,28 @@ int RatClause::GetPivot() const
   return 0;
 }
 
-void RatClause::AddHint(int resolution_partner, const vector<int>& hints){
-  hints_[resolution_partner] = hints;
+void RatClause::AddPositiveHint(int hint){
+  positive_hints_.emplace_back(hint);
 }
 
-const map<int, vector<int>>& RatClause::GetHints() const {
-  return hints_;
+const std::vector<int>& RatClause::GetPositiveHints() const{
+  return positive_hints_;
+}
+
+void RatClause::AddNegativeHint(int resolution_partner, 
+                                const vector<int>& hints){
+  negative_hints_[resolution_partner] = hints;
+}
+
+const map<int, vector<int>>& RatClause::GetNegativeHints() const {
+  return negative_hints_;
 }
 
 string RatClause::ToLrat() const
 {
   stringstream ss;
   ss << Clause::ToLrat() << ' ';
-  for(auto hint : hints_){
+  for(auto hint : negative_hints_){
     ss << -hint.first << ' ';
     for(auto sub_hint : hint.second){
       ss << sub_hint << ' ';

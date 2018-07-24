@@ -19,12 +19,15 @@ class RatClause : public Clause
   RatClause(RatClause&& other);
   RatClause& operator=(RatClause other);
   int GetPivot() const;
-  void AddHint(int resolution_partner, const std::vector<int>& hints);
-  const std::map<int, std::vector<int>>& GetHints() const; 
+  void AddPositiveHint(int hint);
+  const std::vector<int>& GetPositiveHints() const;
+  void AddNegativeHint(int resolution_partner, const std::vector<int>& hints);
+  const std::map<int, std::vector<int>>& GetNegativeHints() const; 
   virtual std::string ToLrat() const override;
 
  private:
-  std::map<int, std::vector<int>> hints_;
+  std::vector<int> positive_hints_;
+  std::map<int, std::vector<int>> negative_hints_;
 };
 
 } // namespace

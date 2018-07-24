@@ -11,13 +11,14 @@ namespace drat2er
 class Clause
 {
   friend void swap(Clause& lhs, Clause& rhs);
+  friend bool operator==(const Clause& lhs, const Clause& rhs);
 
  public:
   Clause();
   Clause(const Clause& other) = default;
   Clause(Clause&& other);
   Clause& operator=(Clause other);
-
+  
   int GetIndex() const;
   void SetIndex(int index);
   void SetLiterals(const std::vector<int>& literals);

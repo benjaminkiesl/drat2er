@@ -18,17 +18,23 @@ using std::endl;
 
 using namespace drat2er;
 
-const string kDratTrimPath = "/media/DATA/code/drat-trim/drat-trim";
-//const string kInputFormula = "/media/DATA/Dropbox/papers/bc_rat/code/cnf/hole20.cnf";
-const string kInputFormula = "/home/benjamin/Documents/drat2er/test_bca.cnf";
-const string kInputDratProof = "/media/DATA/Dropbox/papers/bc_rat/code/Cook/hole20.rat";
-//const string kLratProof = "/home/benjamin/Documents/drat2er/temp.lrat";
-const string kLratProof = "/home/benjamin/Documents/drat2er/test_bca.lrat";
-const string kOutputERupProof = "/home/benjamin/Documents/drat2er/test.erup";
-const string kOutputErProof = "/home/benjamin/Documents/drat2er/test.er";
+const string file_name = "hole20";
+const string folder_name = "/home/benjamin/Documents/drat2er/";
+const string temp_folder = "temp/";
 
-int main()
+const string kDRATTrimPath = "/media/DATA/code/drat-trim/drat-trim";
+const string kInputFormula = folder_name + file_name + ".cnf";
+const string kInputDRAT = folder_name + file_name + ".rat";
+const string kOutputLRAT = folder_name + temp_folder + file_name + ".lrat";
+const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
+const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
+//const string kOutputLEDRUP = folder_name + file_name + ".ledrup";
+//const string kOutputLERUP = folder_name + file_name + ".lerup";
+//const string kOutputER = folder_name + file_name + ".er";
+
+int main (int argc, char *argv[])
 {
+  cout << "DRAT2ER: Parsing Formula..." << endl;
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);
   if(formula == nullptr){
@@ -36,28 +42,38 @@ int main()
     return 1;
   }
 
-  auto drat_trim_call = kDratTrimPath + " " + kInputFormula + " " +
-    kInputDratProof + " -L " + kLratProof;
-  //system(drat_trim_call.c_str()); 
+  cout << "DRAT2ER: Converting DRAT proof to LRAT format using drat-trim..." << endl;
+  auto drat_trim_call = kDRATTrimPath + " " + kInputFormula + " " +
+    kInputDRAT + " -b -L " + kOutputLRAT;
+  system(drat_trim_call.c_str()); 
 
   LratParser lrat_parser{};
 
   auto stat_collector = std::make_shared<ProofStatCollector>(formula);
   lrat_parser.RegisterObserver(stat_collector);
-  lrat_parser.ParseFile(kLratProof);
+  lrat_parser.ParseFile(kOutputLRAT);
 
+  cout << "DRAT2ER: Eliminating proper RATs..." << endl;
   auto rat_eliminator = 
-    std::make_shared<RatEliminator>(kOutputERupProof, formula, 
+    std::make_shared<RatEliminator>(kOutputEDRUP, formula, 
         stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction());
   lrat_parser.RegisterObserver(rat_eliminator);
-  lrat_parser.ParseFile(kLratProof);
+  lrat_parser.ParseFile(kOutputLRAT);
 
+  cout << "DRAT2ER: Eliminating deletions..." << endl;
   //auto deletion_eliminator = 
-  //  std::make_shared<DeletionEliminator>(kOutputErProof);
+  //  std::make_shared<DeletionEliminator>(kOutputERUP);
   //lrat_parser.RegisterObserver(deletion_eliminator);
-  //lrat_parser.ParseFile(kOutputERupProof);
+  //lrat_parser.ParseFile(kOutputEDRUP);
+  auto sed_call = "sed '/^d.*/d' " + kOutputEDRUP + " > " + kOutputERUP;
+  system(sed_call.c_str());
+  
+  cout << "DRAT2ER: Verifying proof with drat-trim..." << endl;
+  auto drat_trim_check_call = kDRATTrimPath + " " + kInputFormula 
+    + " -b " + kOutputERUP;
+  system(drat_trim_check_call.c_str());
 
-  cout << "DRAT2ER finished succcessfully." << endl;
+  cout << "DRAT2ER: Finished." << endl;
   return 0;
 }
 

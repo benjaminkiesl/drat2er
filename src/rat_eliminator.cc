@@ -41,7 +41,6 @@ void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
 
   auto definition_clauses = CorrespondingDefinition(rat, new_variable);
   WriteDefinitionToOutput(definition_clauses);
-  //formula_->AddClauses(definition_clauses);
   formula_->AddClause(definition_clauses.front());
 
   ReplaceOldLiteralByNew(rat, definition_clauses);
@@ -108,8 +107,8 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
     for(auto literal : *clause){
       rup.AddLiteral(literal == rat.GetPivot() ? new_literal : literal);
     }
-    rup.AddHint(clause->GetIndex());
-    rup.AddHint(definition[1].GetIndex());
+    rup.AddPositiveHint(clause->GetIndex());
+    rup.AddPositiveHint(definition[1].GetIndex());
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
   }
@@ -120,17 +119,19 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
     for(auto literal : *clause){
       rup.AddLiteral(literal == -rat.GetPivot() ? -new_literal : literal);
     }
-    rup.AddHint(clause->GetIndex());
+    rup.AddPositiveHint(clause->GetIndex());
     for(int i = 2;i < definition.size();i++){
-      rup.AddHint(definition[i].GetIndex());
+      rup.AddPositiveHint(definition[i].GetIndex());
     }
-    if(rat.GetHints().find(clause->GetIndex()) != rat.GetHints().end()){
-      for(auto hint : rat.GetHints().at(clause->GetIndex())){
-        rup.AddHint(hint);
+    for(auto hint : rat.GetPositiveHints()){
+      rup.AddPositiveHint(hint);
+    }
+    if(rat.GetNegativeHints().find(clause->GetIndex()) 
+        != rat.GetNegativeHints().end()){
+      for(auto hint : rat.GetNegativeHints().at(clause->GetIndex())){
+        rup.AddPositiveHint(hint);
       }
-    }else{
-      //cout << "No hints for clause found." << endl;
-    }
+    }    
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
   }
@@ -138,17 +139,18 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
 
 void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
                                            const vector<Clause>& definition){
-  vector<int> clauses_to_delete{};
+  vector<Clause> clauses_to_delete{};
   for(auto clause : formula_->Occurrences(old_variable)){
-    clauses_to_delete.emplace_back(clause->GetIndex());
+    clauses_to_delete.emplace_back(*clause);
   }
   for(auto clause : formula_->Occurrences(-old_variable)){
-    clauses_to_delete.emplace_back(clause->GetIndex());
+    clauses_to_delete.emplace_back(*clause);
   }
-  formula_->DeleteClauses(clauses_to_delete);
-
+  for(auto clause : clauses_to_delete){
+    formula_->DeleteClause(clause.GetIndex());
+  }
   for(int i=1; i < definition.size(); i++){
-    clauses_to_delete.emplace_back(definition[i].GetIndex());
+    clauses_to_delete.emplace_back(definition[i]);
   }
   WriteDeletionToOutput(clauses_to_delete, max_instruction_);
 }
@@ -180,23 +182,61 @@ void RatEliminator::UpdateRenaming(int old_literal, int new_literal){
 }
 
 void RatEliminator::WriteRupToOutput(const RupClause& rup){
-  output_stream_ << rup.ToLrat() << endl;
+  bool lrat = false;
+  if(lrat){
+    output_stream_ << rup.ToLrat() << endl;
+  } else {
+    output_stream_ << rup.ToDimacs() << endl;
+  }
 }
 
 void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition){
-  for(auto clause : definition){
-    output_stream_ << clause.GetIndex() << " e " << clause.ToDimacs() << endl;
+  bool lrat = false;
+  if(lrat){
+    for(auto clause : definition){
+      output_stream_ << clause.GetIndex() << " e " << clause.ToDimacs() << endl;
+    }
+  } else {
+    for(auto clause : definition){
+      output_stream_ << clause.ToDimacs() << endl;
+    }
   }
 }
 
 void RatEliminator::WriteDeletionToOutput(const vector<int>& clause_indices,
                                           int instruction_index){
-  output_stream_ << instruction_index << " d ";
-  for(auto index : clause_indices){
-    output_stream_ << index << " ";
+  bool lrat = false;
+  if(lrat){
+    output_stream_ << instruction_index << ' ';
+    output_stream_ << "d ";
+    for(auto index : clause_indices){
+      output_stream_ << index << " ";
+    }
+    output_stream_ << "0" << endl;
+  } else {
+    for(auto index : clause_indices){
+      if(formula_->GetClause(index) != nullptr){
+        output_stream_ << "d " << formula_->GetClause(index)->ToDimacs() << endl;
+      }
+    }
   }
-  output_stream_ << "0" << endl;
 }
 
+void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
+                                          int instruction_index){
+  bool lrat = false;
+  if(lrat){
+    output_stream_ << instruction_index << ' ';
+    output_stream_ << "d ";
+    for(auto clause : clauses){
+      output_stream_ << clause.GetIndex() << " ";
+    }
+    output_stream_ << "0" << endl;
+  } else {
+    for(auto clause : clauses){
+      output_stream_ << "d " << clause.ToDimacs() << endl;
+    }
+  }
+}
 
 } // namespace

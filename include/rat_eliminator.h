@@ -45,6 +45,8 @@ class RatEliminator : public LratParserObserver
   void WriteDefinitionToOutput(const std::vector<Clause>& definition);
   void WriteDeletionToOutput(const std::vector<int>& clause_indices,
                              int instruction_index);
+  void WriteDeletionToOutput(const std::vector<Clause>& clauses,
+                             int instruction_index);
 
   std::shared_ptr<Formula> formula_;
   int max_variable_;
