@@ -41,10 +41,11 @@ void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
 
   auto definition_clauses = CorrespondingDefinition(rat, new_variable);
   WriteDefinitionToOutput(definition_clauses);
+  //formula_->AddClauses(definition_clauses);
   formula_->AddClause(definition_clauses.front());
 
   ReplaceOldLiteralByNew(rat, definition_clauses);
-  DeleteClausesWithOldVariable(abs(rat.GetPivot()));
+  DeleteClausesWithOldVariable(abs(rat.GetPivot()), definition_clauses);
   UpdateRenaming(rat.GetPivot(), new_variable);
 }
 
@@ -135,7 +136,8 @@ void RatEliminator::ReplaceOldLiteralByNew(const RatClause& rat,
   }
 }
 
-void RatEliminator::DeleteClausesWithOldVariable(const int old_variable){
+void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
+                                           const vector<Clause>& definition){
   vector<int> clauses_to_delete{};
   for(auto clause : formula_->Occurrences(old_variable)){
     clauses_to_delete.emplace_back(clause->GetIndex());
@@ -144,7 +146,11 @@ void RatEliminator::DeleteClausesWithOldVariable(const int old_variable){
     clauses_to_delete.emplace_back(clause->GetIndex());
   }
   formula_->DeleteClauses(clauses_to_delete);
-  WriteDeletionToOutput(clauses_to_delete, ++max_instruction_);
+
+  for(int i=1; i < definition.size(); i++){
+    clauses_to_delete.emplace_back(definition[i].GetIndex());
+  }
+  WriteDeletionToOutput(clauses_to_delete, max_instruction_);
 }
 
 int RatEliminator::Rename(const int literal) {

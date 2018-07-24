@@ -17,9 +17,9 @@ namespace drat2er
 {
 
 Formula::Formula(int number_of_variables, int number_of_clauses) :
-clauses_(number_of_variables),
+clauses_(1, nullptr),
 max_variable_{0},
-occurrences_(2*number_of_variables,std::vector<shared_ptr<Clause>> {}) { }
+occurrences_(2*number_of_variables, std::vector<shared_ptr<Clause>> {}) { }
 
 void Formula::AddClauses(const std::vector<Clause>& clauses){
   for(auto clause : clauses){

@@ -33,7 +33,8 @@ class RatEliminator : public LratParserObserver
                                               const int new_variable);
   void ReplaceOldLiteralByNew(const RatClause& rat, 
                               const std::vector<Clause>& definition);
-  void DeleteClausesWithOldVariable(const int old_variable);
+  void DeleteClausesWithOldVariable(const int old_variable,
+                                    const std::vector<Clause>& definition);
 
   void ApplyRenaming(Clause& clause);
   int Rename(const int literal);

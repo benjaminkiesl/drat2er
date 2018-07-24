@@ -20,10 +20,10 @@ using namespace drat2er;
 
 const string kDratTrimPath = "/media/DATA/code/drat-trim/drat-trim";
 //const string kInputFormula = "/media/DATA/Dropbox/papers/bc_rat/code/cnf/hole20.cnf";
-const string kInputFormula = "/home/benjamin/Documents/drat2er/test.cnf";
+const string kInputFormula = "/home/benjamin/Documents/drat2er/test_bca.cnf";
 const string kInputDratProof = "/media/DATA/Dropbox/papers/bc_rat/code/Cook/hole20.rat";
 //const string kLratProof = "/home/benjamin/Documents/drat2er/temp.lrat";
-const string kLratProof = "/home/benjamin/Documents/drat2er/hole20.lrat";
+const string kLratProof = "/home/benjamin/Documents/drat2er/test_bca.lrat";
 const string kOutputERupProof = "/home/benjamin/Documents/drat2er/test.erup";
 const string kOutputErProof = "/home/benjamin/Documents/drat2er/test.er";
 
@@ -31,6 +31,10 @@ int main()
 {
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);
+  if(formula == nullptr){
+    std::cerr << "File '" << kInputFormula << "' could not be opened." << endl;
+    return 1;
+  }
 
   auto drat_trim_call = kDratTrimPath + " " + kInputFormula + " " +
     kInputDratProof + " -L " + kLratProof;
@@ -48,10 +52,10 @@ int main()
   lrat_parser.RegisterObserver(rat_eliminator);
   lrat_parser.ParseFile(kLratProof);
 
-  auto deletion_eliminator = 
-    std::make_shared<DeletionEliminator>(kOutputErProof);
-  lrat_parser.RegisterObserver(deletion_eliminator);
-  lrat_parser.ParseFile(kOutputERupProof);
+  //auto deletion_eliminator = 
+  //  std::make_shared<DeletionEliminator>(kOutputErProof);
+  //lrat_parser.RegisterObserver(deletion_eliminator);
+  //lrat_parser.ParseFile(kOutputERupProof);
 
   cout << "DRAT2ER finished succcessfully." << endl;
   return 0;
