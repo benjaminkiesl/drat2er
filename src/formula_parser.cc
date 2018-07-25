@@ -48,11 +48,14 @@ unique_ptr<Formula> FormulaParser::ParseFormula(
   auto formula = make_unique<Formula>(formula_properties.number_of_variables,
                                       formula_properties.number_of_clauses);
 
+  int clause_index = 1;
   while(getline(file_stream, line)) {
     if(line.front() == 'c') {
       ParseComment(line);
     } else {
-      formula->AddClause(ParseClause(line));
+      auto clause = ParseClause(line);
+      clause.SetIndex(clause_index++);
+      formula->AddClause(clause);
     }
   }
 

@@ -65,16 +65,12 @@ int main (int argc, char *argv[])
   lrat_parser.ParseFile(kOutputLRAT);
 
   cout << "DRAT2ER: Eliminating deletions..." << endl;
-  //auto deletion_eliminator = 
-  //  std::make_shared<DeletionEliminator>(kOutputERUP);
-  //lrat_parser.RegisterObserver(deletion_eliminator);
-  //lrat_parser.ParseFile(kOutputEDRUP);
   auto sed_call = "sed '/^d.*/d' " + kOutputEDRUP + " > " + kOutputERUP;
   system(sed_call.c_str());
   
   cout << "DRAT2ER: Verifying proof with drat-trim..." << endl;
   auto drat_trim_check_call = kDRATTrimPath + " " + kInputFormula 
-    + " -b " + kOutputERUP;
+    + " " + kOutputERUP + " -b";
   system(drat_trim_check_call.c_str());
 
   cout << "DRAT2ER: Finished." << endl;
