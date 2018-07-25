@@ -31,8 +31,12 @@ class RatEliminator : public LratParserObserver
   int AddDefinitionsForRatClause(const RatClause& clause);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
-  void ReplaceOldLiteralByNew(const RatClause& rat, 
-                              const std::vector<Clause>& definition);
+  void ReplaceOldPivotByNew(const RatClause& rat, 
+                            const std::vector<Clause>& definition);
+  void ReplacePositivePivot(const RatClause& rat,
+                            const std::vector<Clause>& definition);  
+  void ReplaceNegativePivot(const RatClause& rat,
+                            const std::vector<Clause>& definition);  
   void DeleteClausesWithOldVariable(const int old_variable,
                                     const std::vector<Clause>& definition);
 

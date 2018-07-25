@@ -12,7 +12,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Build library for the CI exercises
+# Build library for the main executable 
 add_library(lib_drat2er STATIC 
 	src/formula.cc
 	src/formula_parser.cc
@@ -29,13 +29,17 @@ add_library(lib_drat2er STATIC
 add_executable(drat2er src/main.cc)
 target_link_libraries(drat2er lib_drat2er)
 
-## Build unit tests
-#enable_testing()
-##add_subdirectory(${CMAKE_BINARY_DIR}/test/src
-##				 ${CMAKE_BINARY_DIR}/test/build
-##				 EXCLUDE_FROM_ALL)
-#add_executable(formula_parser_test test/src/formula_parser_test.cc)
-#
-#target_link_libraries(formula_parser_test gtest_main lib_satyle)
-#
-#add_test(NAME FormulaParserTest COMMAND lib_satyle)
+# Build the executable for the unit tests
+set(CATCH_INCLUDE_DIR third-party/catch2)
+add_library(catch INTERFACE)
+target_include_directories(catch INTERFACE ${CATCH_INCLUDE_DIR})
+
+set(TEST_DIRECTORY test) 
+set(TEST_SOURCES ${TEST_DIRECTORY}/tests_main.cc
+				 ${TEST_DIRECTORY}/test_rat_eliminator.cc)
+add_executable(unit_test ${TEST_SOURCES})
+target_link_libraries(unit_test catch lib_drat2er)
+
+# Enable Unit testing
+enable_testing()
+add_test(NAME UnitTests COMMAND unit_test)

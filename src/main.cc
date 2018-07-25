@@ -18,22 +18,26 @@ using std::endl;
 
 using namespace drat2er;
 
-const string file_name = "hole20";
 const string folder_name = "/home/benjamin/Documents/drat2er/";
 const string temp_folder = "temp/";
 
 const string kDRATTrimPath = "/media/DATA/code/drat-trim/drat-trim";
-const string kInputFormula = folder_name + file_name + ".cnf";
-const string kInputDRAT = folder_name + file_name + ".rat";
-const string kOutputLRAT = folder_name + temp_folder + file_name + ".lrat";
-const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
-const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
 //const string kOutputLEDRUP = folder_name + file_name + ".ledrup";
 //const string kOutputLERUP = folder_name + file_name + ".lerup";
 //const string kOutputER = folder_name + file_name + ".er";
 
 int main (int argc, char *argv[])
 {
+  string file_name = "hole20";
+  if(argc > 1){
+    file_name = argv[1];
+  }
+  const string kInputFormula = folder_name + file_name + ".cnf";
+  const string kInputDRAT = folder_name + file_name + ".drat";
+  const string kOutputLRAT = folder_name + temp_folder + file_name + ".lrat";
+  const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
+  const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
+
   cout << "DRAT2ER: Parsing Formula..." << endl;
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);

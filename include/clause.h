@@ -29,6 +29,7 @@ class Clause
   virtual std::string ToLrat() const;
 
   auto size() const { return literals_.size(); }
+  auto empty() const { return literals_.empty(); }
   auto begin() const { return literals_.begin(); }
   auto end() const { return literals_.end(); }
 

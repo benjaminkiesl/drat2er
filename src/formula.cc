@@ -58,6 +58,9 @@ std::shared_ptr<Clause> Formula::GetClause(const int clause_index) const
 
 void Formula::DeleteClause(const int clause_index)
 {
+  if(clauses_[clause_index] == nullptr){
+    return;
+  }
   auto clause = clauses_[clause_index];
   for(auto literal : *clause){
     auto& occurrences = Occurrences(literal);
