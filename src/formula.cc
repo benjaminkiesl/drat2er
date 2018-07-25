@@ -3,13 +3,10 @@
 #include <iostream>
 #include <algorithm>
 
-using std::unique_ptr;
 using std::shared_ptr;
 using std::make_shared;
 using std::vector;
 using std::find;
-using std::move;
-using std::cout;
 using std::cerr;
 using std::endl;
 
@@ -19,10 +16,10 @@ namespace drat2er
 Formula::Formula(int number_of_variables, int number_of_clauses) :
 clauses_(1, nullptr),
 max_variable_{0},
-occurrences_(2*number_of_variables, std::vector<shared_ptr<Clause>> {}) { }
+occurrences_(2*number_of_variables, vector<shared_ptr<Clause>> {}) { }
 
-void Formula::AddClauses(const std::vector<Clause>& clauses){
-  for(auto clause : clauses){
+void Formula::AddClauses(const vector<Clause>& clauses){
+  for(auto& clause : clauses){
     AddClause(clause);
   }
 }
@@ -51,7 +48,7 @@ void Formula::AddClause(const Clause& clause)
   }
 }
 
-std::shared_ptr<Clause> Formula::GetClause(const int clause_index) const
+shared_ptr<Clause> Formula::GetClause(const int clause_index) const
 {
   return clauses_[clause_index];
 }
@@ -69,7 +66,7 @@ void Formula::DeleteClause(const int clause_index)
   clauses_[clause_index] = nullptr;
 }
 
-void Formula::DeleteClauses(const std::vector<int>& clause_indices){
+void Formula::DeleteClauses(const vector<int>& clause_indices){
   for(auto clause_index : clause_indices){
     DeleteClause(clause_index);
   }

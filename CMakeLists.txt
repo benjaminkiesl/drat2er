@@ -36,10 +36,11 @@ target_include_directories(catch INTERFACE ${CATCH_INCLUDE_DIR})
 
 set(TEST_DIRECTORY test) 
 set(TEST_SOURCES ${TEST_DIRECTORY}/tests_main.cc
-				 ${TEST_DIRECTORY}/test_rat_eliminator.cc
 			 	 ${TEST_DIRECTORY}/test_clause.cc
+				 ${TEST_DIRECTORY}/test_formula.cc
 				 ${TEST_DIRECTORY}/test_rup_clause.cc
-				 ${TEST_DIRECTORY}/test_rat_clause.cc)
+				 ${TEST_DIRECTORY}/test_rat_clause.cc
+				 ${TEST_DIRECTORY}/test_rat_eliminator.cc)
 add_executable(unit_tests ${TEST_SOURCES})
 target_link_libraries(unit_tests catch lib_drat2er)
 
