@@ -15,12 +15,14 @@ class Clause
 
  public:
   Clause();
+  Clause(std::initializer_list<int> literals);
   Clause(const Clause& other) = default;
   Clause(Clause&& other);
   Clause& operator=(Clause other);
   
   int GetIndex() const;
   void SetIndex(int index);
+  const std::vector<int>& GetLiterals() const;
   void SetLiterals(const std::vector<int>& literals);
   void AddLiteral(int literal);
   int GetMaxVariable() const;

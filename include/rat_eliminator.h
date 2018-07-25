@@ -27,10 +27,14 @@ class RatEliminator : public LratParserObserver
                               int instruction_index) override;
   virtual void HandleComment(const std::string& comment_line) override;
 
- private:
-  int AddDefinitionsForRatClause(const RatClause& clause);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
+  Clause FirstDefinitionClause(const RatClause& rat, const int new_variable);
+  Clause SecondDefinitionClause(const RatClause& rat, const int new_variable);
+  std::vector<Clause> ThirdBlockOfDefinitionClauses(const RatClause& rat,
+                                                    const int new_variable);
+ private:
+  int AddDefinitionsForRatClause(const RatClause& clause);
   void ReplaceOldPivotByNew(const RatClause& rat, 
                             const std::vector<Clause>& definition);
   void ReplacePositivePivot(const RatClause& rat,

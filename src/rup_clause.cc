@@ -3,10 +3,12 @@
 #include <memory>
 #include <string>
 #include <sstream>
+#include <initializer_list>
 #include "clause.h"
 
 using std::string;
 using std::stringstream;
+using std::initializer_list;
 using std::endl;
 
 namespace drat2er {
@@ -15,6 +17,9 @@ void swap(RupClause& lhs, RupClause& rhs){
   using std::swap;
   swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
   swap(lhs.positive_hints_, rhs.positive_hints_);
+}
+
+RupClause::RupClause(initializer_list<int> literals) : Clause(literals) {
 }
 
 RupClause::RupClause(RupClause&& other) : RupClause(){

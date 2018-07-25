@@ -73,30 +73,45 @@ vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
     return definition;
   }
 
-  Clause first_clause;
-  first_clause.SetIndex(rat.GetIndex());
-  first_clause.AddLiteral(new_variable);
-  for(auto it = rat.begin()+1; it != rat.end(); ++it){
-    first_clause.AddLiteral(*it);
-  }
-  definition.emplace_back(first_clause);
-
-  Clause second_clause;
-  second_clause.SetIndex(++max_instruction_);
-  second_clause.AddLiteral(new_variable); 
-  second_clause.AddLiteral(-rat.GetPivot());
-  definition.emplace_back(second_clause);
-
-  for(auto it=rat.begin()+1; it != rat.end(); ++it){
-    Clause negative_clause;
-    negative_clause.SetIndex(++max_instruction_);
-    negative_clause.AddLiteral(-new_variable);
-    negative_clause.AddLiteral(rat.GetPivot());
-    negative_clause.AddLiteral(-*it);
-    definition.emplace_back(negative_clause);
-  }
+  definition.emplace_back(FirstDefinitionClause(rat, new_variable));
+  definition.emplace_back(SecondDefinitionClause(rat, new_variable));
+  auto third_block_of_definition_clauses = 
+    ThirdBlockOfDefinitionClauses(rat, new_variable);
+  definition.insert(definition.end(), 
+                    third_block_of_definition_clauses.begin(),
+                    third_block_of_definition_clauses.end());
 
   return definition;
+}
+
+Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
+                                            const int new_variable){
+  Clause clause;
+  clause.SetIndex(rat.GetIndex());
+  clause.AddLiteral(new_variable);
+  for(auto it = rat.begin()+1; it != rat.end(); ++it){
+    clause.AddLiteral(*it);
+  }
+  return clause;
+}
+
+Clause RatEliminator::SecondDefinitionClause(const RatClause& rat, 
+                                             const int new_variable){
+  Clause second_clause{new_variable, -rat.GetPivot()};
+  second_clause.SetIndex(++max_instruction_);
+  return second_clause;
+}
+
+vector<Clause> RatEliminator::ThirdBlockOfDefinitionClauses(
+                                                    const RatClause& rat,
+                                                    const int new_variable){
+  vector<Clause> definition_clauses;
+  for(auto it=rat.begin()+1; it != rat.end(); ++it){
+    Clause negative_clause{-new_variable, rat.GetPivot(), -*it};
+    negative_clause.SetIndex(++max_instruction_);
+    definition_clauses.emplace_back(negative_clause);
+  }
+  return definition_clauses;
 }
 
 void RatEliminator::ReplaceOldPivotByNew(const RatClause& rat, 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <initializer_list>
 #include "clause.h"
 
 namespace drat2er
@@ -15,6 +16,7 @@ class RatClause : public Clause
 
  public:
   RatClause() = default;
+  RatClause(std::initializer_list<int> literals);
   RatClause(const RatClause& other) = default;
   RatClause(RatClause&& other);
   RatClause& operator=(RatClause other);

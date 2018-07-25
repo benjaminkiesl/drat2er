@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <initializer_list>
 #include "clause.h"
 
 namespace drat2er
@@ -14,6 +15,7 @@ class RupClause : public Clause
 
  public:
   RupClause() = default;
+  RupClause(std::initializer_list<int> literals);
   RupClause(const RupClause& other) = default;
   RupClause(RupClause&& other);
   RupClause& operator=(RupClause other);

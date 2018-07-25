@@ -5,12 +5,14 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <initializer_list>
 #include "clause.h"
 
 using std::vector;
 using std::string;
 using std::stringstream;
 using std::map;
+using std::initializer_list;
 using std::cout;
 using std::endl;
 
@@ -20,7 +22,11 @@ namespace drat2er
 void swap(RatClause& lhs, RatClause& rhs){
   using std::swap;
   swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
+  swap(lhs.positive_hints_, rhs.positive_hints_);
   swap(lhs.negative_hints_, rhs.negative_hints_);
+}
+
+RatClause::RatClause(initializer_list<int> literals) : Clause(literals) {
 }
 
 RatClause::RatClause(RatClause&& other) : RatClause(){
@@ -61,6 +67,9 @@ string RatClause::ToLrat() const
 {
   stringstream ss;
   ss << Clause::ToLrat() << ' ';
+  for(auto hint : positive_hints_){
+    ss << hint << ' ';
+  }
   for(auto hint : negative_hints_){
     ss << -hint.first << ' ';
     for(auto sub_hint : hint.second){

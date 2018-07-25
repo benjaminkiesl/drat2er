@@ -14,11 +14,18 @@ using std::endl;
 using std::max;
 using std::max_element;
 using std::abs;
+using std::initializer_list;
 
 namespace drat2er
 {
 
 Clause::Clause() : index_ {-1}, literals_ {}, max_variable_ {0} { }
+
+Clause::Clause(initializer_list<int> literals) : Clause() {
+  for(auto literal : literals){
+    AddLiteral(literal);
+  }
+}
 
 Clause::Clause(Clause&& other) : Clause()
 {
@@ -41,11 +48,15 @@ void Clause::SetIndex(int index)
   index_ = index;
 }
 
+const std::vector<int>& Clause::GetLiterals() const {
+  return literals_;
+}
+
 void Clause::SetLiterals(const std::vector<int>& literals)
 {
   literals_.clear();
   max_variable_ = 0;
-for(auto literal : literals) {
+  for(auto literal : literals) {
     AddLiteral(literal);
   }
 }
