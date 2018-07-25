@@ -12,7 +12,7 @@ namespace drat2er
 class Clause;
 class RupClause;
 class RatClause;
-struct DeletionsWithIndex;
+struct Deletion;
 
 class LratParserObserver
 {
@@ -32,7 +32,7 @@ class LratParser
   static bool IsProperRatAddition(const std::string& proof_line);
   static bool IsDeletion(const std::string& proof_line);
   static bool IsComment(const std::string& proof_line);
-  static DeletionsWithIndex ParseDeletion(const std::string& proof_line);
+  static Deletion ParseDeletion(const std::string& proof_line);
   static RupClause ParseRup(const std::string& proof_line);
   static RatClause ParseProperRat(const std::string& proof_line);
  private:

@@ -20,7 +20,7 @@ using std::endl;
 namespace drat2er
 {
 
-struct DeletionsWithIndex{
+struct Deletion{
   vector<int> clause_indices;
   int instruction_index;
 };
@@ -30,9 +30,9 @@ void LratParser::ParseFile(const string& proof_file_path){
   string proof_line;
   while(getline(input_stream, proof_line)) {
     if(LratParser::IsDeletion(proof_line)){
-      auto deletions_with_index = ParseDeletion(proof_line);
-      observer_->HandleDeletion(deletions_with_index.clause_indices,
-                                deletions_with_index.instruction_index);
+      auto deletion = ParseDeletion(proof_line);
+      observer_->HandleDeletion(deletion.clause_indices,
+                                deletion.instruction_index);
     } else if(IsProperRatAddition(proof_line)){
       observer_->HandleProperRatAddition(ParseProperRat(proof_line));
     } else if(IsComment(proof_line)){
@@ -74,13 +74,12 @@ bool LratParser::IsComment(const string& proof_line)
   return proof_line.front() == 'c';
 }
 
-DeletionsWithIndex LratParser::ParseDeletion(const string& proof_line)
+Deletion LratParser::ParseDeletion(const string& proof_line)
 {
   assert(IsDeletion(proof_line));
-  //stringstream line_stream {proof_line.substr(proof_line.find('d')+1)};
-  DeletionsWithIndex deletions_with_index;
+  Deletion deletion;
   stringstream line_stream {proof_line};
-  line_stream >> deletions_with_index.instruction_index;
+  line_stream >> deletion.instruction_index;
 
   char d_symbol;
   line_stream >> d_symbol;
@@ -88,10 +87,10 @@ DeletionsWithIndex LratParser::ParseDeletion(const string& proof_line)
   int token;
   line_stream >> token;
   while(token != 0) {
-    deletions_with_index.clause_indices.emplace_back(token);
+    deletion.clause_indices.emplace_back(token);
     line_stream >> token;
   }
-  return deletions_with_index;
+  return deletion;
 }
 
 RupClause LratParser::ParseRup(const string& proof_line)
@@ -110,6 +109,7 @@ RupClause LratParser::ParseRup(const string& proof_line)
 
 RatClause LratParser::ParseProperRat(const string& proof_line)
 {
+  assert(IsProperRatAddition(proof_line));
   stringstream line_stream {proof_line};
   RatClause rat{};
   ParseClausePart(rat, line_stream);

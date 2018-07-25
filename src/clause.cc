@@ -102,8 +102,4 @@ void swap(Clause& lhs, Clause& rhs)
   swap(lhs.max_variable_, rhs.max_variable_);
 }
 
-bool operator==(const Clause& lhs, const Clause& rhs){
-  return lhs.literals_ == rhs.literals_;
-}
-
 } // namespace

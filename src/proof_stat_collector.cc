@@ -23,7 +23,7 @@ namespace drat2er
 
 ProofStatCollector::ProofStatCollector(shared_ptr<Formula> formula) : 
                                         formula_{formula},
-                                        max_variable_{formula->MaxVariable()},
+                                        max_variable_{0},
                                         max_instruction_{0}
                                         { }
 

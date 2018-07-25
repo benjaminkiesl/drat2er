@@ -5,14 +5,10 @@
 using namespace drat2er;
 using std::vector;
 
-TEST_CASE("Clause::Clause(Clause&& other)"){
-  Clause original{1, 2, 3, 4};
-  original.SetIndex(5);
-  Clause other(original);
-  REQUIRE(original.GetIndex() == 5);
-  REQUIRE(other.GetIndex() == 5);
-  REQUIRE(original.GetLiterals() == vector<int>{1, 2, 3, 4});
-  REQUIRE(other.GetLiterals() == vector<int>{1, 2, 3, 4});
+TEST_CASE("Clause::Clause()"){
+  Clause clause{};
+  REQUIRE(clause.GetIndex() == -1);
+  REQUIRE(clause.GetMaxVariable() == 0);
 }
 
 TEST_CASE("Clause::operator=(Clause other)"){

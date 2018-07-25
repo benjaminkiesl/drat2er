@@ -11,7 +11,6 @@ namespace drat2er
 class Clause
 {
   friend void swap(Clause& lhs, Clause& rhs);
-  friend bool operator==(const Clause& lhs, const Clause& rhs);
 
  public:
   Clause();

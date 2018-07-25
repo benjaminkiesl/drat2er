@@ -2,6 +2,7 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 
 using std::shared_ptr;
 using std::make_shared;
@@ -14,9 +15,10 @@ namespace drat2er
 {
 
 Formula::Formula(int number_of_variables, int number_of_clauses) :
-clauses_(1, nullptr),
-max_variable_{0},
-occurrences_(2*number_of_variables, vector<shared_ptr<Clause>> {}) { }
+clauses_(number_of_clauses, nullptr),
+occurrences_{},
+empty_occurrence_list_{}
+{ }
 
 void Formula::AddClauses(const vector<Clause>& clauses){
   for(auto& clause : clauses){
@@ -26,42 +28,47 @@ void Formula::AddClauses(const vector<Clause>& clauses){
 
 void Formula::AddClause(const Clause& clause)
 {
+  assert(clause.GetIndex() != -1);
   auto new_clause = make_shared<Clause>(clause);
 
-  if(new_clause->GetMaxVariable() > MaxVariable()){
-    max_variable_ = new_clause->GetMaxVariable();
-    if(max_variable_ * 2ll >= occurrences_.size()){
-      occurrences_.resize(static_cast<int>(max_variable_*2.2)); 
-    }
+  if(new_clause->GetIndex() >= int(clauses_.size())){
+    clauses_.resize(static_cast<int>((new_clause->GetIndex()+1)*1.3), nullptr);
+  } else if(clauses_[new_clause->GetIndex()] != nullptr){
+    cerr << "Formula::AddClause(): Clause with index " << 
+      new_clause->GetIndex() << " is already contained.";
+    return;
   }
 
-  if(new_clause->GetIndex() >= int(clauses_.size())){
-    clauses_.resize(static_cast<int>((new_clause->GetIndex()+1)*1.2));
-    clauses_[new_clause->GetIndex()] = new_clause;
-  } else {
-    clauses_.emplace_back(new_clause);
-    new_clause->SetIndex(clauses_.size()-1);
-  }
+  clauses_[new_clause->GetIndex()] = new_clause;
 
   for(auto literal : *new_clause) {
-    Occurrences(literal).emplace_back(new_clause);
+    occurrences_[literal].emplace_back(new_clause);
   }
 }
 
 shared_ptr<Clause> Formula::GetClause(const int clause_index) const
 {
-  return clauses_[clause_index];
+  if(clause_index < clauses_.size()){
+    return clauses_[clause_index];
+  }
+  return nullptr;
+}
+
+const vector<shared_ptr<Clause>>& Formula::GetClauses() {
+  return clauses_;
 }
 
 void Formula::DeleteClause(const int clause_index)
 {
-  if(clauses_[clause_index] == nullptr){
+  if(clause_index >= clauses_.size() || clauses_[clause_index] == nullptr){
     return;
   }
   auto clause = clauses_[clause_index];
   for(auto literal : *clause){
-    auto& occurrences = Occurrences(literal);
-    occurrences.erase(find(occurrences.begin(), occurrences.end(), clause));
+    if(occurrences_.find(literal) != occurrences_.end()){
+      occurrences_[literal].erase(find(occurrences_[literal].begin(), 
+                                       occurrences_[literal].end(), clause));
+    }
   }
   clauses_[clause_index] = nullptr;
 }
@@ -72,18 +79,11 @@ void Formula::DeleteClauses(const vector<int>& clause_indices){
   }
 }
 
-int Formula::MaxVariable(){
-  return max_variable_;
-}
-
-vector<shared_ptr<Clause>>& Formula::Occurrences(int literal)
-{
-  int index = literal > 0 ? 2*literal - 2 : (-2)*literal - 1;
-  if(index >= occurrences_.size()) {
-    cerr << "Index is out of bounds [0," << occurrences_.size()-1 << "]: "
-    << index << endl;
+const vector<shared_ptr<Clause>>& Formula::Occurrences(int literal){
+  if(occurrences_.find(literal) != occurrences_.end()){
+    return occurrences_.at(literal);
   }
-  return occurrences_[index];
+  return empty_occurrence_list_;
 }
 
 } // namespace
