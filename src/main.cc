@@ -37,13 +37,6 @@ int main (int argc, char *argv[])
   const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
   const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
 
-  //FormulaParser parser {};
-  //std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);
-  //LratParser lrat_parser{};
-  //auto simple_parser = std::make_shared<SimpleParser>(formula);
-  //lrat_parser.RegisterObserver(simple_parser);
-  //lrat_parser.ParseFile(kOutputLRAT);
-
   cout << "drat2er: Parsing Formula..." << endl;
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);

@@ -136,18 +136,6 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
 
 void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
                                          const vector<Clause>& definition){
-  //static bool flag = false;
-  //if(!flag && rat.GetNegativeHints().size() == 0 &&
-  //    formula_->Occurrences(-rat.GetPivot()).size() > 10){
-  //  flag = true;
-  //  cout << rat.ToLrat();
-  //  cout << ", occurrences in formula: " << 
-  //    formula_->Occurrences(-rat.GetPivot()).size() << 
-  //    ", negative hints: " << rat.GetNegativeHints().size() << endl;
-  //  for(auto occurrence : formula_->Occurrences(-rat.GetPivot())){
-  //    cout << occurrence->ToLrat() << endl;
-  //  }
-  //}
   int new_literal = *definition.front().begin();
   for(auto& clause : formula_->Occurrences(-rat.GetPivot())){
     RupClause rup;
