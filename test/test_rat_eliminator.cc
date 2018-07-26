@@ -2,6 +2,7 @@
 #include <vector>
 #include "rat_eliminator.h"
 #include "rat_clause.h"
+#include "rup_clause.h"
 
 using namespace drat2er;
 using std::vector;
@@ -175,3 +176,68 @@ TEST_CASE("RatEliminator::CorrespondingDefinition Unary RAT"){
   REQUIRE(definition[1].GetLiterals() == 
     eliminator.SecondDefinitionClause(rat, new_variable).GetLiterals());
 }
+
+TEST_CASE("RatEliminator::RenameLiteral - Single renaming"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  REQUIRE(1 == eliminator.RenameLiteral(1));
+  eliminator.UpdateRenaming(1, 2);
+  REQUIRE(2 == eliminator.RenameLiteral(1));
+}
+
+TEST_CASE("RatEliminator::RenameLiteral - Double renaming"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  REQUIRE(1 == eliminator.RenameLiteral(1));
+  eliminator.UpdateRenaming(1, 2);
+  eliminator.UpdateRenaming(2, 3);
+  REQUIRE(3 == eliminator.RenameLiteral(1));
+}
+
+TEST_CASE("RatEliminator::RenameLiteral - Quadruple renaming"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  REQUIRE(1 == eliminator.RenameLiteral(1));
+  eliminator.UpdateRenaming(1, 2);
+  eliminator.UpdateRenaming(2, 3);
+  eliminator.UpdateRenaming(3, 4);
+  eliminator.UpdateRenaming(4, 5);
+  REQUIRE(5 == eliminator.RenameLiteral(1));
+}
+
+TEST_CASE("RatEliminator::RenameClause - Clause"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  Clause original{1, 2, 3};
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      original.GetLiterals()); 
+  eliminator.UpdateRenaming(1, 4);
+  eliminator.UpdateRenaming(4, 5);
+  eliminator.UpdateRenaming(5, 6);
+  eliminator.UpdateRenaming(2, 7);
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      vector<int>{6, 7, 3});
+}
+
+TEST_CASE("RatEliminator::RenameClause - RupClause"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  RupClause original{1, 2, 3};
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      original.GetLiterals()); 
+  eliminator.UpdateRenaming(1, 4);
+  eliminator.UpdateRenaming(4, 5);
+  eliminator.UpdateRenaming(5, 6);
+  eliminator.UpdateRenaming(2, 7);
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      vector<int>{6, 7, 3});
+}
+
+TEST_CASE("RatEliminator::RenameClause - RatClause"){
+  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatClause original{1, 2, 3};
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      original.GetLiterals()); 
+  eliminator.UpdateRenaming(1, 4);
+  eliminator.UpdateRenaming(4, 5);
+  eliminator.UpdateRenaming(5, 6);
+  eliminator.UpdateRenaming(2, 7);
+  REQUIRE(eliminator.RenameClause(original).GetLiterals() == 
+      vector<int>{6, 7, 3});
+}
+

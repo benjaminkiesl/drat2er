@@ -5,6 +5,7 @@
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "lrat_parser.h"
+#include "deletion.h"
 
 using std::string;
 using std::vector;
@@ -16,8 +17,7 @@ namespace drat2er
 DeletionEliminator::DeletionEliminator(std::string output_file) 
                                      : output_stream_{output_file}{}
 
-void DeletionEliminator::HandleDeletion(const vector<int>& clause_indices,
-    int instruction_index){
+void DeletionEliminator::HandleDeletion(const Deletion& deletion){
   // do nothing
 } 
 

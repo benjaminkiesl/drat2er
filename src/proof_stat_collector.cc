@@ -9,6 +9,7 @@
 #include "clause.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
+#include "deletion.h"
 #include "lrat_parser.h"
 
 using std::string;
@@ -35,9 +36,8 @@ int ProofStatCollector::GetMaxInstruction() {
   return max_instruction_;
 }
 
-void ProofStatCollector::HandleDeletion(const vector<int>& clause_indices,
-    int instruction_index){
-  max_instruction_ = max(max_instruction_, instruction_index);
+void ProofStatCollector::HandleDeletion(const Deletion& deletion){
+  max_instruction_ = max(max_instruction_, deletion.GetIndex());
 } 
 
 void ProofStatCollector::HandleProperRatAddition(const RatClause& rat){

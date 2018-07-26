@@ -8,6 +8,7 @@
 #include <cassert>
 #include "rat_clause.h"
 #include "rup_clause.h"
+#include "deletion.h"
 
 using std::string;
 using std::stringstream;
@@ -20,19 +21,12 @@ using std::endl;
 namespace drat2er
 {
 
-struct Deletion{
-  vector<int> clause_indices;
-  int instruction_index;
-};
-
 void LratParser::ParseFile(const string& proof_file_path){
   ifstream input_stream {proof_file_path, ifstream::in};
   string proof_line;
   while(getline(input_stream, proof_line)) {
     if(LratParser::IsDeletion(proof_line)){
-      auto deletion = ParseDeletion(proof_line);
-      observer_->HandleDeletion(deletion.clause_indices,
-                                deletion.instruction_index);
+      observer_->HandleDeletion(ParseDeletion(proof_line));
     } else if(IsProperRatAddition(proof_line)){
       observer_->HandleProperRatAddition(ParseProperRat(proof_line));
     } else if(IsComment(proof_line)){
@@ -49,7 +43,7 @@ void LratParser::RegisterObserver(shared_ptr<LratParserObserver> observer){
 
 bool LratParser::IsProperRatAddition(const string& proof_line)
 {
-  if(proof_line.front() == '0'){
+  if(proof_line.front() == '0' || ContainsNoLiterals(proof_line)){
     return false;
   }
 
@@ -74,12 +68,26 @@ bool LratParser::IsComment(const string& proof_line)
   return proof_line.front() == 'c';
 }
 
+bool LratParser::ContainsNoLiterals(const string& proof_line){
+  int index_of_first_space = proof_line.find(' ');
+  if(index_of_first_space != string::npos){
+    int index_of_first_number_after_0 = 
+      proof_line.find_first_not_of(' ', index_of_first_space + 1);
+    if(index_of_first_number_after_0 != string::npos){
+      return proof_line[index_of_first_number_after_0] == '0';
+    }
+  }
+  return false;
+}
+
 Deletion LratParser::ParseDeletion(const string& proof_line)
 {
   assert(IsDeletion(proof_line));
   Deletion deletion;
   stringstream line_stream {proof_line};
-  line_stream >> deletion.instruction_index;
+  int instruction_index = 0;
+  line_stream >> instruction_index;
+  deletion.SetIndex(instruction_index);
 
   char d_symbol;
   line_stream >> d_symbol;
@@ -87,7 +95,7 @@ Deletion LratParser::ParseDeletion(const string& proof_line)
   int token;
   line_stream >> token;
   while(token != 0) {
-    deletion.clause_indices.emplace_back(token);
+    deletion.AddClauseIndex(token);
     line_stream >> token;
   }
   return deletion;
@@ -114,9 +122,15 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
   RatClause rat{};
   ParseClausePart(rat, line_stream);
 
-  // Parse resolution partners
+  // Parse positive hints partners
   int token = 0;
   line_stream >> token;
+  while(token > 0){
+    rat.AddPositiveHint(token);
+    line_stream >> token;
+  }
+
+  // Parse negative hints
   while(token != 0) {
     int resolution_partner = -token;
     vector<int> hints{};

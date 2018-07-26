@@ -12,13 +12,12 @@ namespace drat2er
 class Clause;
 class RupClause;
 class RatClause;
-struct Deletion;
+class Deletion;
 
 class LratParserObserver
 {
  public:
-  virtual void HandleDeletion(const std::vector<int>& clause_indices, int
-      instruction_index) = 0;
+  virtual void HandleDeletion(const Deletion& deletion) = 0;
   virtual void HandleProperRatAddition(const RatClause& rat) = 0;
   virtual void HandleRupAddition(const RupClause& rup) = 0;
   virtual void HandleComment(const std::string& comment_line) = 0;
@@ -35,6 +34,7 @@ class LratParser
   static Deletion ParseDeletion(const std::string& proof_line);
   static RupClause ParseRup(const std::string& proof_line);
   static RatClause ParseProperRat(const std::string& proof_line);
+  static bool ContainsNoLiterals(const std::string& proof_line);
  private:
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 

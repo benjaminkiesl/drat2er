@@ -41,7 +41,7 @@ TEST_CASE("RupClause::ToDimacs Empty Clause"){
   REQUIRE(empty.ToDimacs() == "0");
 }
 
-TEST_CASE("RupClause::ToDimacs Unary Clause"){
+TEST_CASE("RupClause::ToDimacs Unit Clause"){
   RupClause unit{-1};
   unit.SetIndex(1);
   REQUIRE(unit.ToDimacs() == "-1 0");
@@ -59,7 +59,7 @@ TEST_CASE("RupClause::ToLrat Empty Clause Without Hints"){
   REQUIRE(empty.ToLrat() == "1 0 0");
 }
 
-TEST_CASE("RupClause::ToLrat Unary Clause Without Hints"){
+TEST_CASE("RupClause::ToLrat Unit Clause Without Hints"){
   RupClause unit{-1};
   unit.SetIndex(1);
   REQUIRE(unit.ToLrat() == "1 -1 0 0");
@@ -79,7 +79,7 @@ TEST_CASE("RupClause::ToLrat Empty Clause With Hints"){
   REQUIRE(empty.ToLrat() == "1 0 4 5 0");
 }
 
-TEST_CASE("RupClause::ToLrat Unary Clause With Hints"){
+TEST_CASE("RupClause::ToLrat Unit Clause With Hints"){
   RupClause unit{-1};
   unit.SetIndex(1);
   unit.AddPositiveHint(5);

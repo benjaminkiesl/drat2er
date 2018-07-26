@@ -10,6 +10,7 @@
 #include "clause.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
+#include "deletion.h"
 #include "lrat_parser.h"
 
 using std::string;
@@ -35,8 +36,7 @@ RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
                              { }
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
-  RatClause rat(unrenamed_rat);
-  ApplyRenaming(rat);
+  auto rat = RenameClause(unrenamed_rat);
   int new_variable = ++max_variable_;
 
   auto definition_clauses = CorrespondingDefinition(rat, new_variable);
@@ -49,16 +49,14 @@ void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
 }
 
 void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
-  RupClause rup(unrenamed_rup);
-  ApplyRenaming(rup);
+  auto rup = RenameClause(unrenamed_rup);
   formula_->AddClause(rup);
   WriteRupToOutput(rup);
 }
 
-void RatEliminator::HandleDeletion(const vector<int>& clause_indices,
-                                   int instruction_index){
-  formula_->DeleteClauses(clause_indices);
-  WriteDeletionToOutput(clause_indices, instruction_index);
+void RatEliminator::HandleDeletion(const Deletion& deletion){
+  formula_->DeleteClauses(deletion.GetClauseIndices());
+  WriteDeletionToOutput(deletion);
 } 
 
 void RatEliminator::HandleComment(const string& comment_line){
@@ -66,7 +64,7 @@ void RatEliminator::HandleComment(const string& comment_line){
 }
 
 vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
-                                                      const int new_variable){
+                                              const int new_variable) {
   vector<Clause> definition{};
 
   if(rat.empty()){
@@ -85,7 +83,7 @@ vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
 }
 
 Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
-                                            const int new_variable){
+                                            const int new_variable) const {
   Clause clause;
   clause.SetIndex(rat.GetIndex());
   clause.AddLiteral(new_variable);
@@ -96,7 +94,7 @@ Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
 }
 
 Clause RatEliminator::SecondDefinitionClause(const RatClause& rat, 
-                                             const int new_variable){
+                                             const int new_variable) {
   Clause second_clause{new_variable, -rat.GetPivot()};
   second_clause.SetIndex(++max_instruction_);
   return second_clause;
@@ -138,6 +136,18 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
 
 void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
                                          const vector<Clause>& definition){
+  //static bool flag = false;
+  //if(!flag && rat.GetNegativeHints().size() == 0 &&
+  //    formula_->Occurrences(-rat.GetPivot()).size() > 10){
+  //  flag = true;
+  //  cout << rat.ToLrat();
+  //  cout << ", occurrences in formula: " << 
+  //    formula_->Occurrences(-rat.GetPivot()).size() << 
+  //    ", negative hints: " << rat.GetNegativeHints().size() << endl;
+  //  for(auto occurrence : formula_->Occurrences(-rat.GetPivot())){
+  //    cout << occurrence->ToLrat() << endl;
+  //  }
+  //}
   int new_literal = *definition.front().begin();
   for(auto& clause : formula_->Occurrences(-rat.GetPivot())){
     RupClause rup;
@@ -181,19 +191,11 @@ void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
   WriteDeletionToOutput(clauses_to_delete, max_instruction_);
 }
 
-int RatEliminator::Rename(const int literal) {
+int RatEliminator::RenameLiteral(const int literal) const {
   if(old_to_new_literal_.find(literal) != old_to_new_literal_.end()){
-    return old_to_new_literal_[literal];
+    return old_to_new_literal_.at(literal);
   }
   return literal;
-}
-
-void RatEliminator::ApplyRenaming(Clause& clause){
-  vector<int> renamed_literals;
-  for(auto literal : clause){
-    renamed_literals.emplace_back(Rename(literal));
-  }
-  clause.SetLiterals(renamed_literals);
 }
 
 void RatEliminator::UpdateRenaming(int old_literal, int new_literal){
@@ -207,7 +209,7 @@ void RatEliminator::UpdateRenaming(int old_literal, int new_literal){
   new_to_old_literal_[-new_literal] = -original_literal;
 }
 
-void RatEliminator::WriteRupToOutput(const RupClause& rup){
+void RatEliminator::WriteRupToOutput(const RupClause& rup) {
   bool lrat = false;
   if(lrat){
     output_stream_ << rup.ToLrat() << endl;
@@ -216,7 +218,8 @@ void RatEliminator::WriteRupToOutput(const RupClause& rup){
   }
 }
 
-void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition){
+void RatEliminator::WriteDefinitionToOutput(
+                                      const vector<Clause>& definition){
   bool lrat = false;
   if(lrat){
     for(auto clause : definition){
@@ -229,18 +232,17 @@ void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition){
   }
 }
 
-void RatEliminator::WriteDeletionToOutput(const vector<int>& clause_indices,
-                                          int instruction_index){
+void RatEliminator::WriteDeletionToOutput(const Deletion& deletion) {
   bool lrat = false;
   if(lrat){
-    output_stream_ << instruction_index << ' ';
+    output_stream_ << deletion.GetIndex() << ' ';
     output_stream_ << "d ";
-    for(auto index : clause_indices){
+    for(auto index : deletion.GetClauseIndices()){
       output_stream_ << index << " ";
     }
     output_stream_ << "0" << endl;
   } else {
-    for(auto index : clause_indices){
+    for(auto index : deletion.GetClauseIndices()){
       if(formula_->GetClause(index) != nullptr){
         output_stream_ << "d " << formula_->GetClause(index)->ToDimacs() << endl;
       }

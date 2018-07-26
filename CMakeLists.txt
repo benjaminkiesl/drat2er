@@ -20,9 +20,11 @@ add_library(lib_drat2er STATIC
 	src/rat_eliminator.cc
 	src/rat_clause.cc
 	src/rup_clause.cc
+	src/deletion.cc
 	src/lrat_parser.cc
   	src/proof_stat_collector.cc
 	src/deletion_eliminator.cc
+	src/simple_parser.cc
 	)
 
 # Build the executable for the main program
@@ -38,6 +40,7 @@ set(TEST_DIRECTORY test)
 set(TEST_SOURCES ${TEST_DIRECTORY}/tests_main.cc
 			 	 ${TEST_DIRECTORY}/test_clause.cc
 				 ${TEST_DIRECTORY}/test_formula.cc
+				 ${TEST_DIRECTORY}/test_lrat_parser.cc
 				 ${TEST_DIRECTORY}/test_rup_clause.cc
 				 ${TEST_DIRECTORY}/test_rat_clause.cc
 				 ${TEST_DIRECTORY}/test_rat_eliminator.cc)

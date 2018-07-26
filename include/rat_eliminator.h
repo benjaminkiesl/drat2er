@@ -23,16 +23,22 @@ class RatEliminator : public LratParserObserver
                 int max_variable, int max_instruction);
   virtual void HandleProperRatAddition(const RatClause& rat) override;
   virtual void HandleRupAddition(const RupClause& rup) override;
-  virtual void HandleDeletion(const std::vector<int>& clause_indices,
-                              int instruction_index) override;
+  virtual void HandleDeletion(const Deletion& deletion) override;
   virtual void HandleComment(const std::string& comment_line) override;
 
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
-  Clause FirstDefinitionClause(const RatClause& rat, const int new_variable);
-  Clause SecondDefinitionClause(const RatClause& rat, const int new_variable);
+  Clause FirstDefinitionClause(const RatClause& rat, 
+                               const int new_variable) const;
+  Clause SecondDefinitionClause(const RatClause& rat, 
+                                const int new_variable);
   std::vector<Clause> ThirdBlockOfDefinitionClauses(const RatClause& rat,
-                                                    const int new_variable);
+                                              const int new_variable);
+  template<typename T>
+  T RenameClause(const T& clause) const;
+  int RenameLiteral(const int literal) const;
+  void UpdateRenaming(const int old_literal, const int new_literal);
+
  private:
   int AddDefinitionsForRatClause(const RatClause& clause);
   void ReplaceOldPivotByNew(const RatClause& rat, 
@@ -44,15 +50,9 @@ class RatEliminator : public LratParserObserver
   void DeleteClausesWithOldVariable(const int old_variable,
                                     const std::vector<Clause>& definition);
 
-  void ApplyRenaming(Clause& clause);
-  int Rename(const int literal);
-  void UpdateRenaming(int old_literal, int new_literal);
-
-
   void WriteRupToOutput(const RupClause& rup);
   void WriteDefinitionToOutput(const std::vector<Clause>& definition);
-  void WriteDeletionToOutput(const std::vector<int>& clause_indices,
-                             int instruction_index);
+  void WriteDeletionToOutput(const Deletion& deletion);
   void WriteDeletionToOutput(const std::vector<Clause>& clauses,
                              int instruction_index);
 
@@ -63,6 +63,16 @@ class RatEliminator : public LratParserObserver
   std::unordered_map<int,int> old_to_new_literal_;
   std::unordered_map<int,int> new_to_old_literal_;
 };
+
+template<typename T>
+T RatEliminator::RenameClause(const T& clause) const {
+  T renamed_clause(clause);
+  renamed_clause.SetLiterals(std::vector<int>{});
+  for(auto literal : clause){
+    renamed_clause.AddLiteral(RenameLiteral(literal));
+  }
+  return renamed_clause;
+}
 
 }// namespace
 
