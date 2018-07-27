@@ -19,7 +19,7 @@ namespace drat2er
 
 Formula::Formula(int number_of_variables, int number_of_clauses) :
 clauses_(number_of_clauses),
-occurrences_{},
+occurrences_(2*number_of_variables),
 empty_occurrence_list_{}
 { }
 

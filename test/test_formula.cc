@@ -7,11 +7,6 @@ using namespace drat2er;
 using std::vector;
 using std::find;
 
-TEST_CASE("Formula::Formula(int, int)"){
-  Formula formula{100, 100};
-  REQUIRE(formula.GetClauses().bucket_count() >= 100);
-}
-
 TEST_CASE("Formula::AddClause - Add and Obtain"){
   Formula formula{100, 100};
   const int clause_index = 5;
