@@ -80,6 +80,34 @@ TEST_CASE("LratParser::ParseProperRat - "
   REQUIRE(rat.GetNegativeHints().at(5) == vector<int>{10, 11});
 }
 
+TEST_CASE("LratParser::ParseProperRat - "
+          "Longer Clause With Positive and (Some Empty) Negative Hints"){
+  auto rat = LratParser::ParseProperRat(
+    "90580 94 -107 0 2786 -90358 90410 -90385 90428 -90536 0");
+  REQUIRE(rat.GetIndex() == 90580);
+  REQUIRE(rat.GetLiterals() == vector<int>{94, -107});
+  REQUIRE(rat.GetPositiveHints() == vector<int>{2786});
+  REQUIRE(rat.GetNegativeHints().size() == 3);
+  REQUIRE(rat.GetNegativeHints().at(90358) == vector<int>{90410});
+  REQUIRE(rat.GetNegativeHints().at(90385) == vector<int>{90428});
+  REQUIRE(rat.GetNegativeHints().at(90536) == vector<int>{});
+}
+
+TEST_CASE("LratParser::ParseProperRat - "
+          "Longer Clause With Positive and Empty Negative Hints"){
+  auto rat = LratParser::ParseProperRat(
+    "90585 45 -107 0 26968 89299 90411 90584 90578 -88659 -90312 -90359 0");
+  REQUIRE(rat.GetIndex() == 90585);
+  REQUIRE(rat.GetLiterals() == vector<int>{45, -107});
+  REQUIRE(rat.GetPositiveHints() == 
+    vector<int>{26968, 89299, 90411, 90584, 90578});
+  REQUIRE(rat.GetNegativeHints().size() == 3);
+  REQUIRE(rat.GetNegativeHints().at(88659) == vector<int>{});
+  REQUIRE(rat.GetNegativeHints().at(90312) == vector<int>{});
+  REQUIRE(rat.GetNegativeHints().at(90359) == vector<int>{});
+}
+
+
 TEST_CASE("LratParser::ParseRup - Empty Clause Without Hints"){
   auto rup = LratParser::ParseRup("1 0 0");
   REQUIRE(rup.GetIndex() == 1);

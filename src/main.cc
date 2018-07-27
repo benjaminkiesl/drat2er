@@ -37,6 +37,25 @@ int main (int argc, char *argv[])
   const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
   const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
 
+  //cout << "drat2er: Parsing Formula..." << endl;
+  //FormulaParser parser {};
+  //std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);
+  //if(formula == nullptr){
+  //  std::cerr << "File '" << kInputFormula << "' could not be opened." << endl;
+  //  return 1;
+  //}
+  //
+  //cout << "drat2er: Converting DRAT proof to LRAT format using drat-trim..." << endl;
+  //auto drat_trim_call = kDRATTrimPath + " " + kInputFormula + " " +
+  //  kInputDRAT + " -b -L " + kOutputLRAT;
+  //system(drat_trim_call.c_str()); 
+  //
+  //LratParser lrat_parser{};
+  //
+  //auto simple_parser = std::make_shared<SimpleParser>(formula);
+  //lrat_parser.RegisterObserver(simple_parser);
+  //lrat_parser.ParseFile(kOutputLRAT);
+
   cout << "drat2er: Parsing Formula..." << endl;
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(kInputFormula);
@@ -59,7 +78,8 @@ int main (int argc, char *argv[])
   cout << "drat2er: Eliminating proper RATs..." << endl;
   auto rat_eliminator = 
     std::make_shared<RatEliminator>(kOutputEDRUP, formula, 
-        stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction());
+        stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction(),
+        stat_collector->GetNumberOfProperRatAdditions());
   lrat_parser.RegisterObserver(rat_eliminator);
   lrat_parser.ParseFile(kOutputLRAT);
   

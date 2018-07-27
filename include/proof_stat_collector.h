@@ -20,6 +20,10 @@ class ProofStatCollector : public LratParserObserver
   ProofStatCollector(std::shared_ptr<Formula> formula);
   int GetMaxVariable();
   int GetMaxInstruction();
+  int GetNumberOfInstructions();
+  int GetNumberOfProperRatAdditions();
+  int GetNumberOfRupAdditions();
+  int GetNumberOfDeletions();
   virtual void HandleDeletion(const Deletion& deletion) override;
   virtual void HandleProperRatAddition(const RatClause& rat) override;
   virtual void HandleRupAddition(const RupClause& rup) override;
@@ -29,6 +33,10 @@ class ProofStatCollector : public LratParserObserver
   std::shared_ptr<Formula> formula_;
   int max_variable_;
   int max_instruction_;
+  int number_of_instructions_;
+  int number_of_proper_rat_additions_;
+  int number_of_rup_additions_;
+  int number_of_deletions_;
 };
 
 }// namespace

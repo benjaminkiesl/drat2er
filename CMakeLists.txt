@@ -25,6 +25,7 @@ add_library(lib_drat2er STATIC
   	src/proof_stat_collector.cc
 	src/deletion_eliminator.cc
 	src/simple_parser.cc
+	src/progress_bar.cc
 	)
 
 # Build the executable for the main program

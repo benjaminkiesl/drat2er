@@ -8,10 +8,11 @@
 #include <memory>
 #include "formula.h"
 #include "clause.h"
+#include "lrat_parser.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
-#include "lrat_parser.h"
+#include "progress_bar.h"
 
 using std::string;
 using std::ifstream;
@@ -27,13 +28,17 @@ namespace drat2er
 {
 
 RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
-                             int max_variable, int max_instruction) : 
-                             formula_{formula},
-                             max_variable_{max_variable},
-                             max_instruction_{max_instruction},
-                             output_stream_{output_file},
-                             old_to_new_literal_{}
-                             { }
+                             int max_variable, int max_instruction,
+                             int number_of_proper_rats_overall) : 
+               formula_{formula},
+               max_variable_{max_variable},
+               max_instruction_{max_instruction},
+               number_of_proper_rats_{0},
+               number_of_proper_rats_overall_{number_of_proper_rats_overall},
+               output_stream_{output_file},
+               old_to_new_literal_{},
+               progress_bar_{22}
+               { }
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
   auto rat = RenameClause(unrenamed_rat);
@@ -46,6 +51,11 @@ void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
   ReplaceOldPivotByNew(rat, definition_clauses);
   DeleteClausesWithOldVariable(abs(rat.GetPivot()), definition_clauses);
   UpdateRenaming(rat.GetPivot(), new_variable);
+
+  if(number_of_proper_rats_overall_ != 0){
+    progress_bar_.PrintProgress(
+      double(++number_of_proper_rats_)/number_of_proper_rats_overall_);
+  }
 }
 
 void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
@@ -254,5 +264,6 @@ void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
     }
   }
 }
+
 
 } // namespace

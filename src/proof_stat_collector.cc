@@ -25,7 +25,11 @@ namespace drat2er
 ProofStatCollector::ProofStatCollector(shared_ptr<Formula> formula) : 
                                         formula_{formula},
                                         max_variable_{0},
-                                        max_instruction_{0}
+                                        max_instruction_{0},
+                                        number_of_instructions_{0},
+                                        number_of_proper_rat_additions_{0},
+                                        number_of_rup_additions_{0},
+                                        number_of_deletions_{0}
                                         { }
 
 int ProofStatCollector::GetMaxVariable() {
@@ -36,18 +40,40 @@ int ProofStatCollector::GetMaxInstruction() {
   return max_instruction_;
 }
 
+int ProofStatCollector::GetNumberOfInstructions(){
+  return number_of_instructions_;
+}
+
+int ProofStatCollector::GetNumberOfProperRatAdditions(){
+  return number_of_proper_rat_additions_;
+}
+
+int ProofStatCollector::GetNumberOfRupAdditions(){
+  return number_of_rup_additions_;
+}
+
+int ProofStatCollector::GetNumberOfDeletions(){
+  return number_of_deletions_;
+}
+
 void ProofStatCollector::HandleDeletion(const Deletion& deletion){
   max_instruction_ = max(max_instruction_, deletion.GetIndex());
+  number_of_deletions_++;
+  number_of_instructions_++;
 } 
 
 void ProofStatCollector::HandleProperRatAddition(const RatClause& rat){
   max_variable_ = max(max_variable_, rat.GetMaxVariable());
   max_instruction_ = max(max_instruction_, rat.GetIndex());
+  number_of_proper_rat_additions_++;
+  number_of_instructions_++;
 }
 
 void ProofStatCollector::HandleRupAddition(const RupClause& rup){
   max_variable_ = max(max_variable_, rup.GetMaxVariable());
   max_instruction_ = max(max_instruction_, rup.GetIndex());
+  number_of_rup_additions_++;
+  number_of_instructions_++;
 }
 
 void ProofStatCollector::HandleComment(const string& comment_line){

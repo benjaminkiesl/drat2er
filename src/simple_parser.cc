@@ -30,10 +30,18 @@ void SimpleParser::HandleDeletion(const Deletion& deletion){
 } 
 
 void SimpleParser::HandleProperRatAddition(const RatClause& rat){
+  if(rat.GetNegativeHints().size() != 
+     formula_->Occurrences(-rat.GetPivot()).size()){
+    cout << "Number of negative hints (" << rat.GetNegativeHints().size() <<
+      ") does not equal number of negative occurrences (" <<
+      formula_->Occurrences(-rat.GetPivot()).size() << ")." << endl;
+  }
   for(auto clause : formula_->Occurrences(-rat.GetPivot())){
+    auto hint_has_clause_index = [&](const auto& hint){ 
+      return hint.first == clause->GetIndex(); 
+    };
     if(find_if(rat.GetNegativeHints().begin(), rat.GetNegativeHints().end(),
-       [&](const auto& hint){ return hint.first == clause->GetIndex(); }) 
-       != rat.GetNegativeHints().end()){
+               hint_has_clause_index) == rat.GetNegativeHints().end()){
       cout << "Clause " << clause->GetIndex() << " = '" << clause->ToLrat() <<
        "' is in occurrence list of " << -rat.GetPivot() << 
        " but not in the NegativeHints of '" << rat.ToLrat() << "'." << endl;
