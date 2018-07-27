@@ -42,15 +42,8 @@ RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
   auto rat = RenameClause(unrenamed_rat);
-  int new_variable = ++max_variable_;
 
-  auto definition_clauses = CorrespondingDefinition(rat, new_variable);
-  WriteDefinitionToOutput(definition_clauses);
-  formula_->AddClause(definition_clauses.front());
-
-  ReplaceOldPivotByNew(rat, definition_clauses);
-  DeleteClausesWithOldVariable(abs(rat.GetPivot()), definition_clauses);
-  UpdateRenaming(rat.GetPivot(), new_variable);
+  ReplaceByDefinitionRUPsAndDeletions(rat);
 
   if(number_of_proper_rats_overall_ != 0){
     progress_bar_.PrintProgress(
@@ -71,6 +64,18 @@ void RatEliminator::HandleDeletion(const Deletion& deletion){
 
 void RatEliminator::HandleComment(const string& comment_line){
   // do nothing
+}
+
+void RatEliminator::ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat){
+  int new_variable = ++max_variable_;
+
+  auto definition_clauses = CorrespondingDefinition(rat, new_variable);
+  WriteDefinitionToOutput(definition_clauses);
+  formula_->AddClause(definition_clauses.front());
+
+  ReplaceOldPivotByNew(rat, definition_clauses);
+  DeleteClausesWithOldVariable(abs(rat.GetPivot()), definition_clauses);
+  UpdateRenaming(rat.GetPivot(), new_variable);
 }
 
 vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,

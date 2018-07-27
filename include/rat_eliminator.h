@@ -29,6 +29,7 @@ class RatEliminator : public LratParserObserver
   virtual void HandleDeletion(const Deletion& deletion) override;
   virtual void HandleComment(const std::string& comment_line) override;
 
+  void ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
   Clause FirstDefinitionClause(const RatClause& rat, 

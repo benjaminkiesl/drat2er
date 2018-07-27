@@ -19,8 +19,8 @@ using std::endl;
 
 using namespace drat2er;
 
-const string folder_name = "/home/benjamin/Documents/drat2er/";
-const string temp_folder = "temp/";
+const string input_folder_name = "/media/DATA/Dropbox/papers/bc_rat/code/";
+const string output_folder_name = "/home/benjamin/Documents/drat2er/temp/";
 
 const string kDRATTrimPath = "/media/DATA/code/drat-trim/drat-trim";
 
@@ -31,11 +31,11 @@ int main (int argc, char *argv[])
   if(argc > 1){
     file_name = argv[1];
   }
-  const string kInputFormula = folder_name + file_name + ".cnf";
-  const string kInputDRAT = folder_name + file_name + ".drat";
-  const string kOutputLRAT = folder_name + temp_folder + file_name + ".lrat";
-  const string kOutputEDRUP = folder_name + temp_folder + file_name + ".edrup";
-  const string kOutputERUP = folder_name + temp_folder + file_name + ".erup";
+  const string kInputFormula = input_folder_name + "cnf/" + file_name + ".cnf";
+  const string kInputDRAT = input_folder_name + "drat/" + file_name + ".drat";
+  const string kOutputLRAT = output_folder_name + file_name + ".lrat";
+  const string kOutputEDRUP = output_folder_name + file_name + ".edrup";
+  const string kOutputERUP = output_folder_name + file_name + ".erup";
 
   //cout << "drat2er: Parsing Formula..." << endl;
   //FormulaParser parser {};
