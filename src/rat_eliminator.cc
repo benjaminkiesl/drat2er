@@ -37,7 +37,7 @@ RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
                number_of_proper_rats_overall_{number_of_proper_rats_overall},
                output_stream_{output_file},
                old_to_new_literal_{},
-               progress_bar_{22}
+               progress_bar_{}
                { }
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
