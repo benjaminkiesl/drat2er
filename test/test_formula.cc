@@ -9,9 +9,7 @@ using std::find;
 
 TEST_CASE("Formula::Formula(int, int)"){
   Formula formula{100, 100};
-  for(auto clause_ptr : formula.GetClauses()){
-    REQUIRE(clause_ptr == nullptr);
-  }
+  REQUIRE(formula.GetClauses().bucket_count() >= 100);
 }
 
 TEST_CASE("Formula::AddClause - Add and Obtain"){
