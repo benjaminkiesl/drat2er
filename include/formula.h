@@ -4,10 +4,14 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include "clause.h"
 
 namespace drat2er
 {
+
+using OccurrenceList = std::vector<std::shared_ptr<Clause>>;
+using WatchList = std::unordered_set<std::shared_ptr<Clause>>;
 
 class Formula
 {
@@ -19,12 +23,15 @@ class Formula
   const std::unordered_map<int, std::shared_ptr<Clause>>& GetClauses();
   void DeleteClause(const int clause_index);
   void DeleteClauses(const std::vector<int>& clause_indices);
-  const std::vector<std::shared_ptr<Clause>>& Occurrences(const int literal);
+  const OccurrenceList& Occurrences(const int literal);
+  WatchList& Watches(const int literal);
 
  private:
   std::unordered_map<int, std::shared_ptr<Clause>> clauses_;
-  std::unordered_map<int, std::vector<std::shared_ptr<Clause>>> occurrences_;
-  const std::vector<std::shared_ptr<Clause>> empty_occurrence_list_;
+  std::unordered_map<int, OccurrenceList> occurrences_;
+  std::unordered_map<int, WatchList> watch_table_;
+  const OccurrenceList empty_occurrence_list_;
+  WatchList empty_watch_list_;
 };
 
 } // namespace

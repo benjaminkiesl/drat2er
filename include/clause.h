@@ -21,7 +21,8 @@ class Clause
   
   int GetIndex() const;
   void SetIndex(int index);
-  const std::vector<int>& GetLiterals() const;
+  std::vector<int>& GetLiterals();
+  const std::vector<int>& GetLiteralsConst() const;
   void SetLiterals(const std::vector<int>& literals);
   void AddLiteral(int literal);
   int GetMaxVariable() const;
@@ -39,7 +40,6 @@ class Clause
 
  private:
   int index_;
-  int max_variable_;
 };
 
 } // namespace

@@ -20,7 +20,9 @@ namespace drat2er
 Formula::Formula(int number_of_variables, int number_of_clauses) :
 clauses_(number_of_clauses),
 occurrences_(2*number_of_variables),
-empty_occurrence_list_{}
+watch_table_(2*number_of_variables),
+empty_occurrence_list_{},
+empty_watch_list_{}
 { }
 
 void Formula::AddClauses(const vector<Clause>& clauses){
@@ -38,6 +40,8 @@ void Formula::AddClause(const Clause& clause)
   for(auto literal : *new_clause) {
     occurrences_[literal].emplace_back(new_clause);
   }
+
+  
 }
 
 shared_ptr<Clause> Formula::GetClause(const int clause_index) const
@@ -75,11 +79,18 @@ void Formula::DeleteClauses(const vector<int>& clause_indices){
   }
 }
 
-const vector<shared_ptr<Clause>>& Formula::Occurrences(int literal){
+const OccurrenceList& Formula::Occurrences(const int literal){
   if(occurrences_.find(literal) != occurrences_.end()){
     return occurrences_.at(literal);
   }
   return empty_occurrence_list_;
+}
+
+WatchList& Formula::Watches(const int literal){
+  if(occurrences_.find(literal) != occurrences_.end()){
+    return watch_table_.at(literal);
+  }
+  return empty_watch_list_;
 }
 
 } // namespace

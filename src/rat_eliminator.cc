@@ -197,7 +197,7 @@ void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
 RupClause RatEliminator::RenameRup(const RupClause& rup) const {
   RupClause renamed_rup;
   renamed_rup.SetIndex(rup.GetIndex());
-  for(auto literal : rup.GetLiterals()){
+  for(auto literal : rup.GetLiteralsConst()){
     renamed_rup.AddLiteral(RenameLiteral(literal));
   }
   for(auto positive_hint : rup.GetPositiveHints()){
@@ -209,7 +209,7 @@ RupClause RatEliminator::RenameRup(const RupClause& rup) const {
 RatClause RatEliminator::RenameRat(const RatClause& rat) const {
   RatClause renamed_rat;
   renamed_rat.SetIndex(rat.GetIndex());
-  for(auto literal : rat.GetLiterals()){
+  for(auto literal : rat.GetLiteralsConst()){
     renamed_rat.AddLiteral(RenameLiteral(literal));
   }
   for(auto positive_hint : rat.GetPositiveHints()){
