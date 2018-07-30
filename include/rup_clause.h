@@ -20,6 +20,7 @@ class RupClause : public Clause
   RupClause(RupClause&& other);
   RupClause& operator=(RupClause other);
   void AddPositiveHint(int hint);
+  void ClearPositiveHints();
   const std::vector<int>& GetPositiveHints() const;
   virtual std::string ToLrat() const override;
 

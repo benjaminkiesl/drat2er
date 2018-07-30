@@ -35,6 +35,10 @@ void RupClause::AddPositiveHint(int hint){
   positive_hints_.emplace_back(hint);
 }
 
+void RupClause::ClearPositiveHints() {
+  positive_hints_.clear();
+}
+
 const std::vector<int>& RupClause::GetPositiveHints() const{
   return positive_hints_;
 }

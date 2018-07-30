@@ -54,6 +54,10 @@ const std::vector<int>& RatClause::GetPositiveHints() const{
   return positive_hints_;
 }
 
+void RatClause::ClearPositiveHints() {
+  positive_hints_.clear();
+}
+
 void RatClause::AddNegativeHint(int resolution_partner, 
                                 const vector<int>& hints){
   negative_hints_[resolution_partner] = hints;
@@ -61,6 +65,10 @@ void RatClause::AddNegativeHint(int resolution_partner,
 
 const map<int, vector<int>>& RatClause::GetNegativeHints() const {
   return negative_hints_;
+}
+
+void RatClause::ClearNegativeHints() {
+  negative_hints_.clear();
 }
 
 string RatClause::ToLrat() const

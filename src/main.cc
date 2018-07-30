@@ -64,7 +64,7 @@ int main (int argc, char *argv[])
     return 1;
   }
   
-  cout << "drat2er: Converting DRAT proof to LRAT format using drat-trim..." << endl;
+  cout << "drat2er: Verifying and converting DRAT proof to LRAT format using drat-trim..." << endl;
   auto drat_trim_call = kDRATTrimPath + " " + kInputFormula + " " +
     kInputDRAT + " -b -L " + kOutputLRAT;
   system(drat_trim_call.c_str()); 
@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
   lrat_parser.RegisterObserver(stat_collector);
   lrat_parser.ParseFile(kOutputLRAT);
   
-  cout << "drat2er: Eliminating proper RATs..." << endl;
+  cout << "drat2er: Eliminating proper RAT additions..." << endl;
   auto rat_eliminator = 
     std::make_shared<RatEliminator>(kOutputEDRUP, formula, 
         stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction(),
@@ -83,16 +83,16 @@ int main (int argc, char *argv[])
   lrat_parser.RegisterObserver(rat_eliminator);
   lrat_parser.ParseFile(kOutputLRAT);
   
-  cout << "drat2er: Eliminating deletions..." << endl;
-  auto sed_call = "sed '/^d.*/d' " + kOutputEDRUP + " > " + kOutputERUP;
-  system(sed_call.c_str());
+  //cout << "drat2er: Eliminating deletions..." << endl;
+  //auto sed_call = "sed '/^d.*/d' " + kOutputEDRUP + " > " + kOutputERUP;
+  //system(sed_call.c_str());
   
-  cout << "drat2er: Verifying proof with drat-trim..." << endl;
+  cout << "drat2er: Verifying final proof with drat-trim..." << endl;
   auto drat_trim_check_call = kDRATTrimPath + " " + kInputFormula 
     + " " + kOutputERUP + " -b";
   system(drat_trim_check_call.c_str());
   
-  cout << "drat2er: Finished." << endl;
+  cout << "drat2er: Proof successfully transformed." << endl;
   return 0;
 }
 

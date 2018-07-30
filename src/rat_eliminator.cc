@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
 #include <memory>
 #include "formula.h"
@@ -19,6 +20,7 @@ using std::ifstream;
 using std::ofstream;
 using std::stringstream;
 using std::vector;
+using std::unordered_map;
 using std::max;
 using std::endl;
 using std::cout;
@@ -41,23 +43,19 @@ RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
                { }
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
-  auto rat = RenameClause(unrenamed_rat);
-
+  auto rat = RenameRat(unrenamed_rat);
   ReplaceByDefinitionRUPsAndDeletions(rat);
-
-  if(number_of_proper_rats_overall_ != 0){
-    progress_bar_.PrintProgress(
-      double(++number_of_proper_rats_)/number_of_proper_rats_overall_);
-  }
+  PrintProgress(++number_of_proper_rats_);
 }
 
 void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
-  auto rup = RenameClause(unrenamed_rup);
+  auto rup = RenameRup(unrenamed_rup);
   formula_->AddClause(rup);
   WriteRupToOutput(rup);
 }
 
-void RatEliminator::HandleDeletion(const Deletion& deletion){
+void RatEliminator::HandleDeletion(const Deletion& unrenamed_deletion){
+  auto deletion = RenameDeletion(unrenamed_deletion);
   formula_->DeleteClauses(deletion.GetClauseIndices());
   WriteDeletionToOutput(deletion);
 } 
@@ -75,7 +73,7 @@ void RatEliminator::ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat){
 
   ReplaceOldPivotByNew(rat, definition_clauses);
   DeleteClausesWithOldVariable(abs(rat.GetPivot()), definition_clauses);
-  UpdateRenaming(rat.GetPivot(), new_variable);
+  UpdateLiteralRenaming(rat.GetPivot(), new_variable);
 }
 
 vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
@@ -146,6 +144,7 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
     rup.AddPositiveHint(definition[1].GetIndex());
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
+    UpdateClauseRenaming(clause->GetIndex(), rup.GetIndex());
   }
 }  
 
@@ -173,6 +172,7 @@ void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
     }    
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
+    UpdateClauseRenaming(clause->GetIndex(), rup.GetIndex());
   }
 }  
 
@@ -194,6 +194,55 @@ void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
   WriteDeletionToOutput(clauses_to_delete, max_instruction_);
 }
 
+RupClause RatEliminator::RenameRup(const RupClause& rup) const {
+  RupClause renamed_rup;
+  renamed_rup.SetIndex(rup.GetIndex());
+  for(auto literal : rup.GetLiterals()){
+    renamed_rup.AddLiteral(RenameLiteral(literal));
+  }
+  for(auto positive_hint : rup.GetPositiveHints()){
+    renamed_rup.AddPositiveHint(RenameClauseIndex(positive_hint));
+  }
+  return renamed_rup;
+}
+
+RatClause RatEliminator::RenameRat(const RatClause& rat) const {
+  RatClause renamed_rat;
+  renamed_rat.SetIndex(rat.GetIndex());
+  for(auto literal : rat.GetLiterals()){
+    renamed_rat.AddLiteral(RenameLiteral(literal));
+  }
+  for(auto positive_hint : rat.GetPositiveHints()){
+    renamed_rat.AddPositiveHint(RenameClauseIndex(positive_hint));
+  }
+  for(auto negative_hint : rat.GetNegativeHints()){
+    int resolution_partner = RenameClauseIndex(negative_hint.first);
+    vector<int> hints_for_partner{};
+    for(auto hint : negative_hint.second){
+      hints_for_partner.emplace_back(RenameClauseIndex(hint));
+    }
+    renamed_rat.AddNegativeHint(resolution_partner, hints_for_partner);
+  }
+
+  return renamed_rat;
+}
+
+Deletion RatEliminator::RenameDeletion(const Deletion& deletion) const {
+  Deletion renamed;
+  renamed.SetIndex(deletion.GetIndex());
+  for(auto clause_index : deletion.GetClauseIndices()){
+    renamed.AddClauseIndex(RenameClauseIndex(clause_index));
+  }
+  return renamed;
+}
+
+int RatEliminator::RenameClauseIndex(const int clause_index) const {
+  if(old_to_new_clause_.find(clause_index) != old_to_new_clause_.end()){
+    return old_to_new_clause_.at(clause_index);
+  }
+  return clause_index;
+}
+
 int RatEliminator::RenameLiteral(const int literal) const {
   if(old_to_new_literal_.find(literal) != old_to_new_literal_.end()){
     return old_to_new_literal_.at(literal);
@@ -201,16 +250,31 @@ int RatEliminator::RenameLiteral(const int literal) const {
   return literal;
 }
 
-void RatEliminator::UpdateRenaming(int old_literal, int new_literal){
-  int original_literal = old_literal;
-  if(new_to_old_literal_.find(old_literal) != new_to_old_literal_.end()){
-    original_literal = new_to_old_literal_[old_literal];
-  } 
-  old_to_new_literal_[original_literal] = new_literal;
-  new_to_old_literal_[new_literal] = original_literal;
-  old_to_new_literal_[-original_literal] = -new_literal;
-  new_to_old_literal_[-new_literal] = -original_literal;
+void RatEliminator::UpdateLiteralRenaming(const int old_literal, 
+                                          const int new_literal){
+  UpdateMapping(old_to_new_literal_, new_to_old_literal_, 
+                old_literal, new_literal);
 }
+
+void RatEliminator::UpdateClauseRenaming(const int old_index, 
+                                         const int new_index){
+  UpdateMapping(old_to_new_clause_, new_to_old_clause_, 
+                old_index, new_index);
+}
+
+void RatEliminator::UpdateMapping(unordered_map<int,int>& mapping,
+                          unordered_map<int,int>& inverse_mapping,
+                          const int old_value, const int new_value){
+  int original_value = old_value;
+  if(inverse_mapping.find(old_value) != inverse_mapping.end()){
+    original_value = inverse_mapping[old_value];
+  } 
+  mapping[original_value] = new_value;
+  inverse_mapping[new_value] = original_value;
+  mapping[-original_value] = -new_value;
+  inverse_mapping[-new_value] = -original_value;
+}
+
 
 void RatEliminator::WriteRupToOutput(const RupClause& rup) {
   bool lrat = false;
@@ -226,7 +290,8 @@ void RatEliminator::WriteDefinitionToOutput(
   bool lrat = false;
   if(lrat){
     for(auto clause : definition){
-      output_stream_ << clause.GetIndex() << " e " << clause.ToDimacs() << endl;
+      output_stream_ << clause.GetIndex() << " e " 
+        << clause.ToDimacs() << endl;
     }
   } else {
     for(auto clause : definition){
@@ -267,6 +332,13 @@ void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
     for(auto clause : clauses){
       output_stream_ << "d " << clause.ToDimacs() << endl;
     }
+  }
+}
+
+void RatEliminator::PrintProgress(int number_of_proper_rats_eliminated){
+  if(number_of_proper_rats_overall_ != 0){
+    progress_bar_.PrintProgress(
+      double(number_of_proper_rats_eliminated)/number_of_proper_rats_overall_);
   }
 }
 

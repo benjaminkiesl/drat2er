@@ -39,9 +39,14 @@ class RatEliminator : public LratParserObserver
   std::vector<Clause> ThirdBlockOfDefinitionClauses(const RatClause& rat,
                                               const int new_variable);
   template<typename T>
-  T RenameClause(const T& clause) const;
+  T RenameLiterals(const T& clause) const;
+  RupClause RenameRup(const RupClause& clause) const;
+  RatClause RenameRat(const RatClause& clause) const;
+  Deletion RenameDeletion(const Deletion& deletion) const;
+  int RenameClauseIndex(const int clause_index) const;
   int RenameLiteral(const int literal) const;
-  void UpdateRenaming(const int old_literal, const int new_literal);
+  void UpdateLiteralRenaming(const int old_literal, const int new_literal);
+  void UpdateClauseRenaming(const int old_index, const int new_index);
 
  private:
   int AddDefinitionsForRatClause(const RatClause& clause);
@@ -59,7 +64,10 @@ class RatEliminator : public LratParserObserver
   void WriteDeletionToOutput(const Deletion& deletion);
   void WriteDeletionToOutput(const std::vector<Clause>& clauses,
                              int instruction_index);
-  static void PrintProgress(double percentage);
+  static void UpdateMapping(std::unordered_map<int,int>& mapping,
+                            std::unordered_map<int,int>& inverse_mapping, 
+                            const int old_value, const int new_value);
+  void PrintProgress(int number_of_proper_rats_eliminated);
 
   std::shared_ptr<Formula> formula_;
   int max_variable_;
@@ -69,18 +77,10 @@ class RatEliminator : public LratParserObserver
   std::ofstream output_stream_;
   std::unordered_map<int,int> old_to_new_literal_;
   std::unordered_map<int,int> new_to_old_literal_;
+  std::unordered_map<int,int> old_to_new_clause_;
+  std::unordered_map<int,int> new_to_old_clause_;
   ProgressBar progress_bar_;
 };
-
-template<typename T>
-T RatEliminator::RenameClause(const T& clause) const {
-  T renamed_clause(clause);
-  renamed_clause.SetLiterals(std::vector<int>{});
-  for(auto literal : clause){
-    renamed_clause.AddLiteral(RenameLiteral(literal));
-  }
-  return renamed_clause;
-}
 
 }// namespace
 

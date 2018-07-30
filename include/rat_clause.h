@@ -23,8 +23,10 @@ class RatClause : public Clause
   int GetPivot() const;
   void AddPositiveHint(int hint);
   const std::vector<int>& GetPositiveHints() const;
+  void ClearPositiveHints();
   void AddNegativeHint(int resolution_partner, const std::vector<int>& hints);
   const std::map<int, std::vector<int>>& GetNegativeHints() const; 
+  void ClearNegativeHints();
   virtual std::string ToLrat() const override;
 
  private:
