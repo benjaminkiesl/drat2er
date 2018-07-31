@@ -1,6 +1,7 @@
 #include "clause.h"
 
 #include <utility>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -9,6 +10,7 @@
 
 using std::string;
 using std::stringstream;
+using std::vector;
 using std::cout;
 using std::endl;
 using std::max;
@@ -48,15 +50,15 @@ void Clause::SetIndex(int index)
   index_ = index;
 }
 
-std::vector<int>& Clause::GetLiterals() {
+vector<int>& Clause::GetLiterals() {
   return literals_;
 }
 
-const std::vector<int>& Clause::GetLiteralsConst() const {
+const vector<int>& Clause::GetLiteralsConst() const {
   return literals_;
 }
 
-void Clause::SetLiterals(const std::vector<int>& literals)
+void Clause::SetLiterals(const vector<int>& literals)
 {
   literals_.clear();
   for(auto literal : literals) {

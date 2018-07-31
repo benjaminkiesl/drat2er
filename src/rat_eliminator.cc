@@ -100,7 +100,7 @@ Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
   Clause clause;
   clause.SetIndex(rat.GetIndex());
   clause.AddLiteral(new_variable);
-  for(auto it = rat.begin()+1; it != rat.end(); ++it){
+  for(auto it = rat.cbegin()+1; it != rat.cend(); ++it){
     clause.AddLiteral(*it);
   }
   return clause;
@@ -117,7 +117,7 @@ vector<Clause> RatEliminator::ThirdBlockOfDefinitionClauses(
                                                     const RatClause& rat,
                                                     const int new_variable){
   vector<Clause> definition_clauses;
-  for(auto it=rat.begin()+1; it != rat.end(); ++it){
+  for(auto it=rat.cbegin()+1; it != rat.cend(); ++it){
     Clause negative_clause{-new_variable, rat.GetPivot(), -*it};
     negative_clause.SetIndex(++max_instruction_);
     definition_clauses.emplace_back(negative_clause);
@@ -133,7 +133,7 @@ void RatEliminator::ReplaceOldPivotByNew(const RatClause& rat,
 
 void RatEliminator::ReplacePositivePivot(const RatClause& rat,
                                          const vector<Clause>& definition){
-  int new_literal = *definition.front().begin();
+  int new_literal = *definition.front().cbegin();
   for(auto& clause : formula_->Occurrences(rat.GetPivot())){
     RupClause rup;
     rup.SetIndex(++max_instruction_);
@@ -150,7 +150,7 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
 
 void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
                                          const vector<Clause>& definition){
-  int new_literal = *definition.front().begin();
+  int new_literal = *definition.front().cbegin();
   for(auto& clause : formula_->Occurrences(-rat.GetPivot())){
     RupClause rup;
     rup.SetIndex(++max_instruction_);

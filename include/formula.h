@@ -32,12 +32,14 @@ class Formula
   void DeleteClauseFromWatchList(std::shared_ptr<Clause> clause, 
                                  const int literal);
   bool Propagate();
-  int GetTruthValue(const int literal);
+  int TruthValue(const int literal);
   void Satisfy(const int literal);
   void Falsify(const int literal);
   void Unassign(const int literal);
 
  private:
+  auto IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause);
+
   std::unordered_map<int, std::shared_ptr<Clause>> clauses_;
   std::vector<std::shared_ptr<Clause>> unit_clauses_;
   std::unordered_map<int, OccurrenceList> occurrences_;

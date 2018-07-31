@@ -30,11 +30,12 @@ class Clause
   bool ContainsLiteral(int literal) const;
   std::string ToDimacs() const;
   virtual std::string ToLrat() const;
-
   auto size() const { return literals_.size(); }
   auto empty() const { return literals_.empty(); }
-  auto begin() const { return literals_.begin(); }
-  auto end() const { return literals_.end(); }
+  auto begin() { return literals_.begin(); }
+  auto end() { return literals_.end(); }
+  auto cbegin() const { return literals_.cbegin(); }
+  auto cend() const { return literals_.cend(); }
 
  protected:
   std::vector<int> literals_;

@@ -81,3 +81,45 @@ TEST_CASE("Formula::DeleteClause - Check that occurrences are updated"){
   REQUIRE(formula.Occurrences(2).empty());
 }
 
+//TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
+//  Formula formula{2,2};
+//  Clause clause{1};
+//  clause.SetIndex(1);
+//  formula.AddClause(clause);
+//  Clause negated_clause{-1};
+//  negated_clause.SetIndex(2);
+//  formula.AddClause(negated_clause);
+//  REQUIRE(!formula.Propagate());
+//}
+//
+//TEST_CASE("Formula::Propagate - Two clauses, no conflict"){
+//  Formula formula{2,2};
+//  Clause clause{1};
+//  clause.SetIndex(1);
+//  formula.AddClause(clause);
+//  Clause other{-1, 2};
+//  other.SetIndex(2);
+//  formula.AddClause(other);
+//  REQUIRE(formula.Propagate());
+//}
+
+TEST_CASE("Formula::Propagate - Chain leads to conflict, no binary clauses"){
+  const int number_of_clauses = 8;
+  Formula formula{number_of_clauses, number_of_clauses};
+  Clause first_unit{1};
+  first_unit.SetIndex(1);
+  formula.AddClause(first_unit);
+  Clause second_unit{2};
+  second_unit.SetIndex(2);
+  formula.AddClause(second_unit);
+  for(int i=3; i < number_of_clauses; i++){
+    Clause ternary{-(i-1), -(i-2), i};
+    ternary.SetIndex(i);
+    formula.AddClause(ternary);
+  }
+  Clause conflict{-(number_of_clauses-1)};
+  conflict.SetIndex(number_of_clauses);
+  formula.AddClause(conflict);
+  REQUIRE(!formula.Propagate());
+}
+
