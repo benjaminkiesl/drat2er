@@ -69,6 +69,10 @@ void Clause::AddLiteral(const int literal)
   literals_.emplace_back(literal);
 }
 
+bool Clause::IsUnit(){
+  return literals_.size() == 1;
+}
+
 int Clause::GetMaxVariable() const
 {
   int max_variable = 0;

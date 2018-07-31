@@ -17,6 +17,7 @@ add_library(lib_drat2er STATIC
 	src/formula.cc
 	src/formula_parser.cc
 	src/clause.cc
+	src/watch.cc
 	src/rat_eliminator.cc
 	src/rat_clause.cc
 	src/rup_clause.cc
