@@ -186,7 +186,7 @@ bool Formula::Propagate()
     auto& watches = Watches(literal);
     for(auto& watch : watches) {
       auto clause = watch.GetClause();
-      if(watch.GetBlockingLiteral() != 0){
+      if(watch.GetBlockingLiteral() != 0) {
         continue;
       } else if(clause->size() == 1) {
         conflict = clause;
@@ -199,20 +199,20 @@ bool Formula::Propagate()
       if(TruthValue(other_watched_literal) == kTrue) {
         watch.SetBlockingLiteral(other_watched_literal);
       } else {
-        auto& unfalsified_unwatched_literal =
-            *IteratorToUnfalsifiedUnwatchedLiteral(*clause);
+        auto it_unfalsified_unwatched_literal =
+            IteratorToUnfalsifiedUnwatchedLiteral(*clause);
 
-        if(TruthValue(unfalsified_unwatched_literal) == kTrue) {
-          watch.SetBlockingLiteral(unfalsified_unwatched_literal);
-        } else if(TruthValue(unfalsified_unwatched_literal) == kUnassigned) {
-          swap(unfalsified_unwatched_literal, clause->GetLiterals()[1]);
-          Watches(clause->GetLiterals()[1]).emplace_back(clause);
-        } else if(TruthValue(clause->GetLiterals()[0]) == kUnassigned) {
-          unit_clauses_.emplace_back(clause);
-          // search_assign the 0 literal with 'clause' as the reason
-          // Probably: add to unit_clauses_, set reason
+        if(it_unfalsified_unwatched_literal == clause->end()) {
+          if(TruthValue(other_watched_literal) == kFalse) {
+            conflict = clause;
+          } else {
+            unit_clauses_.emplace_back(clause);
+          }
+        } else if(TruthValue(*it_unfalsified_unwatched_literal) == kTrue) {
+          watch.SetBlockingLiteral(*it_unfalsified_unwatched_literal);
         } else {
-          conflict = clause;
+          swap(*it_unfalsified_unwatched_literal, clause->GetLiterals()[1]);
+          Watches(clause->GetLiterals()[1]).emplace_back(watch);
         }
       }
     }

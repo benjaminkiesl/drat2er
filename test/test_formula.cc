@@ -155,27 +155,66 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
   REQUIRE(formula.TruthValue(-1) == kUnassigned);
 }
 
-//TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
-//  Formula formula{2,2};
-//  Clause clause{1};
-//  clause.SetIndex(1);
-//  formula.AddClause(clause);
-//  Clause negated_clause{-1};
-//  negated_clause.SetIndex(2);
-//  formula.AddClause(negated_clause);
-//  REQUIRE(!formula.Propagate());
-//}
-//
-//TEST_CASE("Formula::Propagate - Two clauses, no conflict"){
-//  Formula formula{2,2};
-//  Clause clause{1};
-//  clause.SetIndex(1);
-//  formula.AddClause(clause);
-//  Clause other{-1, 2};
-//  other.SetIndex(2);
-//  formula.AddClause(other);
-//  REQUIRE(formula.Propagate());
-//}
+TEST_CASE("Formula::Propagate - Empty formula"){
+  Formula formula{0,0};
+  REQUIRE(formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
+  Formula formula{2,2};
+  Clause clause{1};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  Clause negated_clause{-1};
+  negated_clause.SetIndex(2);
+  formula.AddClause(negated_clause);
+  REQUIRE(!formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Two clauses, no conflict"){
+  Formula formula{2,2};
+  Clause clause{1};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  Clause other{-1, 2};
+  other.SetIndex(2);
+  formula.AddClause(other);
+  REQUIRE(formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Several clauses, no conflict"){
+  Formula formula{2,4};
+  Clause first{1};
+  first.SetIndex(1);
+  formula.AddClause(first);
+  Clause second{2};
+  second.SetIndex(2);
+  formula.AddClause(second);
+  Clause third{-1, 2};
+  third.SetIndex(3);
+  formula.AddClause(third);
+  Clause fourth{-2, 1};
+  fourth.SetIndex(4);
+  formula.AddClause(fourth);
+  REQUIRE(formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Chain leads to conflict, binary clauses"){
+  const int number_of_clauses = 8;
+  Formula formula{number_of_clauses, number_of_clauses};
+  Clause first_unit{1};
+  first_unit.SetIndex(1);
+  formula.AddClause(first_unit);
+  for(int i=2; i < number_of_clauses; i++){
+    Clause binary{-(i-1), i};
+    binary.SetIndex(i);
+    formula.AddClause(binary);
+  }
+  Clause conflict{-(number_of_clauses-1)};
+  conflict.SetIndex(number_of_clauses);
+  formula.AddClause(conflict);
+  REQUIRE(!formula.Propagate());
+}
 
 TEST_CASE("Formula::Propagate - Chain leads to conflict, no binary clauses"){
   const int number_of_clauses = 8;
@@ -194,6 +233,49 @@ TEST_CASE("Formula::Propagate - Chain leads to conflict, no binary clauses"){
   Clause conflict{-(number_of_clauses-1)};
   conflict.SetIndex(number_of_clauses);
   formula.AddClause(conflict);
+  REQUIRE(!formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Example from Urquhart formula"){
+  Formula formula{5, 6};
+  Clause first_rup_unit{1};
+  first_rup_unit.SetIndex(1);
+  formula.AddClause(first_rup_unit);
+  Clause second_rup_unit{-2};
+  second_rup_unit.SetIndex(2);
+  formula.AddClause(second_rup_unit);
+  Clause third_rup_unit{-3};
+  third_rup_unit.SetIndex(3);
+  formula.AddClause(third_rup_unit);
+  Clause first_existing{4, -1};
+  first_existing.SetIndex(4);
+  formula.AddClause(first_existing);
+  Clause second_existing{5, -1, 2, 3};
+  second_existing.SetIndex(5);
+  formula.AddClause(second_existing);
+  Clause third_existing{-4, -5};
+  third_existing.SetIndex(6);
+  formula.AddClause(third_existing);
+  REQUIRE(!formula.Propagate());
+}
+
+TEST_CASE("Formula::Propagate - Example from two-pigeons-per-hole formula"){
+  Formula formula{4, 6};
+  Clause first_rup_unit{1};
+  first_rup_unit.SetIndex(1);
+  formula.AddClause(first_rup_unit);
+  Clause second_rup_unit{2};
+  second_rup_unit.SetIndex(2);
+  formula.AddClause(second_rup_unit);
+  Clause first_existing{-2, -3};
+  first_existing.SetIndex(3);
+  formula.AddClause(first_existing);
+  Clause second_existing{4, -1, -2};
+  second_existing.SetIndex(5);
+  formula.AddClause(second_existing);
+  Clause third_existing{3, -4};
+  third_existing.SetIndex(6);
+  formula.AddClause(third_existing);
   REQUIRE(!formula.Propagate());
 }
 
