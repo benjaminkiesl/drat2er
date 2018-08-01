@@ -44,6 +44,12 @@ class Clause
   int index_;
 };
 
+inline void SwapLiteralToSecondPosition(const int literal, Clause& clause){
+  const int other = clause.GetLiterals()[0]^clause.GetLiterals()[1]^literal;
+  clause.GetLiterals()[0] = other; 
+  clause.GetLiterals()[1] = literal;
+}
+
 } // namespace
 
 #endif

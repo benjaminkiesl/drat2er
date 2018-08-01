@@ -10,6 +10,10 @@
 namespace drat2er
 {
 
+const int kTrue = 1;
+const int kFalse = -1;
+const int kUnassigned = 0;
+
 class Clause;
 
 using OccurrenceList = std::vector<std::shared_ptr<Clause>>;

@@ -81,6 +81,80 @@ TEST_CASE("Formula::DeleteClause - Check that occurrences are updated"){
   REQUIRE(formula.Occurrences(2).empty());
 }
 
+TEST_CASE("Formula::FalsifyLiteral - Positive Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+  formula.Falsify(1);
+  REQUIRE(formula.TruthValue(1) == kFalse);
+  REQUIRE(formula.TruthValue(-1) == kTrue);
+}
+
+TEST_CASE("Formula::FalsifyLiteral - Negative Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+  formula.Falsify(-1);
+  REQUIRE(formula.TruthValue(-1) == kFalse);
+  REQUIRE(formula.TruthValue(1) == kTrue);
+}
+
+TEST_CASE("Formula::SatisfyLiteral - Positive Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+  formula.Satisfy(1);
+  REQUIRE(formula.TruthValue(1) == kTrue);
+  REQUIRE(formula.TruthValue(-1) == kFalse);
+}
+
+TEST_CASE("Formula::SatisfyLiteral - Negative Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+  formula.Satisfy(-1);
+  REQUIRE(formula.TruthValue(-1) == kTrue);
+  REQUIRE(formula.TruthValue(1) == kFalse);
+}
+
+TEST_CASE("Formula::UnassignLiteral - Positive Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  formula.Satisfy(1);
+  REQUIRE(formula.TruthValue(1) == kTrue);
+  REQUIRE(formula.TruthValue(-1) == kFalse);
+  formula.Unassign(1);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+}
+
+TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
+  Formula formula{2, 1};
+  Clause clause{1, 2};
+  clause.SetIndex(1);
+  formula.AddClause(clause);
+  formula.Satisfy(1);
+  REQUIRE(formula.TruthValue(1) == kTrue);
+  REQUIRE(formula.TruthValue(-1) == kFalse);
+  formula.Unassign(-1);
+  REQUIRE(formula.TruthValue(1) == kUnassigned);
+  REQUIRE(formula.TruthValue(-1) == kUnassigned);
+}
+
 //TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
 //  Formula formula{2,2};
 //  Clause clause{1};

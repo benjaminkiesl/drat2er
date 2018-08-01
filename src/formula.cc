@@ -21,10 +21,6 @@ using std::swap;
 namespace drat2er
 {
 
-const int kTrue = 1;
-const int kFalse = -1;
-const int kUnassigned = 0;
-
 Formula::Formula(int number_of_variables, int number_of_clauses) :
 clauses_(number_of_clauses),
 unit_clauses_ {},
@@ -150,12 +146,6 @@ inline int Sign(const int number)
   return (number > 0) - (0 > number);
 }
 
-inline void SwapLiteralToSecondPosition(const int literal, Clause& clause){
-  const int other = clause.GetLiterals()[0]^clause.GetLiterals()[1]^literal;
-  clause.GetLiterals()[0] = other; 
-  clause.GetLiterals()[1] = literal;
-}
-
 int Formula::TruthValue(const int literal)
 {
   return Sign(literal) * assignment_[abs(literal)];
@@ -179,7 +169,7 @@ void Formula::Unassign(const int literal)
 auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)
 {
   for(auto it = clause.begin()+2; it != clause.end(); ++it) {
-    if(TruthValue(*it) >= 0) {
+    if(TruthValue(*it) >= kUnassigned) {
       return it;
     }
   }
@@ -190,7 +180,7 @@ bool Formula::Propagate()
 {
   shared_ptr<Clause> conflict = nullptr;
   while(conflict == nullptr && !unit_clauses_.empty()) {
-    auto literal = -unit_clauses_.back()->GetLiterals().front();
+    auto literal = -(unit_clauses_.back()->GetLiterals().front());
     unit_clauses_.pop_back();
     Falsify(literal);
     auto& watches = Watches(literal);
@@ -216,8 +206,7 @@ bool Formula::Propagate()
           watch.SetBlockingLiteral(unfalsified_unwatched_literal);
         } else if(TruthValue(unfalsified_unwatched_literal) == kUnassigned) {
           swap(unfalsified_unwatched_literal, clause->GetLiterals()[1]);
-          Watches(unfalsified_unwatched_literal).emplace_back(clause);
-          //DeleteClauseFromWatchList(clause, clause->GetLiterals()[1]);
+          Watches(clause->GetLiterals()[1]).emplace_back(clause);
         } else if(TruthValue(clause->GetLiterals()[0]) == kUnassigned) {
           unit_clauses_.emplace_back(clause);
           // search_assign the 0 literal with 'clause' as the reason

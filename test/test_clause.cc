@@ -90,3 +90,15 @@ TEST_CASE("Clause::GetMaxVariable Empty Clause"){
   Clause clause;
   REQUIRE(clause.GetMaxVariable() == 0);
 }
+
+TEST_CASE("SwapLiteralToSecondPosition - Already there"){
+  Clause clause{1, 2, 3};
+  SwapLiteralToSecondPosition(2, clause);
+  REQUIRE(clause.GetLiterals() == vector<int>{1, 2, 3});
+}
+
+TEST_CASE("SwapLiteralToSecondPosition - Not there"){
+  Clause clause{1, 2, 3};
+  SwapLiteralToSecondPosition(1, clause);
+  REQUIRE(clause.GetLiterals() == vector<int>{2, 1, 3});
+}
