@@ -8,11 +8,15 @@
 #include <algorithm>
 #include <utility>
 #include <cassert>
+#include <limits>
 #include "clause.h"
+#include "rup_clause.h"
 #include "watch.h"
 
 using std::shared_ptr;
+using std::unique_ptr;
 using std::make_shared;
+using std::make_unique;
 using std::vector;
 using std::unordered_set;
 using std::unordered_map;
@@ -24,7 +28,6 @@ using std::back_inserter;
 using std::cout;
 using std::cerr;
 using std::endl;
-using std::swap;
 
 namespace drat2er
 {
@@ -35,7 +38,10 @@ unit_clauses_ {},
               occurrences_(2*number_of_variables),
               watch_table_(2*number_of_variables),
               assignment_ {},
-              empty_occurrence_list_ {}
+              conflict_{nullptr},
+              resolution_graph_{},
+              empty_occurrence_list_ {},
+              next_clause_index_ {std::numeric_limits<int>::max()}
 { }
 
 void Formula::AddClauses(const vector<Clause>& clauses)
@@ -202,29 +208,14 @@ Clause Resolve(const Clause& first, const Clause& second, const int pivot){
   return resolvent;
 }
 
-struct Reason {
-  Reason(shared_ptr<Clause> clause=nullptr, int propagation_step=0) 
-                                      : clause(clause), 
-                                        propagation_step(propagation_step){}
-  shared_ptr<Clause> clause;
-  int propagation_step;
-};
-
-bool operator<(const Reason& lhs, const Reason& rhs){
-  return lhs.propagation_step < rhs.propagation_step;
-}
 
 bool Formula::Propagate()
 {
-  unordered_map<shared_ptr<Clause>, vector<Reason>> conflict_graph;
-  unordered_map<int, int> literal_propagated_at_step;
-  int propagation_step = 0;
-
-  shared_ptr<Clause> conflict = nullptr;
-  while(conflict == nullptr && !unit_clauses_.empty()) {
+  int propagation_step = 1;
+  conflict_ = nullptr;
+  while(conflict_ == nullptr && !unit_clauses_.empty()) {
     auto unit_clause = unit_clauses_.front();
     auto literal = -unit_clause->GetLiterals().front();
-    literal_propagated_at_step[++propagation_step] = literal;
     unit_clauses_.pop_front();
     Falsify(literal);
     auto& watches = Watches(literal);
@@ -233,8 +224,9 @@ bool Formula::Propagate()
       if(watch.GetBlockingLiteral() != 0) {
         continue;
       } else if(clause->size() == 1) {
-        conflict_graph[clause].emplace_back(unit_clause, propagation_step);
-        conflict = clause;
+        resolution_graph_[clause].emplace_back(unit_clause, literal, 
+                                               propagation_step);
+        conflict_ = clause;
         break;
       }
 
@@ -248,50 +240,79 @@ bool Formula::Propagate()
             IteratorToUnfalsifiedUnwatchedLiteral(*clause);
 
         if(it_unfalsified_unwatched_literal == clause->end()) {
-          conflict_graph[clause].emplace_back(unit_clause, 
-                                              propagation_step);
+          resolution_graph_[clause].emplace_back(unit_clause, literal, 
+                                                 propagation_step);
           if(TruthValue(other_watched_literal) == kFalse) {
-            conflict = clause;
+            conflict_ = clause;
           } else {
             unit_clauses_.emplace_back(clause);
           }
         } else if(TruthValue(*it_unfalsified_unwatched_literal) == kTrue) {
           watch.SetBlockingLiteral(*it_unfalsified_unwatched_literal);
         } else {
-          swap(*it_unfalsified_unwatched_literal, clause->GetLiterals()[1]);
+          std::swap(*it_unfalsified_unwatched_literal, 
+                    clause->GetLiterals()[1]);
           Watches(clause->GetLiterals()[1]).emplace_back(watch);
-          conflict_graph[clause].emplace_back(unit_clause, 
-                                              propagation_step);
+          resolution_graph_[clause].emplace_back(unit_clause, literal, 
+                                                 propagation_step);
         }
       }
     }
+    propagation_step++;
   }
-  
-  if(conflict != nullptr){
-    unordered_set<shared_ptr<Clause>> marked_clauses;
-    priority_queue<Reason> reason_queue;
-    Clause resolvent = *conflict;
-    for_each(conflict_graph[conflict].begin(),
-             conflict_graph[conflict].end(), 
-             [&](const auto& clause){ reason_queue.push(clause); });
+  return conflict_ == nullptr;
+}
 
+int Formula::GetUnusedClauseIndex() {
+  while(clauses_.find(next_clause_index_) != clauses_.end()){
+    next_clause_index_--;
+  }
+  return next_clause_index_;
+}
+
+bool operator<(const Reason& lhs, const Reason& rhs){
+  return lhs.propagation_step < rhs.propagation_step;
+}
+
+unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup){
+  unordered_set<shared_ptr<Clause>> marked_clauses;
+
+  for(auto literal : rup.GetLiteralsConst()){
+    Clause negated_unit{-literal};
+    negated_unit.SetIndex(GetUnusedClauseIndex());
+    AddClause(negated_unit);
+    marked_clauses.insert(GetClause(negated_unit.GetIndex()));
+  } 
+
+  if(!Propagate()){
+    priority_queue<Reason> reason_queue;
+
+    RupClause subsuming_rup;
+    subsuming_rup.SetIndex(rup.GetIndex());
+    subsuming_rup.SetLiterals(conflict_->GetLiterals());
+    subsuming_rup.AddPositiveHint(conflict_->GetIndex());
+    for_each(resolution_graph_[conflict_].begin(),
+             resolution_graph_[conflict_].end(), 
+             [&](const auto& clause){ reason_queue.push(clause); });
+    
     while(!reason_queue.empty()){
       auto current = reason_queue.top();
       reason_queue.pop();
       if(marked_clauses.find(current.clause) == marked_clauses.end()){
         marked_clauses.insert(current.clause);
-        int pivot = literal_propagated_at_step[current.propagation_step];
-        cout << resolvent << " " << pivot << " " << *current.clause << ": ";
-        resolvent = Resolve(resolvent, *current.clause, pivot);
-        cout << resolvent << endl; 
-        for_each(conflict_graph[current.clause].begin(),
-                 conflict_graph[current.clause].end(), 
+        subsuming_rup.SetLiterals(Resolve(subsuming_rup, 
+                                          *current.clause, 
+                                          current.literal).GetLiterals());
+        subsuming_rup.AddPositiveHint(current.clause->GetIndex());
+        for_each(resolution_graph_[current.clause].begin(),
+                 resolution_graph_[current.clause].end(), 
                  [&](const auto& reason){ reason_queue.push(reason); });
       }
     }
-    cout << endl;
+    return make_unique<RupClause>(subsuming_rup);
+  } else {
+    return nullptr;
   }
-  return conflict == nullptr;
 }
 
 } // namespace

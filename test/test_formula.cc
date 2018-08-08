@@ -1,10 +1,14 @@
 #include "catch.hpp"
 #include <vector>
+#include <unordered_set>
 #include <algorithm>
 #include "formula.h"
+#include "clause.h"
+#include "rup_clause.h"
 
 using namespace drat2er;
 using std::vector;
+using std::unordered_set;
 using std::find;
 
 TEST_CASE("Formula::AddClause - Add and Obtain"){
@@ -157,7 +161,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 
 //TEST_CASE("Formula::Propagate - Empty formula"){
 //  Formula formula{0,0};
-//  REQUIRE(formula.Propagate());
+//  REQUIRE(!formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
@@ -179,7 +183,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //  Clause other{-1, 2};
 //  other.SetIndex(2);
 //  formula.AddClause(other);
-//  REQUIRE(formula.Propagate());
+//  REQUIRE(!formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Several clauses, no conflict"){
@@ -196,7 +200,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //  Clause fourth{-2, 1};
 //  fourth.SetIndex(4);
 //  formula.AddClause(fourth);
-//  REQUIRE(formula.Propagate());
+//  REQUIRE(!formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Chain leads to conflict, binary clauses"){
@@ -255,18 +259,32 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //  formula.AddClause(third_existing);
 //  REQUIRE(!formula.Propagate());
 //}
+//
+//TEST_CASE("Formula::Propagate - Example from Urquhart formula"){
+//  Formula formula{5, 6};
+//  Clause first_rup_unit{1};
+//  first_rup_unit.SetIndex(1);
+//  formula.AddClause(first_rup_unit);
+//  Clause second_rup_unit{-2};
+//  second_rup_unit.SetIndex(2);
+//  formula.AddClause(second_rup_unit);
+//  Clause third_rup_unit{-3};
+//  third_rup_unit.SetIndex(3);
+//  formula.AddClause(third_rup_unit);
+//  Clause first_existing{4, -1};
+//  first_existing.SetIndex(4);
+//  formula.AddClause(first_existing);
+//  Clause second_existing{5, -1, 2, 3};
+//  second_existing.SetIndex(5);
+//  formula.AddClause(second_existing);
+//  Clause third_existing{-4, -5};
+//  third_existing.SetIndex(6);
+//  formula.AddClause(third_existing);
+//  REQUIRE(!formula.Propagate());
+//}
 
-TEST_CASE("Formula::Propagate - Example from Urquhart formula"){
-  Formula formula{5, 6};
-  Clause first_rup_unit{1};
-  first_rup_unit.SetIndex(1);
-  formula.AddClause(first_rup_unit);
-  Clause second_rup_unit{-2};
-  second_rup_unit.SetIndex(2);
-  formula.AddClause(second_rup_unit);
-  Clause third_rup_unit{-3};
-  third_rup_unit.SetIndex(3);
-  formula.AddClause(third_rup_unit);
+TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"){
+  Formula formula{3, 5};
   Clause first_existing{4, -1};
   first_existing.SetIndex(4);
   formula.AddClause(first_existing);
@@ -276,6 +294,36 @@ TEST_CASE("Formula::Propagate - Example from Urquhart formula"){
   Clause third_existing{-4, -5};
   third_existing.SetIndex(6);
   formula.AddClause(third_existing);
-  REQUIRE(!formula.Propagate());
+  Clause rup{-1, 2, 3};
+  rup.SetIndex(7);
+  auto resulting_clause = formula.DeriveSubsumingClause(rup);
+  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
+                                        resulting_clause->cend());
+  unordered_set<int> desired_literals{-1, 2, 3};
+  REQUIRE(resulting_literals == desired_literals);
+  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
+  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
 }
 
+TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"
+          " with subsumption"){
+  Formula formula{3, 5};
+  Clause first_existing{4, -1};
+  first_existing.SetIndex(4);
+  formula.AddClause(first_existing);
+  Clause second_existing{5, -1, 2, 3};
+  second_existing.SetIndex(5);
+  formula.AddClause(second_existing);
+  Clause third_existing{-4, -5};
+  third_existing.SetIndex(6);
+  formula.AddClause(third_existing);
+  Clause rup{-1, 2, 3, 6};
+  rup.SetIndex(7);
+  auto resulting_clause = formula.DeriveSubsumingClause(rup);
+  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
+                                        resulting_clause->cend());
+  unordered_set<int> desired_literals{-1, 2, 3};
+  REQUIRE(resulting_literals == desired_literals);
+  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
+  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
+}
