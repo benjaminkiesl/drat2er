@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <ostream>
 #include <initializer_list>
 
 namespace drat2er
@@ -11,7 +12,8 @@ namespace drat2er
 class Clause
 {
   friend void swap(Clause& lhs, Clause& rhs);
-
+  friend std::ostream& operator<< (std::ostream& stream, const Clause& matrix); 
+  
  public:
   Clause();
   Clause(std::initializer_list<int> literals);

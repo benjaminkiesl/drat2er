@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <deque>
 #include <unordered_map>
 #include <unordered_set>
 #include "watch.h"
@@ -45,7 +46,7 @@ class Formula
   auto IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause);
 
   std::unordered_map<int, std::shared_ptr<Clause>> clauses_;
-  std::vector<std::shared_ptr<Clause>> unit_clauses_;
+  std::deque<std::shared_ptr<Clause>> unit_clauses_;
   std::unordered_map<int, OccurrenceList> occurrences_;
   std::unordered_map<int, WatchList> watch_table_;
   std::unordered_map<int, int> assignment_;

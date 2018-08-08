@@ -1,6 +1,7 @@
 #include "formula.h"
 #include <memory>
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
@@ -12,8 +13,12 @@
 using std::shared_ptr;
 using std::make_shared;
 using std::vector;
+using std::unordered_set;
 using std::unordered_map;
 using std::find;
+using std::copy_if;
+using std::back_inserter;
+using std::cout;
 using std::cerr;
 using std::endl;
 using std::swap;
@@ -176,12 +181,40 @@ auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)
   return clause.end();
 }
 
+Clause Resolve(const Clause& first, const Clause& second, const int pivot){
+  unordered_set<int> resolvent_literals;
+  for(auto it = first.cbegin(); it != first.cend(); ++it){
+    if(*it != pivot){
+      resolvent_literals.insert(*it);
+    }
+  }
+  for(auto it = second.cbegin(); it != second.cend(); ++it){
+    if(*it != -pivot){
+      resolvent_literals.insert(*it);
+    }
+  }
+  Clause resolvent{};
+  resolvent.GetLiterals().assign(resolvent_literals.begin(), 
+                                 resolvent_literals.end());
+  return resolvent;
+}
+
+struct Reason {
+  Reason(shared_ptr<Clause> clause=nullptr, int pivot=0) : clause(clause), 
+                                                           pivot(pivot){}
+  shared_ptr<Clause> clause;
+  int pivot;
+};
+
 bool Formula::Propagate()
 {
+  unordered_map<shared_ptr<Clause>, Reason> reason;
+
   shared_ptr<Clause> conflict = nullptr;
   while(conflict == nullptr && !unit_clauses_.empty()) {
-    auto literal = -(unit_clauses_.back()->GetLiterals().front());
-    unit_clauses_.pop_back();
+    auto unit_clause = unit_clauses_.front();
+    auto literal = -unit_clause->GetLiterals().front();
+    unit_clauses_.pop_front();
     Falsify(literal);
     auto& watches = Watches(literal);
     for(auto& watch : watches) {
@@ -190,11 +223,12 @@ bool Formula::Propagate()
         continue;
       } else if(clause->size() == 1) {
         conflict = clause;
+        reason[conflict] = Reason(unit_clause, literal);
         break;
       }
 
       SwapLiteralToSecondPosition(literal, *clause);
-      auto other_watched_literal = clause->GetLiterals()[0];
+      auto other_watched_literal = clause->GetLiterals().front();
 
       if(TruthValue(other_watched_literal) == kTrue) {
         watch.SetBlockingLiteral(other_watched_literal);
@@ -205,8 +239,10 @@ bool Formula::Propagate()
         if(it_unfalsified_unwatched_literal == clause->end()) {
           if(TruthValue(other_watched_literal) == kFalse) {
             conflict = clause;
+            reason[conflict] = Reason(unit_clause,literal);
           } else {
             unit_clauses_.emplace_back(clause);
+            reason[clause] = Reason(unit_clause,literal);
           }
         } else if(TruthValue(*it_unfalsified_unwatched_literal) == kTrue) {
           watch.SetBlockingLiteral(*it_unfalsified_unwatched_literal);
@@ -216,6 +252,19 @@ bool Formula::Propagate()
         }
       }
     }
+  }
+  
+  if(conflict != nullptr){
+    auto current = conflict;
+    Clause resolvent = *conflict;
+    while(reason[current].clause != nullptr){
+      cout << resolvent << " o ";
+      int pivot = reason[current].pivot;
+      current = reason[current].clause;
+      resolvent = Resolve(resolvent, *current, pivot);
+      cout << *current << " : " << resolvent << endl; 
+    }
+    cout << endl;
   }
   return conflict == nullptr;
 }

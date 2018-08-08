@@ -113,4 +113,17 @@ void swap(Clause& lhs, Clause& rhs)
   swap(lhs.literals_, rhs.literals_);
 }
 
+std::ostream& operator<< (std::ostream& stream, const Clause& clause){
+  if(clause.size() == 0){
+    stream << "{}";
+  } else {
+    stream << '{' << *clause.cbegin();
+    for(auto it = clause.cbegin()+1; it != clause.cend(); ++it){
+      stream << ' ' << *it;
+    }
+    stream << '}';
+  }
+  return stream;
+} 
+
 } // namespace
