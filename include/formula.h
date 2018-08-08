@@ -11,9 +11,9 @@
 namespace drat2er
 {
 
+const int kFalse = -1; 
+const int kUnassigned = 0; 
 const int kTrue = 1;
-const int kFalse = -1;
-const int kUnassigned = 0;
 
 class Clause;
 

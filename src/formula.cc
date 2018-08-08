@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
+#include <queue>
 #include <iostream>
 #include <algorithm>
 #include <utility>
@@ -15,8 +16,10 @@ using std::make_shared;
 using std::vector;
 using std::unordered_set;
 using std::unordered_map;
+using std::priority_queue;
 using std::find;
 using std::copy_if;
+using std::for_each;
 using std::back_inserter;
 using std::cout;
 using std::cerr;
@@ -200,20 +203,28 @@ Clause Resolve(const Clause& first, const Clause& second, const int pivot){
 }
 
 struct Reason {
-  Reason(shared_ptr<Clause> clause=nullptr, int pivot=0) : clause(clause), 
-                                                           pivot(pivot){}
+  Reason(shared_ptr<Clause> clause=nullptr, int propagation_step=0) 
+                                      : clause(clause), 
+                                        propagation_step(propagation_step){}
   shared_ptr<Clause> clause;
-  int pivot;
+  int propagation_step;
 };
+
+bool operator<(const Reason& lhs, const Reason& rhs){
+  return lhs.propagation_step < rhs.propagation_step;
+}
 
 bool Formula::Propagate()
 {
-  unordered_map<shared_ptr<Clause>, Reason> reason;
+  unordered_map<shared_ptr<Clause>, vector<Reason>> conflict_graph;
+  unordered_map<int, int> literal_propagated_at_step;
+  int propagation_step = 0;
 
   shared_ptr<Clause> conflict = nullptr;
   while(conflict == nullptr && !unit_clauses_.empty()) {
     auto unit_clause = unit_clauses_.front();
     auto literal = -unit_clause->GetLiterals().front();
+    literal_propagated_at_step[++propagation_step] = literal;
     unit_clauses_.pop_front();
     Falsify(literal);
     auto& watches = Watches(literal);
@@ -222,8 +233,8 @@ bool Formula::Propagate()
       if(watch.GetBlockingLiteral() != 0) {
         continue;
       } else if(clause->size() == 1) {
+        conflict_graph[clause].emplace_back(unit_clause, propagation_step);
         conflict = clause;
-        reason[conflict] = Reason(unit_clause, literal);
         break;
       }
 
@@ -237,32 +248,46 @@ bool Formula::Propagate()
             IteratorToUnfalsifiedUnwatchedLiteral(*clause);
 
         if(it_unfalsified_unwatched_literal == clause->end()) {
+          conflict_graph[clause].emplace_back(unit_clause, 
+                                              propagation_step);
           if(TruthValue(other_watched_literal) == kFalse) {
             conflict = clause;
-            reason[conflict] = Reason(unit_clause,literal);
           } else {
             unit_clauses_.emplace_back(clause);
-            reason[clause] = Reason(unit_clause,literal);
           }
         } else if(TruthValue(*it_unfalsified_unwatched_literal) == kTrue) {
           watch.SetBlockingLiteral(*it_unfalsified_unwatched_literal);
         } else {
           swap(*it_unfalsified_unwatched_literal, clause->GetLiterals()[1]);
           Watches(clause->GetLiterals()[1]).emplace_back(watch);
+          conflict_graph[clause].emplace_back(unit_clause, 
+                                              propagation_step);
         }
       }
     }
   }
   
   if(conflict != nullptr){
-    auto current = conflict;
+    unordered_set<shared_ptr<Clause>> marked_clauses;
+    priority_queue<Reason> reason_queue;
     Clause resolvent = *conflict;
-    while(reason[current].clause != nullptr){
-      cout << resolvent << " o ";
-      int pivot = reason[current].pivot;
-      current = reason[current].clause;
-      resolvent = Resolve(resolvent, *current, pivot);
-      cout << *current << " : " << resolvent << endl; 
+    for_each(conflict_graph[conflict].begin(),
+             conflict_graph[conflict].end(), 
+             [&](const auto& clause){ reason_queue.push(clause); });
+
+    while(!reason_queue.empty()){
+      auto current = reason_queue.top();
+      reason_queue.pop();
+      if(marked_clauses.find(current.clause) == marked_clauses.end()){
+        marked_clauses.insert(current.clause);
+        int pivot = literal_propagated_at_step[current.propagation_step];
+        cout << resolvent << " " << pivot << " " << *current.clause << ": ";
+        resolvent = Resolve(resolvent, *current.clause, pivot);
+        cout << resolvent << endl; 
+        for_each(conflict_graph[current.clause].begin(),
+                 conflict_graph[current.clause].end(), 
+                 [&](const auto& reason){ reason_queue.push(reason); });
+      }
     }
     cout << endl;
   }
