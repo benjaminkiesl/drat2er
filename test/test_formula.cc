@@ -12,7 +12,7 @@ using std::unordered_set;
 using std::find;
 
 TEST_CASE("Formula::AddClause - Add and Obtain"){
-  Formula formula{100, 100};
+  Formula formula{};
   const int clause_index = 5;
   Clause clause{1, 2};
   clause.SetIndex(clause_index);
@@ -24,7 +24,7 @@ TEST_CASE("Formula::AddClause - Add and Obtain"){
 }
 
 TEST_CASE("Formula::AddClause - Check that occurrences are updated"){
-  Formula formula{100, 100};
+  Formula formula{};
   REQUIRE(formula.Occurrences(1).empty());
   REQUIRE(formula.Occurrences(2).empty());
   REQUIRE(formula.Occurrences(-1).empty());
@@ -59,7 +59,7 @@ TEST_CASE("Formula::AddClause - Check that occurrences are updated"){
 }
 
 TEST_CASE("Formula::DeleteClause - Check that clause itself is removed"){
-  Formula formula{100, 100};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   REQUIRE(formula.GetClause(clause.GetIndex()) == nullptr);
@@ -70,7 +70,7 @@ TEST_CASE("Formula::DeleteClause - Check that clause itself is removed"){
 }
 
 TEST_CASE("Formula::DeleteClause - Check that occurrences are updated"){
-  Formula formula{100, 100};
+  Formula formula{};
   REQUIRE(formula.Occurrences(1).empty());
   REQUIRE(formula.Occurrences(2).empty());
   Clause clause{1, 2};
@@ -86,7 +86,7 @@ TEST_CASE("Formula::DeleteClause - Check that occurrences are updated"){
 }
 
 TEST_CASE("Formula::FalsifyLiteral - Positive Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -98,7 +98,7 @@ TEST_CASE("Formula::FalsifyLiteral - Positive Literal"){
 }
 
 TEST_CASE("Formula::FalsifyLiteral - Negative Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -110,7 +110,7 @@ TEST_CASE("Formula::FalsifyLiteral - Negative Literal"){
 }
 
 TEST_CASE("Formula::SatisfyLiteral - Positive Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -122,7 +122,7 @@ TEST_CASE("Formula::SatisfyLiteral - Positive Literal"){
 }
 
 TEST_CASE("Formula::SatisfyLiteral - Negative Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -134,7 +134,7 @@ TEST_CASE("Formula::SatisfyLiteral - Negative Literal"){
 }
 
 TEST_CASE("Formula::UnassignLiteral - Positive Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -147,7 +147,7 @@ TEST_CASE("Formula::UnassignLiteral - Positive Literal"){
 }
 
 TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
-  Formula formula{2, 1};
+  Formula formula{};
   Clause clause{1, 2};
   clause.SetIndex(1);
   formula.AddClause(clause);
@@ -160,12 +160,12 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 }
 
 //TEST_CASE("Formula::Propagate - Empty formula"){
-//  Formula formula{0,0};
-//  REQUIRE(!formula.Propagate());
+//  Formula formula{};
+//  REQUIRE(formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Two complementary unit clauses"){
-//  Formula formula{2,2};
+//  Formula formula{};
 //  Clause clause{1};
 //  clause.SetIndex(1);
 //  formula.AddClause(clause);
@@ -176,18 +176,18 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //}
 //
 //TEST_CASE("Formula::Propagate - Two clauses, no conflict"){
-//  Formula formula{2,2};
+//  Formula formula{};
 //  Clause clause{1};
 //  clause.SetIndex(1);
 //  formula.AddClause(clause);
 //  Clause other{-1, 2};
 //  other.SetIndex(2);
 //  formula.AddClause(other);
-//  REQUIRE(!formula.Propagate());
+//  REQUIRE(formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Several clauses, no conflict"){
-//  Formula formula{2,4};
+//  Formula formula{};
 //  Clause first{1};
 //  first.SetIndex(1);
 //  formula.AddClause(first);
@@ -200,12 +200,12 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //  Clause fourth{-2, 1};
 //  fourth.SetIndex(4);
 //  formula.AddClause(fourth);
-//  REQUIRE(!formula.Propagate());
+//  REQUIRE(formula.Propagate());
 //}
 //
 //TEST_CASE("Formula::Propagate - Chain leads to conflict, binary clauses"){
 //  const int number_of_clauses = 8;
-//  Formula formula{number_of_clauses, number_of_clauses};
+//  Formula formula{};
 //  Clause first_unit{1};
 //  first_unit.SetIndex(1);
 //  formula.AddClause(first_unit);
@@ -222,7 +222,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //
 //TEST_CASE("Formula::Propagate - Chain leads to conflict, no binary clauses"){
 //  const int number_of_clauses = 8;
-//  Formula formula{number_of_clauses, number_of_clauses};
+//  Formula formula{};
 //  Clause first_unit{1};
 //  first_unit.SetIndex(1);
 //  formula.AddClause(first_unit);
@@ -241,7 +241,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //}
 //
 //TEST_CASE("Formula::Propagate - Example from two-pigeons-per-hole formula"){
-//  Formula formula{4, 6};
+//  Formula formula{};
 //  Clause first_rup_unit{1};
 //  first_rup_unit.SetIndex(1);
 //  formula.AddClause(first_rup_unit);
@@ -261,7 +261,7 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //}
 //
 //TEST_CASE("Formula::Propagate - Example from Urquhart formula"){
-//  Formula formula{5, 6};
+//  Formula formula{};
 //  Clause first_rup_unit{1};
 //  first_rup_unit.SetIndex(1);
 //  formula.AddClause(first_rup_unit);
@@ -282,48 +282,124 @@ TEST_CASE("Formula::UnassignLiteral - Negative Literal"){
 //  formula.AddClause(third_existing);
 //  REQUIRE(!formula.Propagate());
 //}
+//
+//TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"){
+//  Formula formula{};
+//  Clause first_existing{4, -1};
+//  first_existing.SetIndex(4);
+//  formula.AddClause(first_existing);
+//  Clause second_existing{5, -1, 2, 3};
+//  second_existing.SetIndex(5);
+//  formula.AddClause(second_existing);
+//  Clause third_existing{-4, -5};
+//  third_existing.SetIndex(6);
+//  formula.AddClause(third_existing);
+//  Clause rup{-1, 2, 3};
+//  rup.SetIndex(7);
+//  auto resulting_clause = formula.DeriveSubsumingClause(rup);
+//  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
+//                                        resulting_clause->cend());
+//  unordered_set<int> desired_literals{-1, 2, 3};
+//  REQUIRE(resulting_literals == desired_literals);
+//  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
+//  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
+//}
+//
+//TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"
+//          " with subsumption"){
+//  Formula formula{};
+//  Clause first_existing{4, -1};
+//  first_existing.SetIndex(4);
+//  formula.AddClause(first_existing);
+//  Clause second_existing{5, -1, 2, 3};
+//  second_existing.SetIndex(5);
+//  formula.AddClause(second_existing);
+//  Clause third_existing{-4, -5};
+//  third_existing.SetIndex(6);
+//  formula.AddClause(third_existing);
+//  Clause rup{-1, 2, 3, 6};
+//  rup.SetIndex(7);
+//  auto resulting_clause = formula.DeriveSubsumingClause(rup);
+//  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
+//                                        resulting_clause->cend());
+//  unordered_set<int> desired_literals{-1, 2, 3};
+//  REQUIRE(resulting_literals == desired_literals);
+//  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
+//  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
+//}
 
-TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"){
-  Formula formula{3, 5};
-  Clause first_existing{4, -1};
-  first_existing.SetIndex(4);
-  formula.AddClause(first_existing);
-  Clause second_existing{5, -1, 2, 3};
-  second_existing.SetIndex(5);
-  formula.AddClause(second_existing);
-  Clause third_existing{-4, -5};
-  third_existing.SetIndex(6);
-  formula.AddClause(third_existing);
-  Clause rup{-1, 2, 3};
-  rup.SetIndex(7);
-  auto resulting_clause = formula.DeriveSubsumingClause(rup);
-  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
-                                        resulting_clause->cend());
-  unordered_set<int> desired_literals{-1, 2, 3};
-  REQUIRE(resulting_literals == desired_literals);
-  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
-  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
-}
-
-TEST_CASE("Formula::DeriveSubsumingClause - Example from Urquhart formula"
-          " with subsumption"){
-  Formula formula{3, 5};
-  Clause first_existing{4, -1};
-  first_existing.SetIndex(4);
-  formula.AddClause(first_existing);
-  Clause second_existing{5, -1, 2, 3};
-  second_existing.SetIndex(5);
-  formula.AddClause(second_existing);
-  Clause third_existing{-4, -5};
-  third_existing.SetIndex(6);
-  formula.AddClause(third_existing);
-  Clause rup{-1, 2, 3, 6};
-  rup.SetIndex(7);
-  auto resulting_clause = formula.DeriveSubsumingClause(rup);
-  unordered_set<int> resulting_literals(resulting_clause->cbegin(), 
-                                        resulting_clause->cend());
-  unordered_set<int> desired_literals{-1, 2, 3};
-  REQUIRE(resulting_literals == desired_literals);
-  REQUIRE(resulting_clause->GetIndex() == rup.GetIndex());
-  REQUIRE(resulting_clause->GetPositiveHints() == vector<int>{6,5,4});
+TEST_CASE("Formula::DeriveSubsumingClause"
+          " - Example from a proof of the hole20 formula."){
+  Clause a{548, -547};
+  a.SetIndex(4402);
+  Clause b{547, -545};
+  b.SetIndex(4400);
+  Clause c{546, 547};
+  c.SetIndex(4401);
+  Clause d{547, 539};
+  d.SetIndex(32827);
+  Clause e{547, 532};
+  e.SetIndex(32826);
+  Clause f{547, 525};
+  f.SetIndex(32825);
+  Clause g{547, 518};
+  g.SetIndex(32824);
+  Clause h{547, 511};
+  h.SetIndex(32823);
+  Clause i{547, 504};
+  i.SetIndex(32822);
+  Clause j{547, 497};
+  j.SetIndex(32821);
+  Clause k{547, 490};
+  k.SetIndex(32820);
+  Clause l{547, 483};
+  l.SetIndex(32819);
+  Clause m{547, 476};
+  m.SetIndex(32818);
+  Clause n{547, 469};
+  n.SetIndex(32817);
+  Clause o{547, 462};
+  o.SetIndex(32816);
+  Clause p{547, 455};
+  p.SetIndex(32815);
+  Clause q{547, 448};
+  q.SetIndex(32814);
+  Clause r{547, 441};
+  r.SetIndex(32813);
+  Clause s{547, 434};
+  s.SetIndex(32812);
+  Clause t{547, 427};
+  t.SetIndex(32811);
+  Clause u{-476, -525, -532, -455, -469, -546, 545, -427, -441, -462, 
+           -511, -434, -518, -490, -448, -497, 419, -539, -504, -483};
+  u.SetIndex(32789);
+  Formula formula{};
+  formula.AddClause(a);
+  formula.AddClause(b);
+  formula.AddClause(c);
+  formula.AddClause(d);
+  formula.AddClause(e);
+  formula.AddClause(f);
+  formula.AddClause(g);
+  formula.AddClause(h);
+  formula.AddClause(i);
+  formula.AddClause(j);
+  formula.AddClause(k);
+  formula.AddClause(l);
+  formula.AddClause(m);
+  formula.AddClause(n);
+  formula.AddClause(o);
+  formula.AddClause(p);
+  formula.AddClause(q);
+  formula.AddClause(r);
+  formula.AddClause(s);
+  formula.AddClause(t);
+  formula.AddClause(u);
+  Clause rup{548, 419};
+  rup.SetIndex(4403);
+  auto subsuming = formula.DeriveSubsumingClause(rup);
+  REQUIRE(subsuming != nullptr);
+  INFO("RUP is '" + rup.ToDimacs() + "', " 
+       "subsuming is '" + subsuming->ToDimacs() + "'");
+  REQUIRE(subsuming->IsSubclauseOf(rup));
 }

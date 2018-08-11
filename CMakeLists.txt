@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 project (ci)
 
-set (CMAKE_CXX_STANDARD 14)
-set (CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_BUILD_TYPE Debug)
 
 # General options
 include_directories(include)
@@ -18,13 +18,14 @@ add_library(lib_drat2er STATIC
 	src/formula_parser.cc
 	src/clause.cc
 	src/watch.cc
-	src/rat_eliminator.cc
 	src/rat_clause.cc
 	src/rup_clause.cc
 	src/deletion.cc
 	src/lrat_parser.cc
+	src/rat_eliminator.cc
   	src/proof_stat_collector.cc
 	src/deletion_eliminator.cc
+	src/rup_to_resolution_transformer.cc
 	src/simple_parser.cc
 	src/progress_bar.cc
 	)

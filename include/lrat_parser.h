@@ -21,6 +21,7 @@ class LratParserObserver
   virtual void HandleProperRatAddition(const RatClause& rat) = 0;
   virtual void HandleRupAddition(const RupClause& rup) = 0;
   virtual void HandleComment(const std::string& comment_line) = 0;
+  virtual void HandleExtension(const Clause& definition_clause){};
 };
 
 class LratParser
@@ -30,11 +31,14 @@ class LratParser
   void RegisterObserver(std::shared_ptr<LratParserObserver> observer);
   static bool IsProperRatAddition(const std::string& proof_line);
   static bool IsDeletion(const std::string& proof_line);
+  static bool IsExtension(const std::string& proof_line);
   static bool IsComment(const std::string& proof_line);
   static Deletion ParseDeletion(const std::string& proof_line);
   static RupClause ParseRup(const std::string& proof_line);
   static RatClause ParseProperRat(const std::string& proof_line);
+  static Clause ParseExtension(const std::string& proof_line);
   static bool ContainsNoLiterals(const std::string& proof_line);
+  static std::string RemoveE(const std::string& proof_line);
  private:
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 

@@ -31,12 +31,14 @@ namespace drat2er
 
 RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
                              int max_variable, int max_instruction,
-                             int number_of_proper_rats_overall) : 
+                             int number_of_proper_rats_overall,
+                             bool output_lrat) : 
                formula_{formula},
                max_variable_{max_variable},
                max_instruction_{max_instruction},
                number_of_proper_rats_{0},
                number_of_proper_rats_overall_{number_of_proper_rats_overall},
+               output_lrat_{output_lrat},
                output_stream_{output_file},
                old_to_new_literal_{},
                progress_bar_{}
@@ -151,28 +153,29 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
 void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
                                          const vector<Clause>& definition){
   int new_literal = *definition.front().cbegin();
-  for(auto& clause : formula_->Occurrences(-rat.GetPivot())){
+  for(auto& resolution_partner : formula_->Occurrences(-rat.GetPivot())){
     RupClause rup;
     rup.SetIndex(++max_instruction_);
-    for(auto literal : *clause){
+    for(auto literal : *resolution_partner){
       rup.AddLiteral(literal == -rat.GetPivot() ? -new_literal : literal);
     }
-    rup.AddPositiveHint(clause->GetIndex());
+    rup.AddPositiveHint(resolution_partner->GetIndex());
     for(int i = 2;i < definition.size();i++){
       rup.AddPositiveHint(definition[i].GetIndex());
     }
     for(auto hint : rat.GetPositiveHints()){
       rup.AddPositiveHint(hint);
     }
-    if(rat.GetNegativeHints().find(clause->GetIndex()) 
+    if(rat.GetNegativeHints().find(resolution_partner->GetIndex()) 
         != rat.GetNegativeHints().end()){
-      for(auto hint : rat.GetNegativeHints().at(clause->GetIndex())){
+      for(auto hint : rat.GetNegativeHints().at(
+            resolution_partner->GetIndex())){
         rup.AddPositiveHint(hint);
       }
     }    
     WriteRupToOutput(rup);
     formula_->AddClause(rup);
-    UpdateClauseRenaming(clause->GetIndex(), rup.GetIndex());
+    UpdateClauseRenaming(resolution_partner->GetIndex(), rup.GetIndex());
   }
 }  
 
@@ -277,8 +280,7 @@ void RatEliminator::UpdateMapping(unordered_map<int,int>& mapping,
 
 
 void RatEliminator::WriteRupToOutput(const RupClause& rup) {
-  bool lrat = false;
-  if(lrat){
+  if(output_lrat_){
     output_stream_ << rup.ToLrat() << endl;
   } else {
     output_stream_ << rup.ToDimacs() << endl;
@@ -287,8 +289,7 @@ void RatEliminator::WriteRupToOutput(const RupClause& rup) {
 
 void RatEliminator::WriteDefinitionToOutput(
                                       const vector<Clause>& definition){
-  bool lrat = false;
-  if(lrat){
+  if(output_lrat_){
     for(auto clause : definition){
       output_stream_ << clause.GetIndex() << " e " 
         << clause.ToDimacs() << endl;
@@ -301,8 +302,7 @@ void RatEliminator::WriteDefinitionToOutput(
 }
 
 void RatEliminator::WriteDeletionToOutput(const Deletion& deletion) {
-  bool lrat = false;
-  if(lrat){
+  if(output_lrat_){
     output_stream_ << deletion.GetIndex() << ' ';
     output_stream_ << "d ";
     for(auto index : deletion.GetClauseIndices()){
@@ -320,8 +320,7 @@ void RatEliminator::WriteDeletionToOutput(const Deletion& deletion) {
 
 void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
                                           int instruction_index){
-  bool lrat = false;
-  if(lrat){
+  if(output_lrat_){
     output_stream_ << instruction_index << ' ';
     output_stream_ << "d ";
     for(auto clause : clauses){

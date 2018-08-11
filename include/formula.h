@@ -36,8 +36,14 @@ using WatchList = std::vector<Watch>;
 
 class Formula
 {
+  //friend void swap(Formula& lhs, Formula& rhs);
+
  public:
-  Formula(int number_of_variables, int number_of_clauses);
+  Formula(int number_of_variables = 0, int number_of_clauses = 0);
+  //Formula(const Formula& other);
+  //Formula(Formula&& other);
+  //~Formula();
+  //Formula& operator=(Formula other);
   void AddClause(const Clause& clause);
   void AddClauses(const std::vector<Clause>& clauses);
   std::shared_ptr<Clause> GetClause(const int clause_index) const;

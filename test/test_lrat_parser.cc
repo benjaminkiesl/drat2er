@@ -161,3 +161,44 @@ TEST_CASE("LratParser::ParseDeletion - Multiple Clauses"){
   REQUIRE(deletion.GetIndex() == 1);
   REQUIRE(deletion.GetClauseIndices() == vector<int>{2, 3, 4, 5});
 }
+
+TEST_CASE("LratParser::ParseExtension - Single Spaces Around 'e'"){
+  Clause extension = LratParser::ParseExtension("1 e 2 3 4 0");
+  REQUIRE(extension.GetIndex() == 1);
+  REQUIRE(extension.GetLiterals() == vector<int>{2, 3, 4});
+}
+
+TEST_CASE("LratParser::ParseExtension - Several Spaces Before 'e'"){
+  Clause extension = LratParser::ParseExtension("1     e 2 3 4 0");
+  REQUIRE(extension.GetIndex() == 1);
+  REQUIRE(extension.GetLiterals() == vector<int>{2, 3, 4});
+}
+
+TEST_CASE("LratParser::ParseExtension - Several Spaces After 'e'"){
+  Clause extension = LratParser::ParseExtension("1 e      2 3 4 0");
+  REQUIRE(extension.GetIndex() == 1);
+  REQUIRE(extension.GetLiterals() == vector<int>{2, 3, 4});
+}
+
+TEST_CASE("LratParser::ParseExtension - Several Spaces Before and After 'e'"){
+  Clause extension = LratParser::ParseExtension("1   e    2 3 4 0");
+  REQUIRE(extension.GetIndex() == 1);
+  REQUIRE(extension.GetLiterals() == vector<int>{2, 3, 4});
+}
+
+TEST_CASE("LratParser::RemoveE - Single Spaces Around 'e'"){
+  REQUIRE(LratParser::RemoveE("1 e 2 3 4 0") == "1 2 3 4 0");
+}
+
+TEST_CASE("LratParser::RemoveE - Several Spaces Before 'e'"){
+  REQUIRE(LratParser::RemoveE("1   e 2 3 4 0") == "1 2 3 4 0");
+}
+
+TEST_CASE("LratParser::RemoveE - Several Spaces After 'e'"){
+  REQUIRE(LratParser::RemoveE("1 e     2 3 4 0") == "1 2 3 4 0");
+}
+
+TEST_CASE("LratParser::RemoveE - Several Spaces Before and After 'e'"){
+  REQUIRE(LratParser::RemoveE("1     e     2 3 4 0") == "1 2 3 4 0");
+}
+

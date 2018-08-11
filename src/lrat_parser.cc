@@ -27,6 +27,8 @@ void LratParser::ParseFile(const string& proof_file_path){
   while(getline(input_stream, proof_line)) {
     if(LratParser::IsDeletion(proof_line)){
       observer_->HandleDeletion(ParseDeletion(proof_line));
+    } else if(IsExtension(proof_line)){
+      observer_->HandleExtension(ParseExtension(proof_line));
     } else if(IsProperRatAddition(proof_line)){
       observer_->HandleProperRatAddition(ParseProperRat(proof_line));
     } else if(IsComment(proof_line)){
@@ -61,6 +63,11 @@ bool LratParser::IsProperRatAddition(const string& proof_line)
 bool LratParser::IsDeletion(const string& proof_line)
 {
   return proof_line.find('d') != string::npos;
+}
+
+bool LratParser::IsExtension(const string& proof_line)
+{
+  return proof_line.find('e') != string::npos;
 }
 
 bool LratParser::IsComment(const string& proof_line)
@@ -143,6 +150,23 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
   }
 
   return rat;
+}
+
+string LratParser::RemoveE(const string& proof_line){
+  assert(IsExtension(proof_line));
+  int index_of_first_space = proof_line.find(" ");
+  int index_of_e = proof_line.find("e"); 
+  int index_of_first_literal = proof_line.find_first_not_of(" ", index_of_e+1); 
+  return proof_line.substr(0, index_of_first_space + 1) + 
+    proof_line.substr(index_of_first_literal);
+}
+
+Clause LratParser::ParseExtension(const string& proof_line){
+  assert(IsExtension(proof_line));
+  Clause clause;
+  stringstream line_stream{RemoveE(proof_line)};
+  ParseClausePart(clause, line_stream);
+  return clause;
 }
 
 void LratParser::ParseClausePart(Clause& clause, stringstream& line_stream)

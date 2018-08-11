@@ -23,7 +23,8 @@ class RatEliminator : public LratParserObserver
  public:
   RatEliminator(std::string output_file, std::shared_ptr<Formula> formula,
                 int max_variable, int max_instruction,
-                int number_of_proper_rats_overall = 0);
+                int number_of_proper_rats_overall = 0,
+                bool output_lrat = true);
   virtual void HandleProperRatAddition(const RatClause& rat) override;
   virtual void HandleRupAddition(const RupClause& rup) override;
   virtual void HandleDeletion(const Deletion& deletion) override;
@@ -74,6 +75,7 @@ class RatEliminator : public LratParserObserver
   int max_instruction_;
   int number_of_proper_rats_;
   int number_of_proper_rats_overall_;
+  bool output_lrat_;
   std::ofstream output_stream_;
   std::unordered_map<int,int> old_to_new_literal_;
   std::unordered_map<int,int> new_to_old_literal_;

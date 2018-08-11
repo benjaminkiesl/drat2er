@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <vector>
+#include <unordered_set>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -11,6 +12,7 @@
 using std::string;
 using std::stringstream;
 using std::vector;
+using std::unordered_set;
 using std::cout;
 using std::endl;
 using std::max;
@@ -71,8 +73,19 @@ void Clause::AddLiteral(const int literal)
   literals_.emplace_back(literal);
 }
 
-bool Clause::IsUnit(){
+bool Clause::IsUnit() const {
   return literals_.size() == 1;
+}
+
+bool Clause::IsSubclauseOf(const Clause& other) const {
+  unordered_set<int> literals_of_clause(cbegin(), cend());
+  unordered_set<int> literals_of_other(other.cbegin(), other.cend());
+  for(auto literal : literals_of_clause){
+    if(literals_of_other.find(literal) == literals_of_other.end()){
+      return false;
+    }
+  }
+  return true;
 }
 
 int Clause::GetMaxVariable() const

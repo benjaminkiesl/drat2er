@@ -32,6 +32,10 @@ using std::endl;
 namespace drat2er
 {
 
+//void swap(Formula& lhs, Formula& rhs){
+//
+//}
+
 Formula::Formula(int number_of_variables, int number_of_clauses) :
 clauses_(number_of_clauses),
 unit_clauses_ {},
@@ -43,6 +47,17 @@ unit_clauses_ {},
               empty_occurrence_list_ {},
               next_clause_index_ {std::numeric_limits<int>::max()}
 { }
+
+//Formula::Formula(Formula&& other) : Formula()
+//{
+//  swap(*this, other);
+//}
+//
+//Formula& Formula::operator=(Formula other)
+//{
+//  swap(*this, other);
+//  return *this;
+//}
 
 void Formula::AddClauses(const vector<Clause>& clauses)
 {
@@ -221,7 +236,7 @@ bool Formula::Propagate()
     auto& watches = Watches(literal);
     for(auto& watch : watches) {
       auto clause = watch.GetClause();
-      if(watch.GetBlockingLiteral() != 0) {
+      if(TruthValue(watch.GetBlockingLiteral()) != 0) {
         continue;
       } else if(clause->size() == 1) {
         resolution_graph_[clause].emplace_back(unit_clause, literal, 
@@ -285,6 +300,18 @@ unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup){
   } 
 
   if(!Propagate()){
+    cout << "Resolution graph (size=" << resolution_graph_.size() << "): " 
+      << endl;
+    for(auto clause_reasons : resolution_graph_){
+      auto clause = clause_reasons.first;
+      auto reasons = clause_reasons.second;
+      cout << clause->GetIndex() << "|'" << clause->ToDimacs() << "': ";
+      for(auto reason : reasons){
+        cout << reason.clause->GetIndex() << "@" << reason.propagation_step <<
+          "|'" << reason.clause->ToDimacs() << "', ";
+      }
+      cout << endl;
+    }
     priority_queue<Reason> reason_queue;
 
     RupClause subsuming_rup;

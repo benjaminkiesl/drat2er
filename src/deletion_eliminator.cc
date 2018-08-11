@@ -22,11 +22,11 @@ void DeletionEliminator::HandleDeletion(const Deletion& deletion){
 } 
 
 void DeletionEliminator::HandleProperRatAddition(const RatClause& rat){
-  output_stream_ << rat.ToDimacs() << endl;
+  output_stream_ << rat.ToLrat() << endl;
 }
 
 void DeletionEliminator::HandleRupAddition(const RupClause& rup){
-  output_stream_ << rup.ToDimacs() << endl;
+  output_stream_ << rup.ToLrat() << endl;
 }
 
 void DeletionEliminator::HandleComment(const string& comment_line){
