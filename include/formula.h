@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <deque>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include "watch.h"
@@ -20,16 +21,11 @@ class RupClause;
 
 struct Reason {
   Reason(std::shared_ptr<Clause> clause=nullptr, 
-         int literal=0, 
-         int propagation_step = 0) : clause(clause), 
-                                     literal(literal),
-                                     propagation_step(propagation_step){}
+         int literal=0) : clause(clause), 
+                          literal(literal) {}
   std::shared_ptr<Clause> clause;
   int literal;
-  int propagation_step;
 };
-
-bool operator<(const Reason& lhs, const Reason& rhs);
 
 using OccurrenceList = std::vector<std::shared_ptr<Clause>>;
 using WatchList = std::vector<Watch>;
@@ -73,8 +69,9 @@ class Formula
   std::unordered_map<int, WatchList> watch_table_;
   std::unordered_map<int, int> assignment_;
   std::shared_ptr<Clause> conflict_;
-  std::unordered_map<std::shared_ptr<Clause>, std::vector<Reason>> 
-    resolution_graph_;
+  //std::unordered_map<std::shared_ptr<Clause>, std::vector<Reason>> 
+  //  resolution_graph_;
+  std::stack<Reason> resolution_stack_;
   const OccurrenceList empty_occurrence_list_;
   int next_clause_index_;
 };

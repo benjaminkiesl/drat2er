@@ -16,6 +16,7 @@ using std::unordered_set;
 using std::cout;
 using std::endl;
 using std::max;
+using std::find;
 using std::max_element;
 using std::abs;
 using std::initializer_list;
@@ -71,6 +72,11 @@ void Clause::SetLiterals(const vector<int>& literals)
 void Clause::AddLiteral(const int literal)
 {
   literals_.emplace_back(literal);
+}
+
+bool Clause::ContainsLiteral(int literal){
+  return find(literals_.begin(), literals_.end(), literal) !=
+    literals_.end();
 }
 
 bool Clause::IsUnit() const {

@@ -27,6 +27,7 @@ class Clause
   const std::vector<int>& GetLiteralsConst() const;
   void SetLiterals(const std::vector<int>& literals);
   void AddLiteral(int literal);
+  bool ContainsLiteral(int literal);
   bool IsUnit() const;
   bool IsSubclauseOf(const Clause& other) const;
   int GetMaxVariable() const;
