@@ -2,25 +2,23 @@
 #define DRAT2ER_DELETION_ELIMINATOR_H_
 
 #include <string>
-#include <vector>
-#include <fstream>
-#include "lrat_parser.h"
+#include "proof_transformer.h"
 
 namespace drat2er
 {
 
-class DeletionEliminator : public LratParserObserver
+class DeletionEliminator : public ProofTransformer
 {
- public:
-  DeletionEliminator(std::string output_file);
-  virtual void ObserveDeletion(const Deletion& deletion) override;
-  virtual void ObserveProperRatAddition(const RatClause& rat) override;
-  virtual void ObserveRupAddition(const RupClause& rup) override;
-  virtual void ObserveComment(const std::string& comment_line) override;
- private:
-  std::ofstream output_stream_;
+
+ protected:
+  virtual void HandleDeletion(const Deletion& deletion) override;
+  virtual void HandleProperRatAddition(const RatClause& rat) override;
+  virtual void HandleRupAddition(const RupClause& rup) override;
+  virtual void HandleComment(const std::string& comment_line) override;
+  virtual void HandleExtension(const Clause& clause) override;
+
 };
 
-}// namespace
+} // namespace
 
 #endif

@@ -1,36 +1,30 @@
 #include "deletion_eliminator.h"
-#include <vector>
-#include <fstream>
 #include "clause.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
-#include "lrat_parser.h"
 #include "deletion.h"
-
-using std::string;
-using std::vector;
-using std::endl;
 
 namespace drat2er
 {
 
-DeletionEliminator::DeletionEliminator(std::string output_file) 
-                                     : output_stream_{output_file}{}
-
-void DeletionEliminator::ObserveDeletion(const Deletion& deletion){
-  // do nothing
-} 
-
-void DeletionEliminator::ObserveProperRatAddition(const RatClause& rat){
-  output_stream_ << rat.ToLrat() << endl;
+void HandleDeletion(const Deletion& deletion){
+  // Do nothing, i.e., do not write the deletion to the output.
 }
 
-void DeletionEliminator::ObserveRupAddition(const RupClause& rup){
-  output_stream_ << rup.ToLrat() << endl;
+void DeletionEliminator::HandleProperRatAddition(const RatClause& rat){
+  WriteClauseToOutput(rat);
 }
 
-void DeletionEliminator::ObserveComment(const string& comment_line){
-  output_stream_ << comment_line << endl;
+void DeletionEliminator::HandleExtension(const Clause& extension){
+  WriteClauseToOutput(extension);
+}
+
+void DeletionEliminator::HandleRupAddition(const RupClause& rup){
+  WriteClauseToOutput(rup);
+}
+
+void DeletionEliminator::HandleComment(const std::string& comment_line){
+  OutputStream() << comment_line << std::endl;
 }
 
 } // namespace

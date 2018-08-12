@@ -101,10 +101,8 @@ int main (int argc, char *argv[])
   rup_to_resolution_transformer.Transform(kOutputERUP, kOutputER);
 
   cout << "drat2er: Renaming clause indices incrementally..." << endl;
-  ProofStepRenamer incremental_proof_step_renamer(kOutputERRenamed, 
-                                                  size_of_original_formula);
-  lrat_parser.RegisterObserver(&incremental_proof_step_renamer);
-  lrat_parser.ParseFile(kOutputER);
+  ProofStepRenamer incremental_proof_step_renamer(size_of_original_formula);
+  incremental_proof_step_renamer.Transform(kOutputER, kOutputERRenamed);
   
   cout << "drat2er: Proof successfully transformed." << endl;
 
