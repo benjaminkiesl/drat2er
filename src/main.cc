@@ -97,10 +97,8 @@ int main (int argc, char *argv[])
   std::shared_ptr<Formula> original_formula = 
     parser.ParseFormula(kInputFormula);
 
-  RupToResolutionTransformer rup_to_resolution_transformer(kOutputER,
-                                                           original_formula);
-  lrat_parser.RegisterObserver(&rup_to_resolution_transformer);
-  lrat_parser.ParseFile(kOutputERUP);
+  RupToResolutionTransformer rup_to_resolution_transformer(original_formula);
+  rup_to_resolution_transformer.Transform(kOutputERUP, kOutputER);
 
   cout << "drat2er: Renaming clause indices incrementally..." << endl;
   ProofStepRenamer incremental_proof_step_renamer(kOutputERRenamed, 
