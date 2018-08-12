@@ -3,11 +3,9 @@
 
 #include <string>
 #include <memory>
-#include <fstream>
 #include <vector>
 #include <unordered_map>
-#include "lrat_parser.h"
-#include "progress_bar.h"
+#include "proof_transformer.h"
 
 namespace drat2er
 {
@@ -16,19 +14,17 @@ class Formula;
 class Clause;
 class RupClause;
 class RatClause;
-class ProgressBar;
 
-class RatEliminator : public LratParserObserver
+class RatEliminator : public ProofTransformer
 {
  public:
-  RatEliminator(std::string output_file, std::shared_ptr<Formula> formula,
-                int max_variable, int max_instruction,
-                int number_of_proper_rats_overall = 0,
-                bool output_lrat = true);
-  virtual void ObserveProperRatAddition(const RatClause& rat) override;
-  virtual void ObserveRupAddition(const RupClause& rup) override;
-  virtual void ObserveDeletion(const Deletion& deletion) override;
-  virtual void ObserveComment(const std::string& comment_line) override;
+  RatEliminator(std::shared_ptr<Formula> formula, 
+                int max_variable,
+                int max_instruction);
+
+  virtual void HandleProperRatAddition(const RatClause& rat) override;
+  virtual void HandleRupAddition(const RupClause& rup) override;
+  virtual void HandleDeletion(const Deletion& deletion) override;
 
   void ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
@@ -60,7 +56,6 @@ class RatEliminator : public LratParserObserver
   void DeleteClausesWithOldVariable(const int old_variable,
                                     const std::vector<Clause>& definition);
 
-  void WriteRupToOutput(const RupClause& rup);
   void WriteDefinitionToOutput(const std::vector<Clause>& definition);
   void WriteDeletionToOutput(const Deletion& deletion);
   void WriteDeletionToOutput(const std::vector<Clause>& clauses,
@@ -68,20 +63,14 @@ class RatEliminator : public LratParserObserver
   static void UpdateMapping(std::unordered_map<int,int>& mapping,
                             std::unordered_map<int,int>& inverse_mapping, 
                             const int old_value, const int new_value);
-  void PrintProgress(int number_of_proper_rats_eliminated);
 
   std::shared_ptr<Formula> formula_;
   int max_variable_;
   int max_instruction_;
-  int number_of_proper_rats_;
-  int number_of_proper_rats_overall_;
-  bool output_lrat_;
-  std::ofstream output_stream_;
   std::unordered_map<int,int> old_to_new_literal_;
   std::unordered_map<int,int> new_to_old_literal_;
   std::unordered_map<int,int> old_to_new_clause_;
   std::unordered_map<int,int> new_to_old_clause_;
-  ProgressBar progress_bar_;
 };
 
 }// namespace

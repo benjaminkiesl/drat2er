@@ -28,7 +28,7 @@ void LratParser::ParseFile(const string& proof_file_path){
   ifstream input_stream {proof_file_path, ifstream::in};
   string proof_line;
   while(getline(input_stream, proof_line)) {
-    if(LratParser::IsDeletion(proof_line)){
+    if(IsDeletion(proof_line)){
       observer_->ObserveDeletion(ParseDeletion(proof_line));
     } else if(IsExtension(proof_line)){
       observer_->ObserveExtension(ParseExtension(proof_line));

@@ -8,7 +8,7 @@ namespace drat2er
 {
 
 void HandleDeletion(const Deletion& deletion){
-  // Do nothing, i.e., do not write the deletion to the output.
+  // Do nothing: do not write the deletion to the output.
 }
 
 void DeletionEliminator::HandleProperRatAddition(const RatClause& rat){

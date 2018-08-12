@@ -9,7 +9,7 @@ using namespace drat2er;
 using std::vector;
 
 TEST_CASE("RatEliminator::FirstDefinitionClause Ternary RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -20,7 +20,7 @@ TEST_CASE("RatEliminator::FirstDefinitionClause Ternary RAT"){
 }
 
 TEST_CASE("RatEliminator::FirstDefinitionClause Ternary RAT, Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -31,7 +31,7 @@ TEST_CASE("RatEliminator::FirstDefinitionClause Ternary RAT, Negated Pivot"){
 }
 
 TEST_CASE("RatEliminator::FirstDefinitionClause Unit RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -42,7 +42,7 @@ TEST_CASE("RatEliminator::FirstDefinitionClause Unit RAT"){
 }
 
 TEST_CASE("RatEliminator::FirstDefinitionClause Unit RAT, Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -53,7 +53,7 @@ TEST_CASE("RatEliminator::FirstDefinitionClause Unit RAT, Negated Pivot"){
 }
 
 TEST_CASE("RatEliminator::SecondDefinitionClause Ternary RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -64,7 +64,7 @@ TEST_CASE("RatEliminator::SecondDefinitionClause Ternary RAT"){
 }
 
 TEST_CASE("RatEliminator::SecondDefinitionClause Ternary RAT, Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -75,7 +75,7 @@ TEST_CASE("RatEliminator::SecondDefinitionClause Ternary RAT, Negated Pivot"){
 }
 
 TEST_CASE("RatEliminator::SecondDefinitionClause Unit RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -86,7 +86,7 @@ TEST_CASE("RatEliminator::SecondDefinitionClause Unit RAT"){
 }
 
 TEST_CASE("RatEliminator::SecondDefinitionClause Unit RAT, Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -97,7 +97,7 @@ TEST_CASE("RatEliminator::SecondDefinitionClause Unit RAT, Negated Pivot"){
 }
 
 TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Ternary RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -114,7 +114,7 @@ TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Ternary RAT"){
 
 TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Ternary RAT"
           ", Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 4;
   RatClause rat{pivot, 2, 3};
@@ -130,7 +130,7 @@ TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Ternary RAT"
 }
 
 TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Unit RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = 1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -140,7 +140,7 @@ TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Unit RAT"){
 
 TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Unit RAT"
           ", Negated Pivot"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int pivot = -1;
   const int new_variable = 2;
   RatClause rat{pivot};
@@ -149,7 +149,7 @@ TEST_CASE("RatEliminator::ThirdBlockOfDefinitionClauses Unit RAT"
 }
 
 TEST_CASE("RatEliminator::CorrespondingDefinition Ternary RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int new_variable = 4;
   RatClause rat{1, 2, 3};
   
@@ -166,7 +166,7 @@ TEST_CASE("RatEliminator::CorrespondingDefinition Ternary RAT"){
 }
 
 TEST_CASE("RatEliminator::CorrespondingDefinition Unary RAT"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   const int new_variable = 2;
   RatClause rat{1};
   
@@ -179,14 +179,14 @@ TEST_CASE("RatEliminator::CorrespondingDefinition Unary RAT"){
 }
 
 TEST_CASE("RatEliminator::RenameLiteral - Single renaming"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   REQUIRE(1 == eliminator.RenameLiteral(1));
   eliminator.UpdateLiteralRenaming(1, 2);
   REQUIRE(2 == eliminator.RenameLiteral(1));
 }
 
 TEST_CASE("RatEliminator::RenameLiteral - Double renaming"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   REQUIRE(1 == eliminator.RenameLiteral(1));
   eliminator.UpdateLiteralRenaming(1, 2);
   eliminator.UpdateLiteralRenaming(2, 3);
@@ -194,7 +194,7 @@ TEST_CASE("RatEliminator::RenameLiteral - Double renaming"){
 }
 
 TEST_CASE("RatEliminator::RenameLiteral - Quadruple renaming"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   REQUIRE(1 == eliminator.RenameLiteral(1));
   eliminator.UpdateLiteralRenaming(1, 2);
   eliminator.UpdateLiteralRenaming(2, 3);
@@ -204,7 +204,7 @@ TEST_CASE("RatEliminator::RenameLiteral - Quadruple renaming"){
 }
 
 TEST_CASE("RatEliminator::RenameRup - Literal Renaming"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   RupClause original{1, 2, 3};
   REQUIRE(eliminator.RenameRup(original).GetLiterals() == 
       original.GetLiterals()); 
@@ -217,7 +217,7 @@ TEST_CASE("RatEliminator::RenameRup - Literal Renaming"){
 }
 
 TEST_CASE("RatEliminator::RenameRup - Positive Hints"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   RupClause original{1, 2, 3};
   original.AddPositiveHint(4);
   original.AddPositiveHint(5);
@@ -234,7 +234,7 @@ TEST_CASE("RatEliminator::RenameRup - Positive Hints"){
 }
 
 TEST_CASE("RatEliminator::RenameRat - Negative Hints"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   RatClause original{1, 2, 3};
   original.AddPositiveHint(4);
   original.AddPositiveHint(5);
@@ -251,7 +251,7 @@ TEST_CASE("RatEliminator::RenameRat - Negative Hints"){
 }
 
 TEST_CASE("RatEliminator::RenameRat - Positive Hints"){
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   RatClause original{1, 2, 3};
   original.AddNegativeHint(4, vector<int>{5, 6, 7});
   original.AddNegativeHint(8, vector<int>{9, 10, 11});
@@ -274,7 +274,7 @@ TEST_CASE("RatEliminator::RenameRat - Positive Hints"){
 }
 
 TEST_CASE("RatEliminator::RenameDeletion") {
-  RatEliminator eliminator{"", nullptr, 0, 0};
+  RatEliminator eliminator(nullptr, 0, 0);
   Deletion original;
   original.SetIndex(1);
   original.AddClauseIndex(2);

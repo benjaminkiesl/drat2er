@@ -26,12 +26,6 @@ const string output_folder_name = "/home/benjamin/Documents/drat2er/temp/";
 
 const string kDRATTrimPath = "/media/DATA/code/drat-trim/drat-trim";
 
-//void process_proof(std::shared_ptr<LratParser> proof_parser,
-//                   std::shared_ptr<LratParserObserver> proof_transformer,
-//                   const std::string& input_file_path,
-//                   const std::string& output_file_path){
-//}
-
 void eliminate_deletions(const std::string& input_file,
                          const std::string& output_file){
 
@@ -84,11 +78,9 @@ int main (int argc, char *argv[])
   lrat_parser.ParseFile(kOutputLRAT);
   
   cout << "drat2er: Eliminating proper RAT additions..." << endl;
-  RatEliminator rat_eliminator(kOutputEDRUP, formula, 
-        stat_collector.GetMaxVariable(), stat_collector.GetMaxInstruction(),
-        stat_collector.GetNumberOfProperRatAdditions());
-  lrat_parser.RegisterObserver(&rat_eliminator);
-  lrat_parser.ParseFile(kOutputLRAT);
+  RatEliminator rat_eliminator(formula, stat_collector.GetMaxVariable(),
+                                        stat_collector.GetMaxInstruction());
+  rat_eliminator.Transform(kOutputLRAT, kOutputEDRUP);
   
   cout << "drat2er: Eliminating deletions..." << endl;
   eliminate_deletions(kOutputEDRUP, kOutputERUP);
