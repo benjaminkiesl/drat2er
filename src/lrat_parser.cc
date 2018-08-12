@@ -22,24 +22,27 @@ namespace drat2er
 {
 
 void LratParser::ParseFile(const string& proof_file_path){
+  if(observer_ == nullptr){
+    return;
+  }
   ifstream input_stream {proof_file_path, ifstream::in};
   string proof_line;
   while(getline(input_stream, proof_line)) {
     if(LratParser::IsDeletion(proof_line)){
-      observer_->HandleDeletion(ParseDeletion(proof_line));
+      observer_->ObserveDeletion(ParseDeletion(proof_line));
     } else if(IsExtension(proof_line)){
-      observer_->HandleExtension(ParseExtension(proof_line));
+      observer_->ObserveExtension(ParseExtension(proof_line));
     } else if(IsProperRatAddition(proof_line)){
-      observer_->HandleProperRatAddition(ParseProperRat(proof_line));
+      observer_->ObserveProperRatAddition(ParseProperRat(proof_line));
     } else if(IsComment(proof_line)){
-      observer_->HandleComment(proof_line);
+      observer_->ObserveComment(proof_line);
     } else {
-      observer_->HandleRupAddition(ParseRup(proof_line));
+      observer_->ObserveRupAddition(ParseRup(proof_line));
     }
   }
 }
 
-void LratParser::RegisterObserver(shared_ptr<LratParserObserver> observer){
+void LratParser::RegisterObserver(LratParserObserver* observer){
   observer_ = observer;
 }
 

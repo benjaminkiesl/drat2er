@@ -74,7 +74,7 @@ void RatClause::ClearNegativeHints() {
 string RatClause::ToLrat() const
 {
   stringstream ss;
-  ss << Clause::ToLrat() << ' ';
+  ss << GetIndex() << ' ' << Clause::ToDimacs() << ' ';
   for(auto hint : positive_hints_){
     ss << hint << ' ';
   }

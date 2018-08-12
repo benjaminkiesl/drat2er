@@ -5,9 +5,13 @@ namespace drat2er {
 
 class ProgressBar {
   public:
-    ProgressBar(int width=22);
+    ProgressBar(int overall_number_of_items=1, int width=22);
+    int GetOverallNumberOfItems(int overall_number_of_items);
+    void SetOverallNumberOfItems(int overall_number_of_items);
+    void PrintProgress(int number_of_items_processed);
     void PrintProgress(double percentage);
   private:
+    int overall_number_of_items_;
     int width_;
 };
 

@@ -24,6 +24,14 @@ using std::initializer_list;
 namespace drat2er
 {
 
+void swap(Clause& lhs, Clause& rhs)
+{
+  using std::swap;
+  swap(lhs.index_, rhs.index_);
+  swap(lhs.literals_, rhs.literals_);
+}
+
+
 Clause::Clause() : index_ {-1}, literals_ {} { }
 
 Clause::Clause(initializer_list<int> literals) : Clause() {
@@ -31,6 +39,9 @@ Clause::Clause(initializer_list<int> literals) : Clause() {
     AddLiteral(literal);
   }
 }
+
+Clause::Clause(const Clause& other) : index_{other.index_},
+                                      literals_(other.literals_){}
 
 Clause::Clause(Clause&& other) : Clause()
 {
@@ -121,15 +132,8 @@ string Clause::ToDimacs() const
 string Clause::ToLrat() const
 {
   stringstream ss;
-  ss << index_ << ' ' << ToDimacs();
+  ss << index_ << ' ' << ToDimacs() << " 0";
   return ss.str();
-}
-
-void swap(Clause& lhs, Clause& rhs)
-{
-  using std::swap;
-  swap(lhs.index_, rhs.index_);
-  swap(lhs.literals_, rhs.literals_);
 }
 
 std::ostream& operator<< (std::ostream& stream, const Clause& clause){

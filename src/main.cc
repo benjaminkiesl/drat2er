@@ -7,6 +7,7 @@
 #include "formula_parser.h"
 #include "rat_eliminator.h"
 #include "rup_to_resolution_transformer.h"
+#include "proof_step_renamer.h"
 #include "lrat_parser.h"
 #include "proof_stat_collector.h"
 #include "deletion_eliminator.h"
@@ -57,7 +58,9 @@ int main (int argc, char *argv[])
   const string kOutputLRAT = output_folder_name + file_name + ".lrat";
   const string kOutputEDRUP = output_folder_name + file_name + ".edrup";
   const string kOutputERUP = output_folder_name + file_name + ".erup";
-  const string kOutputER = output_folder_name + file_name + ".er";
+  const string kOutputER = output_folder_name + file_name + "_unrenamed.er";
+  const string kOutputERRenamed = output_folder_name + file_name + ".er";
+  const string kOutputERTrimmed = output_folder_name + file_name + "_trimmed.er";
 
   cout << "drat2er: Parsing Formula..." << endl;
   FormulaParser parser {};
@@ -66,6 +69,7 @@ int main (int argc, char *argv[])
     std::cerr << "File '" << kInputFormula << "' could not be opened." << endl;
     return 1;
   }
+  int size_of_original_formula = formula->GetClauses().size();
   
   cout << "drat2er: Verifying DRAT proof and converting it to" 
           " LRAT format using drat-trim..." << endl;
@@ -75,16 +79,15 @@ int main (int argc, char *argv[])
   
   LratParser lrat_parser{};
   
-  auto stat_collector = std::make_shared<ProofStatCollector>(formula);
-  lrat_parser.RegisterObserver(stat_collector);
+  ProofStatCollector stat_collector(formula);
+  lrat_parser.RegisterObserver(&stat_collector);
   lrat_parser.ParseFile(kOutputLRAT);
   
   cout << "drat2er: Eliminating proper RAT additions..." << endl;
-  auto rat_eliminator = 
-    std::make_shared<RatEliminator>(kOutputEDRUP, formula, 
-        stat_collector->GetMaxVariable(), stat_collector->GetMaxInstruction(),
-        stat_collector->GetNumberOfProperRatAdditions());
-  lrat_parser.RegisterObserver(rat_eliminator);
+  RatEliminator rat_eliminator(kOutputEDRUP, formula, 
+        stat_collector.GetMaxVariable(), stat_collector.GetMaxInstruction(),
+        stat_collector.GetNumberOfProperRatAdditions());
+  lrat_parser.RegisterObserver(&rat_eliminator);
   lrat_parser.ParseFile(kOutputLRAT);
   
   cout << "drat2er: Eliminating deletions..." << endl;
@@ -94,12 +97,24 @@ int main (int argc, char *argv[])
   std::shared_ptr<Formula> original_formula = 
     parser.ParseFormula(kInputFormula);
 
-  auto rup_to_resolution_transformer =
-    std::make_shared<RupToResolutionTransformer>(kOutputER, original_formula);
-  lrat_parser.RegisterObserver(rup_to_resolution_transformer);
+  RupToResolutionTransformer rup_to_resolution_transformer(kOutputER,
+                                                           original_formula);
+  lrat_parser.RegisterObserver(&rup_to_resolution_transformer);
   lrat_parser.ParseFile(kOutputERUP);
+
+  cout << "drat2er: Renaming clause indices incrementally..." << endl;
+  ProofStepRenamer incremental_proof_step_renamer(kOutputERRenamed, 
+                                                  size_of_original_formula);
+  lrat_parser.RegisterObserver(&incremental_proof_step_renamer);
+  lrat_parser.ParseFile(kOutputER);
   
   cout << "drat2er: Proof successfully transformed." << endl;
+
+  //cout << "drat2er: Verifying final proof with drat-trim..." << endl;
+  //auto drat_trim_verification_call = kDRATTrimPath + " " + 
+  //  kInputFormula + " -b " + kOutputER + " " + kOutputERTrimmed;
+  //system(drat_trim_verification_call.c_str());
+
   return 0;
 }
 

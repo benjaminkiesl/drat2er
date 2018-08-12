@@ -58,19 +58,19 @@ TEST_CASE("Clause::ToDimacs Longer Clause"){
 TEST_CASE("Clause::ToLrat Empty Clause"){
   Clause empty{};
   empty.SetIndex(1);
-  REQUIRE(empty.ToLrat() == "1 0");
+  REQUIRE(empty.ToLrat() == "1 0 0");
 }
 
 TEST_CASE("Clause::ToLrat Unary Clause"){
   Clause unit{-1};
   unit.SetIndex(1);
-  REQUIRE(unit.ToLrat() == "1 -1 0");
+  REQUIRE(unit.ToLrat() == "1 -1 0 0");
 }
 
 TEST_CASE("Clause::ToLrat Longer Clause"){
   Clause clause{1, -2, -3, 4, 5};
   clause.SetIndex(1);
-  REQUIRE(clause.ToLrat() == "1 1 -2 -3 4 5 0");
+  REQUIRE(clause.ToLrat() == "1 1 -2 -3 4 5 0 0");
 }
 
 TEST_CASE("Clause::GetMaxVariable Default Constructor + AddLiteral"){

@@ -17,18 +17,18 @@ class Deletion;
 class LratParserObserver
 {
  public:
-  virtual void HandleDeletion(const Deletion& deletion) = 0;
-  virtual void HandleProperRatAddition(const RatClause& rat) = 0;
-  virtual void HandleRupAddition(const RupClause& rup) = 0;
-  virtual void HandleComment(const std::string& comment_line) = 0;
-  virtual void HandleExtension(const Clause& definition_clause){};
+  virtual void ObserveDeletion(const Deletion& deletion) = 0;
+  virtual void ObserveProperRatAddition(const RatClause& rat) = 0;
+  virtual void ObserveRupAddition(const RupClause& rup) = 0;
+  virtual void ObserveComment(const std::string& comment_line) = 0;
+  virtual void ObserveExtension(const Clause& definition_clause){};
 };
 
 class LratParser
 {
  public:
   void ParseFile(const std::string& proof_file_path);
-  void RegisterObserver(std::shared_ptr<LratParserObserver> observer);
+  void RegisterObserver(LratParserObserver* observer);
   static bool IsProperRatAddition(const std::string& proof_line);
   static bool IsDeletion(const std::string& proof_line);
   static bool IsExtension(const std::string& proof_line);
@@ -42,7 +42,7 @@ class LratParser
  private:
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 
-  std::shared_ptr<LratParserObserver> observer_;
+  LratParserObserver* observer_;
 };
 
 } // namespace

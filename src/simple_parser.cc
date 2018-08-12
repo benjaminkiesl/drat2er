@@ -22,14 +22,14 @@ namespace drat2er {
 
 SimpleParser::SimpleParser(shared_ptr<Formula> formula) : formula_(formula){}
 
-void SimpleParser::HandleDeletion(const Deletion& deletion){
+void SimpleParser::ObserveDeletion(const Deletion& deletion){
   formula_->DeleteClauses(deletion.GetClauseIndices());
   for(auto index : deletion.GetClauseIndices()){
     deleted_clauses_.insert(index);
   }
 } 
 
-void SimpleParser::HandleProperRatAddition(const RatClause& rat){
+void SimpleParser::ObserveProperRatAddition(const RatClause& rat){
   if(rat.GetNegativeHints().size() != 
      formula_->Occurrences(-rat.GetPivot()).size()){
     cout << "Number of negative hints (" << rat.GetNegativeHints().size() <<
@@ -60,12 +60,12 @@ void SimpleParser::HandleProperRatAddition(const RatClause& rat){
   added_clauses_.insert(rat.GetIndex());
 }
 
-void SimpleParser::HandleRupAddition(const RupClause& rup){
+void SimpleParser::ObserveRupAddition(const RupClause& rup){
   formula_->AddClause(rup);
   added_clauses_.insert(rup.GetIndex());
 }
 
-void SimpleParser::HandleComment(const string& comment_line){
+void SimpleParser::ObserveComment(const string& comment_line){
   // do nothing
 }
 

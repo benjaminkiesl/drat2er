@@ -17,7 +17,7 @@ class Clause
  public:
   Clause();
   Clause(std::initializer_list<int> literals);
-  Clause(const Clause& other) = default;
+  Clause(const Clause& other);
   Clause(Clause&& other);
   Clause& operator=(Clause other);
   

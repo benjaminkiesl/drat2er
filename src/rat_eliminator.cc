@@ -44,25 +44,25 @@ RatEliminator::RatEliminator(string output_file, shared_ptr<Formula> formula,
                progress_bar_{}
                { }
 
-void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
+void RatEliminator::ObserveProperRatAddition(const RatClause& unrenamed_rat){
   auto rat = RenameRat(unrenamed_rat);
   ReplaceByDefinitionRUPsAndDeletions(rat);
   PrintProgress(++number_of_proper_rats_);
 }
 
-void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
+void RatEliminator::ObserveRupAddition(const RupClause& unrenamed_rup){
   auto rup = RenameRup(unrenamed_rup);
   formula_->AddClause(rup);
   WriteRupToOutput(rup);
 }
 
-void RatEliminator::HandleDeletion(const Deletion& unrenamed_deletion){
+void RatEliminator::ObserveDeletion(const Deletion& unrenamed_deletion){
   auto deletion = RenameDeletion(unrenamed_deletion);
   formula_->DeleteClauses(deletion.GetClauseIndices());
   WriteDeletionToOutput(deletion);
 } 
 
-void RatEliminator::HandleComment(const string& comment_line){
+void RatEliminator::ObserveComment(const string& comment_line){
   // do nothing
 }
 

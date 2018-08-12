@@ -56,27 +56,27 @@ int ProofStatCollector::GetNumberOfDeletions(){
   return number_of_deletions_;
 }
 
-void ProofStatCollector::HandleDeletion(const Deletion& deletion){
+void ProofStatCollector::ObserveDeletion(const Deletion& deletion){
   max_instruction_ = max(max_instruction_, deletion.GetIndex());
   number_of_deletions_++;
   number_of_instructions_++;
 } 
 
-void ProofStatCollector::HandleProperRatAddition(const RatClause& rat){
+void ProofStatCollector::ObserveProperRatAddition(const RatClause& rat){
   max_variable_ = max(max_variable_, rat.GetMaxVariable());
   max_instruction_ = max(max_instruction_, rat.GetIndex());
   number_of_proper_rat_additions_++;
   number_of_instructions_++;
 }
 
-void ProofStatCollector::HandleRupAddition(const RupClause& rup){
+void ProofStatCollector::ObserveRupAddition(const RupClause& rup){
   max_variable_ = max(max_variable_, rup.GetMaxVariable());
   max_instruction_ = max(max_instruction_, rup.GetIndex());
   number_of_rup_additions_++;
   number_of_instructions_++;
 }
 
-void ProofStatCollector::HandleComment(const string& comment_line){
+void ProofStatCollector::ObserveComment(const string& comment_line){
   // do nothing
 }
 

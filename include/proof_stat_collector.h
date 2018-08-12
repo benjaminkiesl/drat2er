@@ -24,10 +24,10 @@ class ProofStatCollector : public LratParserObserver
   int GetNumberOfProperRatAdditions();
   int GetNumberOfRupAdditions();
   int GetNumberOfDeletions();
-  virtual void HandleDeletion(const Deletion& deletion) override;
-  virtual void HandleProperRatAddition(const RatClause& rat) override;
-  virtual void HandleRupAddition(const RupClause& rup) override;
-  virtual void HandleComment(const std::string& comment_line) override;
+  virtual void ObserveDeletion(const Deletion& deletion) override;
+  virtual void ObserveProperRatAddition(const RatClause& rat) override;
+  virtual void ObserveRupAddition(const RupClause& rup) override;
+  virtual void ObserveComment(const std::string& comment_line) override;
 
  private:
   std::shared_ptr<Formula> formula_;

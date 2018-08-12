@@ -46,7 +46,7 @@ const std::vector<int>& RupClause::GetPositiveHints() const{
 string RupClause::ToLrat() const
 {
   stringstream ss;
-  ss << Clause::ToLrat() << ' ';
+  ss << GetIndex() << ' ' << Clause::ToDimacs() << ' ';
   for(auto hint : positive_hints_){
     ss << hint << ' ';
   }

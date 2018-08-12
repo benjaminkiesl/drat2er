@@ -19,10 +19,10 @@ class SimpleParser : public LratParserObserver
 {
  public:
   SimpleParser(std::shared_ptr<Formula> formula);
-  virtual void HandleDeletion(const Deletion& deletion) override;
-  virtual void HandleProperRatAddition(const RatClause& rat) override;
-  virtual void HandleRupAddition(const RupClause& rup) override;
-  virtual void HandleComment(const std::string& comment_line) override;
+  virtual void ObserveDeletion(const Deletion& deletion) override;
+  virtual void ObserveProperRatAddition(const RatClause& rat) override;
+  virtual void ObserveRupAddition(const RupClause& rup) override;
+  virtual void ObserveComment(const std::string& comment_line) override;
 
   std::unordered_set<int> deleted_clauses_;
   std::unordered_set<int> added_clauses_;

@@ -25,10 +25,10 @@ class RatEliminator : public LratParserObserver
                 int max_variable, int max_instruction,
                 int number_of_proper_rats_overall = 0,
                 bool output_lrat = true);
-  virtual void HandleProperRatAddition(const RatClause& rat) override;
-  virtual void HandleRupAddition(const RupClause& rup) override;
-  virtual void HandleDeletion(const Deletion& deletion) override;
-  virtual void HandleComment(const std::string& comment_line) override;
+  virtual void ObserveProperRatAddition(const RatClause& rat) override;
+  virtual void ObserveRupAddition(const RupClause& rup) override;
+  virtual void ObserveDeletion(const Deletion& deletion) override;
+  virtual void ObserveComment(const std::string& comment_line) override;
 
   void ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat);
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
