@@ -32,9 +32,17 @@ add_library(lib_drat2er STATIC
 	src/progress_bar.cc
 	)
 
+# Include the CLI11 command line parsing library
+set(CLI11_INCLUDE_DIR third-party/cli11)
+add_library(cli11 INTERFACE)
+target_include_directories(cli11 INTERFACE ${CLI11_INCLUDE_DIR})
+
 # Build the executable for the main program
 add_executable(drat2er src/main.cc)
-target_link_libraries(drat2er lib_drat2er)
+target_link_libraries(drat2er lib_drat2er cli11)
+
+# Build the executable for drat-trim
+add_executable(drat-trim third-party/drat-trim/drat-trim.c)
 
 # Build the executable for the unit tests
 set(CATCH_INCLUDE_DIR third-party/catch2)
