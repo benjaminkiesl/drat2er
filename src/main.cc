@@ -26,11 +26,18 @@ using namespace drat2er;
 
 const string input_folder_name = "/media/DATA/Dropbox/papers/bc_rat/code/";
 const string output_folder_name = "/home/benjamin/Documents/drat2er/temp/";
-
+const string kOutputLRAT = output_folder_name + "temp.lrat";
+const string kOutputEDRUP = output_folder_name + "temp.edrup";
+const string kOutputERUP = output_folder_name + "temp.erup";
+const string kOutputER = output_folder_name + "temp_unrenamed.er";
 const string kDRATTrimPath = "/media/DATA/code/drat2er/build/bin/drat-trim";
 
 void eliminate_deletions(const std::string& input_file,
-                         std::ostream& output_stream){
+                         std::ostream& output_stream,
+                         bool is_verbose){
+  if(is_verbose){
+    cout << "c drat2er: Eliminating deletions." << endl;
+  }
   std::ifstream input_stream {input_file, std::ifstream::in};
   string proof_line;
   while(getline(input_stream, proof_line)) {
@@ -41,20 +48,16 @@ void eliminate_deletions(const std::string& input_file,
 }
 
 void eliminate_deletions(const std::string& input_file,
-                         const std::string& output_file){
+                         const std::string& output_file,
+                         bool is_verbose){
   std::ofstream output_stream{output_file};
-  eliminate_deletions(input_file, output_stream);
+  eliminate_deletions(input_file, output_stream, is_verbose);
 }
-
 
 int PerformTransformation(const std::string& input_formula_file,
                           const std::string& input_proof_file,
-                          std::ostream& output_stream){
-
-  const string kOutputLRAT = output_folder_name + "temp.lrat";
-  const string kOutputEDRUP = output_folder_name + "temp.edrup";
-  const string kOutputERUP = output_folder_name + "temp.erup";
-  const string kOutputER = output_folder_name + "temp_unrenamed.er";
+                          std::ostream& output_stream,
+                          bool is_output_drat, bool is_verbose){
 
   cout << "c drat2er: Parsing Formula..." << endl;
   FormulaParser parser {};
@@ -67,7 +70,7 @@ int PerformTransformation(const std::string& input_formula_file,
   int size_of_original_formula = formula->GetClauses().size();
   
   cout << "c drat2er: Verifying DRAT proof and converting it to" 
-          " LRAT format using drat-trim..." << endl;
+          " LRAT format using drat-trim." << endl;
   auto drat_trim_call = kDRATTrimPath + " " + input_formula_file + " " +
     input_proof_file + " -b -L " + kOutputLRAT;
   system(drat_trim_call.c_str()); 
@@ -78,39 +81,79 @@ int PerformTransformation(const std::string& input_formula_file,
   lrat_parser.RegisterObserver(&stat_collector);
   lrat_parser.ParseFile(kOutputLRAT);
   
-  cout << "c drat2er: Eliminating proper RAT additions..." << endl;
   RatEliminator rat_eliminator(formula, stat_collector.GetMaxVariable(),
-                                        stat_collector.GetMaxInstruction());
+                               stat_collector.GetMaxInstruction(), is_verbose);
   rat_eliminator.Transform(kOutputLRAT, kOutputEDRUP);
   
-  cout << "c drat2er: Eliminating deletions..." << endl;
-  eliminate_deletions(kOutputEDRUP, kOutputERUP);
+  eliminate_deletions(kOutputEDRUP, kOutputERUP, is_verbose);
 
-  cout << "c drat2er: Transforming RUPs to resolution chains..." << endl;
   std::shared_ptr<Formula> original_formula = 
     parser.ParseFormula(input_formula_file);
 
-  RupToResolutionTransformer rup_to_resolution_transformer(original_formula);
+  RupToResolutionTransformer 
+    rup_to_resolution_transformer(original_formula, 
+                                  is_output_drat, is_verbose);
   rup_to_resolution_transformer.Transform(kOutputERUP, kOutputER);
 
-  cout << "c drat2er: Renaming clause indices incrementally..." << endl;
-  ProofStepRenamer incremental_proof_step_renamer(size_of_original_formula);
+  ProofStepRenamer 
+    incremental_proof_step_renamer(size_of_original_formula, is_verbose);
   incremental_proof_step_renamer.Transform(kOutputER, output_stream);
   
   cout << "c drat2er: Proof successfully transformed." << endl;
   return 0;
 }
 
-int main (int argc, char *argv[])
-{
-  const string kInputFormula = input_folder_name + "cnf/hole20.cnf";
-  const string kInputDRAT = input_folder_name + "drat/hole20.drat";
-  const string kOutputERRenamed = output_folder_name + "hole20.er";
-
-  int return_code = PerformTransformation(kInputFormula, 
-                                          kInputDRAT, 
-                                          cout);
-
-  return return_code;
+int PerformTransformation(const std::string& input_formula_file,
+                          const std::string& input_proof_file,
+                          const std::string& output_proof_file,
+                          bool is_output_drat, bool is_verbose){
+  if(output_proof_file != "") {
+    std::ofstream output_stream{output_proof_file};
+    return PerformTransformation(input_formula_file, input_proof_file,
+                                 output_stream, is_output_drat, is_verbose);
+  } else {
+    return PerformTransformation(input_formula_file, input_proof_file,
+                                 cout, is_output_drat, is_verbose);
+  }
 }
 
+int main (int argc, char *argv[])
+{
+  CLI::App app{
+    "drat2er transforms DRAT proofs into extended-resolution proofs.\n"
+    "It takes as input a propositional formula (specified in the DIMCAS\n" 
+    "format) together with a DRAT proof, and outputs an extended-resolution\n" 
+    "proof of the formula in either the TRACECHECK format or the DRAT\n" 
+    "format. The description of this transformation can be found in the\n" 
+    "paper \"Extended Resolution Simulates DRAT\" (IJCAR 2018). If no\n" 
+    "output file is specified, the output is written to the standard output.\n" 
+  };
+
+  std::string input_formula_path = "";
+  app.add_option("input_formula", input_formula_path, 
+      "Path to a DIMCAS file of the input formula."
+      )->required()->check(CLI::ExistingFile);
+  
+  std::string input_proof_path = "";
+  app.add_option("input_proof", input_proof_path, 
+      "Path to a DRAT file of the input proof."
+      )->required()->check(CLI::ExistingFile);
+  
+  std::string output_file_path = "";
+  app.add_option("output_proof", output_file_path, 
+      "Path for the output proof.", false)->type_name("FILE");
+
+  bool is_verbose = false;
+  app.add_flag("-v,--verbose", is_verbose, 
+      "Print information about the progress.");
+
+  std::string output_format = "tracecheck";
+  app.add_set("-f,--format", output_format, {"drat", "tracecheck"}, 
+      "Format of the output proof (default: tracecheck).");
+  bool is_output_drat = output_format == "drat";
+
+  CLI11_PARSE(app, argc, argv);
+
+  return PerformTransformation(input_formula_path, input_proof_path,
+                               output_file_path, is_output_drat, is_verbose);
+}

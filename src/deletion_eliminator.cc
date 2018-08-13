@@ -7,6 +7,11 @@
 namespace drat2er
 {
 
+DeletionEliminator::DeletionEliminator(bool print_progress)
+                                          : ProofTransformer(
+                                              "Eliminating deletions.",
+                                              print_progress){}
+
 void HandleDeletion(const Deletion& deletion){
   // Do nothing: do not write the deletion to the output.
 }

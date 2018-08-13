@@ -13,7 +13,12 @@ using std::endl;
 namespace drat2er {
 
 RupToResolutionTransformer::RupToResolutionTransformer(
-                             std::shared_ptr<Formula> formula) :
+                             std::shared_ptr<Formula> formula,
+                             bool is_output_drat,
+                             bool print_progress) :
+                                ProofTransformer(
+                                    "Transforming RUPs to resolution chains.", 
+                                    print_progress),
                                 formula_(formula), 
                                 found_empty_clause_{false} {}
 

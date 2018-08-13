@@ -11,10 +11,13 @@ using std::endl;
 namespace drat2er
 {
 
-ProofStepRenamer::ProofStepRenamer(int index_of_first_proof_step) 
-                         : ProofTransformer(false),
-                           clause_renaming_{},
-                           index_of_next_step_{index_of_first_proof_step}{}
+ProofStepRenamer::ProofStepRenamer(int index_of_first_proof_step, 
+                                   bool print_progress) 
+                           : ProofTransformer(
+                               "Renaming proof steps incrementally.", 
+                               print_progress),
+                             clause_renaming_{},
+                             index_of_next_step_{index_of_first_proof_step}{}
 
 void ProofStepRenamer::HandleExtension(const Clause& extension){
   Clause renamed_extension(extension);

@@ -19,7 +19,8 @@ class Deletion;
 class ProofTransformer : public LratParserObserver
 {
  public:
-  ProofTransformer(bool print_progress=true);
+  ProofTransformer(const std::string& verbose_message, 
+                   bool print_progress);
   void Transform(const std::string& input_file, 
                  std::ostream& output_stream);
   void Transform(const std::string& input_file, 
@@ -36,11 +37,12 @@ class ProofTransformer : public LratParserObserver
   virtual void HandleDeletion(const Deletion& deletion);
   virtual void HandleComment(const std::string& comment_line);
   virtual void HandleExtension(const Clause& extension);
-  void InitProgressBar(const std::string& input_file);
-  void PrintProgress(bool increment_number_of_lines_processed=true);
   std::ostream& OutputStream();
   void WriteClausesToOutput(const std::vector<Clause>& clauses);
   void WriteClauseToOutput(const Clause& clause);
+  void PrintVerboseMessage() const;
+  void InitProgressBar(const std::string& input_file);
+  void PrintProgress(bool increment_number_of_lines_processed=true);
 
   bool is_output_lrat_;
 
@@ -48,6 +50,7 @@ class ProofTransformer : public LratParserObserver
   static int GetNumberOfLines(const std::string& file);
 
   std::ostream* output_stream_;
+  std::string verbose_message_;
   bool print_progress_;
   int number_of_lines_processed_;
   ProgressBar progress_bar_;

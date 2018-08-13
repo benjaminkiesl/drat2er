@@ -9,7 +9,8 @@ namespace drat2er
 
 class DeletionEliminator : public ProofTransformer
 {
-
+ public:
+  DeletionEliminator(bool print_progress=false);
  protected:
   virtual void HandleDeletion(const Deletion& deletion) override;
   virtual void HandleProperRatAddition(const RatClause& rat) override;

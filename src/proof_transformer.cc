@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <iostream>
 #include <algorithm>
 #include <cassert>
 #include "rat_clause.h"
@@ -12,6 +13,7 @@
 
 using std::string;
 using std::vector;
+using std::cout;
 using std::endl;
 using std::make_shared;
 using std::ofstream;
@@ -19,15 +21,18 @@ using std::ifstream;
 
 namespace drat2er {
 
-ProofTransformer::ProofTransformer(bool print_progress) 
+ProofTransformer::ProofTransformer(const std::string& verbose_message,
+                                   bool print_progress) 
                                      : output_stream_{nullptr},
-                                       print_progress_{print_progress},
+                                       verbose_message_{verbose_message},
                                        is_output_lrat_{true},
+                                       print_progress_{print_progress},
                                        number_of_lines_processed_{0},
                                        progress_bar_{} { }
 
 void ProofTransformer::Transform(const std::string& input_file, 
                                  std::ostream& output_stream){
+  PrintVerboseMessage();
   InitProgressBar(input_file);
   output_stream_ = &output_stream;
   LratParser lrat_parser;
@@ -64,24 +69,6 @@ void ProofTransformer::ObserveComment(const string& comment_line){
 void ProofTransformer::ObserveExtension(const Clause& extension){
   HandleExtension(extension);
   PrintProgress();
-}
-
-void ProofTransformer::InitProgressBar(const std::string& input_file){
-  if(print_progress_){
-    progress_bar_.SetOverallNumberOfItems(1);
-    PrintProgress(false);
-    progress_bar_.SetOverallNumberOfItems(GetNumberOfLines(input_file));
-    number_of_lines_processed_ = 0;
-  }
-}
-
-void ProofTransformer::PrintProgress(bool increment_number_of_lines_processed){
-  if(print_progress_){
-    if(increment_number_of_lines_processed){
-      ++number_of_lines_processed_;
-    }
-    progress_bar_.PrintProgress(number_of_lines_processed_);
-  }
 }
 
 std::ostream& ProofTransformer::OutputStream(){
@@ -124,6 +111,30 @@ void ProofTransformer::WriteClauseToOutput(const Clause& clause) {
 void ProofTransformer::WriteClausesToOutput(const vector<Clause>& clauses) {
   for(auto& clause : clauses){
     WriteClauseToOutput(clause);
+  }
+}
+
+void ProofTransformer::PrintVerboseMessage() const {
+  if(print_progress_){
+    cout << "c drat2er: " << verbose_message_ << endl;
+  } 
+}
+
+void ProofTransformer::InitProgressBar(const std::string& input_file){
+  if(print_progress_){
+    progress_bar_.SetOverallNumberOfItems(1);
+    PrintProgress(false);
+    progress_bar_.SetOverallNumberOfItems(GetNumberOfLines(input_file));
+    number_of_lines_processed_ = 0;
+  }
+}
+
+void ProofTransformer::PrintProgress(bool increment_number_of_lines_processed){
+  if(print_progress_){
+    if(increment_number_of_lines_processed){
+      ++number_of_lines_processed_;
+    }
+    progress_bar_.PrintProgress(number_of_lines_processed_);
   }
 }
 

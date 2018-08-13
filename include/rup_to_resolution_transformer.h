@@ -17,7 +17,9 @@ class RupToResolutionTransformer : public ProofTransformer
 {
 
  public:
-  RupToResolutionTransformer(std::shared_ptr<Formula> formula);
+  RupToResolutionTransformer(std::shared_ptr<Formula> formula,
+                             bool is_output_drat = false,
+                             bool print_progress = false);
 
  protected:
   virtual void HandleRupAddition(const RupClause& rup) override;

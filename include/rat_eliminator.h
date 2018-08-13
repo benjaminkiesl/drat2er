@@ -20,7 +20,8 @@ class RatEliminator : public ProofTransformer
  public:
   RatEliminator(std::shared_ptr<Formula> formula, 
                 int max_variable,
-                int max_instruction);
+                int max_instruction,
+                bool print_progress=false);
 
   virtual void HandleProperRatAddition(const RatClause& rat) override;
   virtual void HandleRupAddition(const RupClause& rup) override;
