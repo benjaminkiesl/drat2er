@@ -10,6 +10,7 @@
 #include "rup_clause.h"
 #include "clause.h"
 #include "deletion.h"
+#include "file_helper.h"
 
 using std::string;
 using std::vector;
@@ -124,7 +125,8 @@ void ProofTransformer::InitProgressBar(const std::string& input_file){
   if(print_progress_){
     progress_bar_.SetOverallNumberOfItems(1);
     PrintProgress(false);
-    progress_bar_.SetOverallNumberOfItems(GetNumberOfLines(input_file));
+    progress_bar_.SetOverallNumberOfItems(
+        file_helper::get_number_of_lines(input_file));
     number_of_lines_processed_ = 0;
   }
 }
@@ -136,15 +138,6 @@ void ProofTransformer::PrintProgress(bool increment_number_of_lines_processed){
     }
     progress_bar_.PrintProgress(number_of_lines_processed_);
   }
-}
-
-int ProofTransformer::GetNumberOfLines(const string& file){
-  ifstream input_file(file); 
-  if(input_file.is_open()){
-    return std::count(std::istreambuf_iterator<char>(input_file), 
-                      std::istreambuf_iterator<char>(), '\n');
-  }
-  return -1;
 }
 
 } // namespace

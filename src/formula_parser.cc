@@ -3,9 +3,10 @@
 #include <fstream>
 #include <utility>
 #include <iostream>
+#include <sstream>
 #include <cstring>
 #include <memory>
-#include <sstream>
+#include <cassert>
 #include "formula.h"
 #include "clause.h"
 
@@ -69,16 +70,35 @@ void FormulaParser::ParseComment(const string& comment_line)
 
 FormulaProperties FormulaParser::ParseHeader(const string& header_line)
 {
-  FormulaProperties formula_properties;
+  assert(header_line.front() == 'p');
   stringstream header_stream {header_line};
   string token;
-  for(int i=1; getline(header_stream, token, ' '); i++) {
-    if(i==3) {
-      formula_properties.number_of_variables = stoi(token);
-    } else if(i==4) {
-      formula_properties.number_of_clauses = stoi(token);
-    }
+  header_stream >> token; // 'p'
+  header_stream >> token;
+  if(header_stream.fail() || token != "cnf"){
+    cerr << "Parsing error: Could not parse header of formula." << endl;
   }
+
+  FormulaProperties formula_properties;
+
+  header_stream >> formula_properties.number_of_variables;
+  if(header_stream.fail()){
+    cerr << "Parsing error: Could not parse number of variables in header "
+            "of formula." << endl;
+  }
+
+  header_stream >> formula_properties.number_of_clauses;
+  if(header_stream.fail()){
+    cerr << "Parsing error: Could not parse number of clauses in header "
+            "of formula." << endl;
+  }
+  //for(int i=1; getline(header_stream, token, ' '); i++) {
+  //  if(i==3) {
+  //    formula_properties.number_of_variables = stoi(token);
+  //  } else if(i==4) {
+  //    formula_properties.number_of_clauses = stoi(token);
+  //  }
+  //}
   return formula_properties;
 }
 
@@ -88,9 +108,14 @@ Clause FormulaParser::ParseClause(const string& clause_line)
   stringstream line_stream {clause_line};
   int literal = 0;
   line_stream >> literal;
-  while(literal != 0) {
+  while(!line_stream.fail() && literal != 0) {
     clause.AddLiteral(literal);
     line_stream >> literal;
+  }
+
+  if(line_stream.fail()){
+    cerr << "Parsing error: Could not parse clause in formula." << endl;
+    // TODO: maybe throw exception;
   }
 
   return clause;

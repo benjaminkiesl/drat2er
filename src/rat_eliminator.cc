@@ -26,13 +26,13 @@ RatEliminator::RatEliminator(shared_ptr<Formula> formula,
                              int max_variable, 
                              int max_instruction,
                              bool print_progress) 
-                              : ProofTransformer(
-                                  "Eliminating proper RAT additions.",
-                                  print_progress),
-                                formula_{formula},
-                                max_variable_{max_variable},
-                                max_instruction_{max_instruction},
-                                old_to_new_literal_{} { }
+                        : ProofTransformer(
+                            "Eliminating proper RAT additions and deletions.",
+                            print_progress),
+                          formula_{formula},
+                          max_variable_{max_variable},
+                          max_instruction_{max_instruction},
+                          old_to_new_literal_{} { }
 
 void RatEliminator::HandleProperRatAddition(const RatClause& unrenamed_rat){
   auto rat = RenameRat(unrenamed_rat);
@@ -48,7 +48,7 @@ void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
 void RatEliminator::HandleDeletion(const Deletion& unrenamed_deletion){
   auto deletion = RenameDeletion(unrenamed_deletion);
   formula_->DeleteClauses(deletion.GetClauseIndices());
-  WriteDeletionToOutput(deletion);
+  //WriteDeletionToOutput(deletion);
 } 
 
 void RatEliminator::ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat){

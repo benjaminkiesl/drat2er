@@ -1,3 +1,0 @@
-[submodule "third-party/drat-trim"]
-	path = third-party/drat-trim
-	url = https://github.com/marijnheule/drat-trim.git

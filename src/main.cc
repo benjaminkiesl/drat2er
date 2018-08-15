@@ -1,9 +1,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <cstdlib>
 #include <fstream>
 #include <ostream>
+#include <cstdlib>
+#include <cstdio>
 #include "CLI11.hpp"
 #include "formula.h"
 #include "clause.h"
@@ -13,46 +14,50 @@
 #include "proof_step_renamer.h"
 #include "lrat_parser.h"
 #include "proof_stat_collector.h"
-#include "deletion_eliminator.h"
 #include "simple_parser.h"
+#include "file_helper.h"
+
 
 using std::string;
 using std::shared_ptr;
 using std::system;
 using std::cout;
+using std::cerr;
 using std::endl;
 
 using namespace drat2er;
 
-const string input_folder_name = "/media/DATA/Dropbox/papers/bc_rat/code/";
+const string input_folder_name = "/media/important/Dropbox/papers/bc_rat/code/";
 const string output_folder_name = "/home/benjamin/Documents/drat2er/temp/";
-const string kOutputLRAT = output_folder_name + "temp.lrat";
-const string kOutputEDRUP = output_folder_name + "temp.edrup";
-const string kOutputERUP = output_folder_name + "temp.erup";
-const string kOutputER = output_folder_name + "temp_unrenamed.er";
-const string kDRATTrimPath = "/media/DATA/code/drat2er/build/bin/drat-trim";
+const string kOutputLRAT = "temp.lrat";
+const string kOutputEDRUP = "temp.edrup";
+const string kOutputERUP = "temp.erup";
+const string kOutputER = "temp_unrenamed.er";
+//const string kDRATTrimPath = "/media/important/code/drat2er/build/bin/drat-trim";
+const string kDRATTrimPath = file_helper::get_current_working_directory() 
+                             + "/drat-trim";
 
-void eliminate_deletions(const std::string& input_file,
-                         std::ostream& output_stream,
-                         bool is_verbose){
-  if(is_verbose){
-    cout << "c drat2er: Eliminating deletions." << endl;
-  }
-  std::ifstream input_stream {input_file, std::ifstream::in};
-  string proof_line;
-  while(getline(input_stream, proof_line)) {
-    if(proof_line.find(" d ") == string::npos){
-      output_stream << proof_line << endl;
-    }
-  }
-}
-
-void eliminate_deletions(const std::string& input_file,
-                         const std::string& output_file,
-                         bool is_verbose){
-  std::ofstream output_stream{output_file};
-  eliminate_deletions(input_file, output_stream, is_verbose);
-}
+//void eliminate_deletions(const std::string& input_file,
+//                         std::ostream& output_stream,
+//                         bool is_verbose){
+//  if(is_verbose){
+//    cout << "c drat2er: Eliminating deletions." << endl;
+//  }
+//  std::ifstream input_stream {input_file, std::ifstream::in};
+//  string proof_line;
+//  while(getline(input_stream, proof_line)) {
+//    if(proof_line.find(" d ") == string::npos){
+//      output_stream << proof_line << endl;
+//    }
+//  }
+//}
+//
+//void eliminate_deletions(const std::string& input_file,
+//                         const std::string& output_file,
+//                         bool is_verbose){
+//  std::ofstream output_stream{output_file};
+//  eliminate_deletions(input_file, output_stream, is_verbose);
+//}
 
 int PerformTransformation(const std::string& input_formula_file,
                           const std::string& input_proof_file,
@@ -63,7 +68,7 @@ int PerformTransformation(const std::string& input_formula_file,
   FormulaParser parser {};
   std::shared_ptr<Formula> formula = parser.ParseFormula(input_formula_file);
   if(formula == nullptr){
-    std::cerr << "File '" << input_formula_file << "' could not be opened." 
+    cerr << "Error: File '" << input_formula_file << "' could not be opened." 
       << endl;
     return 1;
   }
@@ -72,8 +77,12 @@ int PerformTransformation(const std::string& input_formula_file,
   cout << "c drat2er: Verifying DRAT proof and converting it to" 
           " LRAT format using drat-trim." << endl;
   auto drat_trim_call = kDRATTrimPath + " " + input_formula_file + " " +
-    input_proof_file + " -b -L " + kOutputLRAT;
-  system(drat_trim_call.c_str()); 
+    input_proof_file + (is_verbose ? " -b" : " ") + "-L " + kOutputLRAT;
+  int status = system(drat_trim_call.c_str()); 
+  if(WEXITSTATUS(status) != 0){
+    cerr << "Error: Could not parse the input proof with drat-trim." << endl;
+    return 1;
+  }
   
   LratParser lrat_parser{};
   
@@ -85,7 +94,7 @@ int PerformTransformation(const std::string& input_formula_file,
                                stat_collector.GetMaxInstruction(), is_verbose);
   rat_eliminator.Transform(kOutputLRAT, kOutputEDRUP);
   
-  eliminate_deletions(kOutputEDRUP, kOutputERUP, is_verbose);
+  //eliminate_deletions(kOutputEDRUP, kOutputERUP, is_verbose);
 
   std::shared_ptr<Formula> original_formula = 
     parser.ParseFormula(input_formula_file);
@@ -98,6 +107,11 @@ int PerformTransformation(const std::string& input_formula_file,
   ProofStepRenamer 
     incremental_proof_step_renamer(size_of_original_formula, is_verbose);
   incremental_proof_step_renamer.Transform(kOutputER, output_stream);
+
+  std::remove(kOutputLRAT.c_str());
+  std::remove(kOutputEDRUP.c_str());
+  std::remove(kOutputERUP.c_str());
+  std::remove(kOutputER.c_str());
   
   cout << "c drat2er: Proof successfully transformed." << endl;
   return 0;

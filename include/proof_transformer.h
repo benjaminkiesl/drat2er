@@ -47,7 +47,6 @@ class ProofTransformer : public LratParserObserver
   bool is_output_lrat_;
 
  private:
-  static int GetNumberOfLines(const std::string& file);
 
   std::ostream* output_stream_;
   std::string verbose_message_;

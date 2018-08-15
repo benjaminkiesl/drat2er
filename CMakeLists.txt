@@ -29,6 +29,7 @@ add_library(lib_drat2er STATIC
 	src/rup_to_resolution_transformer.cc
 	src/proof_step_renamer.cc
 	src/simple_parser.cc
+	src/file_helper.cc
 	src/progress_bar.cc
 	)
 
