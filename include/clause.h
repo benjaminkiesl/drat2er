@@ -10,7 +10,7 @@ namespace drat2er
 {
 
 // Represents a clause (i.e., a disjunction of literals) in a propositional
-// CNF formula. You can iterate of the literals of the clause using the
+// CNF formula. You can iterate over the literals of the clause using the
 // iterators begin() and end() or their constant counterparts cbegin() and
 // cend().
 class Clause
