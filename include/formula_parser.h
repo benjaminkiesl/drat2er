@@ -4,7 +4,6 @@
 #include <string>
 #include <utility>
 #include <memory>
-//#include "formula.h"
 
 namespace drat2er
 {
@@ -12,6 +11,9 @@ namespace drat2er
 class Formula;
 class Clause;
 
+// A pair of two numbers: The number of variables, and the number of clauses
+// of a given formula. This object is created when the header of the DIMCAS
+// file is parsed.
 struct FormulaProperties {
   FormulaProperties() : number_of_variables{0}, number_of_clauses{0} {}
   int number_of_variables;
@@ -24,7 +26,13 @@ class FormulaParser
 {
  public:
   FormulaParser() {};
+
+  // Parses the DIMACS file with the given file name and returns a pointer
+  // to the resulting Formula object.
   std::unique_ptr<Formula> ParseFormula(const std::string& file_name);
+
+  // Parses a clause line in a DIMACS file and returns a Clause object
+  // corresponding to that line.
   Clause ParseClause(const std::string& clause_line);
 
  private:

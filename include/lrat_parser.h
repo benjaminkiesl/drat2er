@@ -43,18 +43,60 @@ class LratParserObserver
 class LratParser
 {
  public:
+
+  // Takes as input the path to an LRAT file and then parses the file.
+  // For every occurrence of a certain object (like a deletion, RUP addition,
+  // etc.) it calls its observer and passes the object to the observer, who
+  // can in turn process it.
   void ParseFile(const std::string& proof_file_path);
+
+  // Registers an observer of the LratParser. An observer is called for every
+  // object (e.g., a deletion, RUP addition, etc.) that is encountered during
+  // parsing of the LRAT proof.
   void RegisterObserver(LratParserObserver* observer);
+
+  // Takes a line in an LRAT proof file and returns true if this line encodes
+  // a proper RAT addition.
   static bool IsProperRatAddition(const std::string& proof_line);
+
+  // Takes a line in an LRAT proof file and returns true if this line encodes
+  // a deletion instruction.
   static bool IsDeletion(const std::string& proof_line);
+
+  // Takes a line in an LRAT proof file and returns true if this line encodes
+  // an extension/definition introduction.
   static bool IsExtension(const std::string& proof_line);
+
+  // Takes a line in an LRAT proof file and returns true if this line encodes
+  // a comment.
   static bool IsComment(const std::string& proof_line);
-  static Deletion ParseDeletion(const std::string& proof_line);
-  static RupClause ParseRup(const std::string& proof_line);
+
+  // Parses a line of an LRAT proof that encodes a proper RAT addition and
+  // returns a RatClause object that contains all the information of the
+  // RAT addition.
   static RatClause ParseProperRat(const std::string& proof_line);
+
+  // Parses a line of an LRAT proof that encodes a deletion instruction and
+  // returns a Deletion object that contains all the information of the
+  // deletion instruction.
+  static Deletion ParseDeletion(const std::string& proof_line);
+
+  // Parses a line of an LRAT proof that encodes an extension/definition
+  // introduction and returns a Clause object that contains all the 
+  // information of the definition clause.
   static Clause ParseExtension(const std::string& proof_line);
+
+  // Parses a line of an LRAT proof that encodes a RUP addition and returns a 
+  // RupClause object that contains all the  information of the RUP clause.
+  static RupClause ParseRup(const std::string& proof_line);
+
+  // Returns true if a given proof line contains no literals.
   static bool ContainsNoLiterals(const std::string& proof_line);
+
+  // Takes a string that encodes an extension/definition introduction and
+  // removes the 'e' symbol from it.
   static std::string RemoveE(const std::string& proof_line);
+
  private:
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 

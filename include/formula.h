@@ -19,6 +19,9 @@ const int kTrue = 1;
 class Clause;
 class RupClause;
 
+// Represents a reason why a clause has become a unit clause
+// during unit propagation. Reasons are used to obtain a resolution
+// derivation after unit propagation has derived a conflict.
 struct Reason {
   Reason(std::shared_ptr<Clause> clause=nullptr, 
          int literal=0) : clause(clause), 
