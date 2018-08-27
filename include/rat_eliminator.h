@@ -15,10 +15,26 @@ class Clause;
 class RupClause;
 class RatClause;
 
-// Performs the most important step of the transformation from DRAT
-// to extended resolution: It takes the input proof (in the LRAT format) and
-// replaces all proper RAT additions by a sequence of definition clauses and
+// RatEliminator performs the most important step of the transformation from 
+// DRAT to extended resolution: It takes the input proof (in the LRAT format) 
+// and replaces all proper RAT additions by a definition clauses and
 // RUP additions. It also eliminates all deletion steps from the DRAT proof.
+//
+// This transformation follows the transformation as described in
+// our paper with the following two exceptions: 
+//
+// 1. In the paper, we transform a single proper RAT addition into a 
+// sequence of definition clauses, RUPs, and deletions - later we then also
+// eliminate the deletion steps. Here, we immediately eliminate the deletion
+// steps by not writing them to the output. This is sound and more efficient.
+// 
+// 2. In the paper, after transforming a single RAT addition, we rename the
+// replaced variable (in the paper, we replace p by x), in all
+// subsequent instructions in the proof. Here, we do not
+// perform this renaming explicitly by changing the proof file. 
+// Instead, we maintain a mapping that "encodes" the renaming: 
+// Whenever we encounter a new instruction in the proof, we first apply this 
+// mapping and then process the instruction. This improves the performance. 
 class RatEliminator : public ProofTransformer
 {
  public:
@@ -31,13 +47,32 @@ class RatEliminator : public ProofTransformer
   virtual void HandleRupAddition(const RupClause& rup) override;
   virtual void HandleDeletion(const Deletion& deletion) override;
 
+  // Performs the real meat of the transformation: Takes a RAT clause
+  // and transforms it into a sequence of definition clauses and RUPs. 
   void ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat);
+
+  // Takes a RAT clause and a variable and returns the definition clauses
+  // corresponding to this RAT clause as described in step 1 within section 4.1
+  // of our paper.
   std::vector<Clause> CorrespondingDefinition(const RatClause& rat, 
                                               const int new_variable);
+
+  // Returns the first definition clause corresponding to a given RAT:
+  // Given a clause p | c_1 | ... | c_k and a new variable x, this function
+  // returns the clause x | c_1 | ... | c_k.
   Clause FirstDefinitionClause(const RatClause& rat, 
                                const int new_variable) const;
+
+
+  // Returns the first definition clause corresponding to a given RAT:
+  // Given a clause p | c_1 | ... | c_k and a new variable x, this function
+  // returns the clause x | -p.
   Clause SecondDefinitionClause(const RatClause& rat, 
                                 const int new_variable);
+
+  // Returns the third block of definition clauses corresponding to a given
+  // RAT: Given a clause p | c_1 | ... | c_k and a new variable x, this 
+  // function returns the clauses {-x | p | -c_1, ..., -x | p | -c_k}.
   std::vector<Clause> ThirdBlockOfDefinitionClauses(const RatClause& rat,
                                               const int new_variable);
   template<typename T>

@@ -115,6 +115,8 @@ void RenameProofStepsIncrementally(const string& input_proof_file,
 // Takes as input a DIMACS file (input_formula_file) and a DRAT proof file 
 // (input_proof_file) and transforms the DRAT proof into an extended-resolution
 // proof. The resulting proof is written to the path 'output_file'.
+// The transformation is described in the paper "Extended Resolution Simulates
+// DRAT" (IJCAR 2018).
 void TransformDRATToExtendedResolution(const string& input_formula_file,
                                        const string& input_proof_file,
                                        const string& output_file,
