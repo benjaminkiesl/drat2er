@@ -26,6 +26,6 @@ Further arguments can be passed. For details call './drat2er --help'.
 
 ## Built With
 
-* [drat-trim]([drat-trim](https://github.com/marijnheule/drat-trim) - Used for performing one step of the transformation.
+* [drat-trim](https://github.com/marijnheule/drat-trim) - Used for performing one step of the transformation.
 * [Catch2](https://github.com/catchorg/Catch2) - Framework for unit testing.
 * [CLI11](https://github.com/CLIUtils/CLI11) - Command line parser for C++11.
