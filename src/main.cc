@@ -16,7 +16,7 @@
 #include "proof_stat_collector.h"
 #include "simple_parser.h"
 #include "file_helper.h"
-
+#include "drat_trim_interface.h"
 
 using std::string;
 using std::shared_ptr;
@@ -27,15 +27,13 @@ using std::endl;
 
 using namespace drat2er;
 
-const string input_folder_name = "/media/important/Dropbox/papers/bc_rat/code/";
-const string output_folder_name = "/home/benjamin/Documents/drat2er/temp/";
-const string kOutputLRAT = "temp.lrat";
+const string kOutputDratTrim = "temp.lrat";
 const string kOutputEDRUP = "temp.edrup";
 const string kOutputERUP = "temp.erup";
 const string kOutputER = "temp_unrenamed.er";
-//const string kDRATTrimPath = "/media/important/code/drat2er/build/bin/drat-trim";
-const string kDRATTrimPath = file_helper::get_current_working_directory() 
-                             + "/drat-trim";
+////const string kDRATTrimPath = "/media/important/code/drat2er/build/bin/drat-trim";
+//const string kDRATTrimPath = file_helper::get_current_working_directory() 
+//                             + "/drat-trim";
 
 //void eliminate_deletions(const std::string& input_file,
 //                         std::ostream& output_stream,
@@ -76,23 +74,28 @@ int PerformTransformation(const std::string& input_formula_file,
   
   cout << "c drat2er: Verifying DRAT proof and converting it to" 
           " LRAT format using drat-trim." << endl;
-  auto drat_trim_call = kDRATTrimPath + " " + input_formula_file + " " +
-    input_proof_file + (is_verbose ? " -b" : " ") + "-L " + kOutputLRAT;
-  int status = system(drat_trim_call.c_str()); 
-  if(WEXITSTATUS(status) != 0){
+  if(drat_trim::check_and_convert_to_lrat(input_formula_file, input_proof_file,
+                    kOutputDratTrim, is_verbose) != 0){
     cerr << "Error: Could not parse the input proof with drat-trim." << endl;
     return 1;
   }
+  //auto drat_trim_call = kDRATTrimPath + " " + input_formula_file + " " +
+  //  input_proof_file + (is_verbose ? " -b" : " ") + "-L " + kOutputLRAT;
+  //int status = system(drat_trim_call.c_str()); 
+  //if(WEXITSTATUS(status) != 0){
+  //  cerr << "Error: Could not parse the input proof with drat-trim." << endl;
+  //  return 1;
+  //}
   
   LratParser lrat_parser{};
   
   ProofStatCollector stat_collector(formula);
   lrat_parser.RegisterObserver(&stat_collector);
-  lrat_parser.ParseFile(kOutputLRAT);
+  lrat_parser.ParseFile(kOutputDratTrim);
   
   RatEliminator rat_eliminator(formula, stat_collector.GetMaxVariable(),
                                stat_collector.GetMaxInstruction(), is_verbose);
-  rat_eliminator.Transform(kOutputLRAT, kOutputEDRUP);
+  rat_eliminator.Transform(kOutputDratTrim, kOutputERUP);
   
   //eliminate_deletions(kOutputEDRUP, kOutputERUP, is_verbose);
 
@@ -108,7 +111,7 @@ int PerformTransformation(const std::string& input_formula_file,
     incremental_proof_step_renamer(size_of_original_formula, is_verbose);
   incremental_proof_step_renamer.Transform(kOutputER, output_stream);
 
-  std::remove(kOutputLRAT.c_str());
+  std::remove(kOutputDratTrim.c_str());
   std::remove(kOutputEDRUP.c_str());
   std::remove(kOutputERUP.c_str());
   std::remove(kOutputER.c_str());

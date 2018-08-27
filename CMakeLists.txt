@@ -12,6 +12,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Include drat-trim as a library
+add_library(drat-trim STATIC third-party/drat-trim/drat-trim.c)
+
 # Build library for the main executable 
 add_library(lib_drat2er STATIC 
 	src/formula.cc
@@ -30,8 +33,10 @@ add_library(lib_drat2er STATIC
 	src/proof_step_renamer.cc
 	src/simple_parser.cc
 	src/file_helper.cc
+	src/drat_trim_interface.cc
 	src/progress_bar.cc
 	)
+target_link_libraries(lib_drat2er drat-trim)
 
 # Include the CLI11 command line parsing library
 set(CLI11_INCLUDE_DIR third-party/cli11)
@@ -41,9 +46,6 @@ target_include_directories(cli11 INTERFACE ${CLI11_INCLUDE_DIR})
 # Build the executable for the main program
 add_executable(drat2er src/main.cc)
 target_link_libraries(drat2er lib_drat2er cli11)
-
-# Build the executable for drat-trim
-add_executable(drat-trim third-party/drat-trim/drat-trim.c)
 
 # Build the executable for the unit tests
 set(CATCH_INCLUDE_DIR third-party/catch2)
