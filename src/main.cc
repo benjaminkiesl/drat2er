@@ -126,7 +126,7 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
                       kTempFileLRAT, is_verbose);
 
   shared_ptr<Formula> formula = ParseFormula(input_formula_file, is_verbose);
-  auto size_of_original_formula = formula->GetClauses().size();
+  auto size_of_original_formula = formula->GetNumberOfClauses();
 
   EliminateProperRATs(formula, kTempFileLRAT, kTempFileERUP, is_verbose);
 

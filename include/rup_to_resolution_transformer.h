@@ -21,6 +21,10 @@ class RupToResolutionTransformer : public ProofTransformer
 {
 
  public:
+  // If the parameter 'is_output_drat' is true, the resulting proof will
+  // be encoded in the DRAT format, otherwise it will be encoded in the
+  // TRACECHECK format. If print_progress is true, a status bar will be
+  // printed on the standard output to indicate the progress.
   RupToResolutionTransformer(std::shared_ptr<Formula> formula,
                              bool is_output_drat = false,
                              bool print_progress = false);

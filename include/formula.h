@@ -39,23 +39,62 @@ class Formula
 
  public:
   Formula(int number_of_variables = 0, int number_of_clauses = 0);
+
+  // Adds a clause to the formula.
   void AddClause(const Clause& clause);
+
+  // Adds a sequence of clauses to the formula.
   void AddClauses(const std::vector<Clause>& clauses);
+
+  // Returns the clause with the given index and nullptr if this clause
+  // is not contained.
   std::shared_ptr<Clause> GetClause(const int clause_index) const;
-  const std::unordered_map<int, std::shared_ptr<Clause>>& GetClauses();
+
+  // Returns the number of clauses contained in the formula.
+  size_t GetNumberOfClauses() const;
+
+  // Deletes the clause with the given index if it is contained in the formula. 
+  // Otherwise does nothing.
   void DeleteClause(const int clause_index);
+
+  // Deletes the clauses with the given indices if they are contained in the
+  // formula.
   void DeleteClauses(const std::vector<int>& clause_indices);
+
+  // Returns a list of all clauses in which the given literal is contained.
   const OccurrenceList& Occurrences(const int literal);
+
+  // Deletes the given clause from the occurrence list of the given literal.
   void DeleteClauseFromOccurrenceList(std::shared_ptr<Clause> clause, 
                                       const int literal);
+
+  // Returns the list of watches. Watches are required for efficient unit
+  // propagation.
   WatchList& Watches(const int literal);
+
+  // Deletes the given clause from the watch list of the given literal.
   void DeleteClauseFromWatchList(std::shared_ptr<Clause> clause, 
                                  const int literal);
+
+  // Performs unit propagation on the current formula.
   bool Propagate();
+
+  // Takes a RUP clause and derives (via resolution) a clause that subsumes
+  // this RUP clause. The result is a pointer to a RUP clause whose positive
+  // hints encode the resolution chain via which the RUP can be obtained
+  // from the clauses in the formula.
   std::unique_ptr<RupClause> DeriveSubsumingClause(const Clause& rup);
+
+  // Returns the truth value of the given literal.
   int TruthValue(const int literal);
+
+  // Sets the truth value of the given literal to TRUE.
   void Satisfy(const int literal);
+  
+  // Sets the truth value of the given literal to FALSE.
   void Falsify(const int literal);
+
+  // Sets the truth value of the given literal to UNASSIGNED.
   void Unassign(const int literal);
 
  private:

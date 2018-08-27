@@ -95,9 +95,9 @@ shared_ptr<Clause> Formula::GetClause(const int clause_index) const
   return nullptr;
 }
 
-const unordered_map<int, shared_ptr<Clause>>& Formula::GetClauses()
+size_t Formula::GetNumberOfClauses() const
 {
-  return clauses_;
+  return clauses_.size();
 }
 
 void Formula::DeleteClause(const int clause_index)
