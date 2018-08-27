@@ -28,10 +28,10 @@ add_library(lib_drat2er STATIC
 	src/proof_transformer.cc
 	src/rat_eliminator.cc
   	src/proof_stat_collector.cc
-	src/deletion_eliminator.cc
+	#src/deletion_eliminator.cc
 	src/rup_to_resolution_transformer.cc
 	src/proof_step_renamer.cc
-	src/simple_parser.cc
+	#src/simple_parser.cc
 	src/file_helper.cc
 	src/drat_trim_interface.cc
 	src/progress_bar.cc
