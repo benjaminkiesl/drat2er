@@ -14,6 +14,11 @@ class RupClause;
 class RatClause;
 class Deletion;
 
+// LratParserObserver defines the interface for all classes that want to
+// act as observers for the LratParser. These classes can register themselves
+// for a specific LratParser and are then called whenever
+// the parser encounters a deletion, proper RAT addition, RUP addition, 
+// comment, or extension (definition introduction).
 class LratParserObserver
 {
  public:
@@ -24,6 +29,17 @@ class LratParserObserver
   virtual void ObserveExtension(const Clause& definition_clause){};
 };
 
+
+// LratParser can parse input files in the LRAT format (including also
+// extensions/definition introductions). It processes an LRAT file from
+// beginning to end and, for every object it encounters (e.g., RAT additions,
+// deletions, etc.), it calls its observer. An observer can register itself
+// via the RegisterObserver member function.
+// Usage: 1. Create an LratParser object.
+//        2. Create an LratParserObserver object.
+//        3. Register the LratParserObserver object by calling 
+//           RegisterObserver on the LratParser object.
+//        4. Call Parser::ParseFile() on the LratParser object.
 class LratParser
 {
  public:

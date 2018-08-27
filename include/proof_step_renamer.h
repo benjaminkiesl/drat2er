@@ -12,6 +12,10 @@ class Clause;
 class RatClause;
 class RupClause;
 
+// A ProofStepRenamer takes an input LRAT proof whose instructions are not
+// necessarily numbered in ascending order. It then outputs a new LRAT proof
+// that is obtained by renaming the instructions of the original proof in
+// ascending order.
 class ProofStepRenamer : public ProofTransformer {
 
  public:

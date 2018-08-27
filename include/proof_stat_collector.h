@@ -14,6 +14,9 @@ class Formula;
 class Clause;
 class RatClause;
 
+// A ProofStatCollector is an observer of an LratParser. It just collects
+// some information about a parsed LRAT proof, such as the number of
+// instructions, number of deletions, etc.
 class ProofStatCollector : public LratParserObserver
 {
  public:

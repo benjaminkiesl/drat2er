@@ -13,6 +13,10 @@ class RatClause;
 class RupClause;
 class Deletion;
 
+// Takes an LRAT proof that only contains RUP additions and extensions
+// (definition introductions) and transforms all RUP additions into resolution
+// chains. The output can be printed either in the TRACECHECK format or
+// the DRAT format.
 class RupToResolutionTransformer : public ProofTransformer
 {
 

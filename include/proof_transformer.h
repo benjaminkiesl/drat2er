@@ -16,15 +16,32 @@ class RatClause;
 class RupClause;
 class Deletion;
 
+// A ProofTransformer object can be used to transform LRAT proofs.
+// A ProofTransformer creates its own LratParser object and acts itself as the
+// observer of this LratParser. It contains additional logic to print the
+// progress, etc. This class acts as an abstract superclass for concrete
+// ProofTransformers.
 class ProofTransformer : public LratParserObserver
 {
  public:
+  // Creates a ProofTransformer. The string parameter 'verbose_message' is
+  // printed when the Transform function is called. The parameter 
+  // 'print_progress' indicates if a progress bar should print the current
+  // progress of the proof transformation.
   ProofTransformer(const std::string& verbose_message, 
                    bool print_progress);
+
+  // Takes a path to an input file and transforms this input file, thereby
+  // writing the result to the given output stream.
   void Transform(const std::string& input_file, 
                  std::ostream& output_stream);
+
+  // Takes a path to an input file and transforms this input file, thereby
+  // writing the result to the given output file.
   void Transform(const std::string& input_file, 
                  const std::string& output_file);
+
+  // LratParserObserver callbacks:
   virtual void ObserveProperRatAddition(const RatClause& rat) final override;
   virtual void ObserveRupAddition(const RupClause& rup) final override;
   virtual void ObserveDeletion(const Deletion& deletion) final override;

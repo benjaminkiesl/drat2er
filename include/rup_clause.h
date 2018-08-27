@@ -9,6 +9,10 @@
 namespace drat2er
 {
 
+// A RupClause represents a RUP clause as given in an LRAT proof.
+// It contains a list of positive hints. For the details of what these hints
+// mean, consult the definition of the LRAT format, given in the paper
+// "Efficient Certified RAT Verification" (CADE-26).
 class RupClause : public Clause
 {
   friend void swap(RupClause& lhs, RupClause& rhs);

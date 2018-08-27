@@ -10,6 +10,10 @@
 namespace drat2er
 {
 
+// Represents a RAT clause in a RAT proof. It contains a list of positive
+// hints as well as of negative hints. For the details of what these hints
+// mean, consult the definition of the LRAT format, given in the paper
+// "Efficient Certified RAT Verification" (CADE-26).
 class RatClause : public Clause
 {
   friend void swap(RatClause& lhs, RatClause& rhs);

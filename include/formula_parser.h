@@ -18,6 +18,8 @@ struct FormulaProperties {
   int number_of_clauses;
 };
 
+// Can parse a DIMACS file and return a Formula object created from the
+// formula encoded in the DIMACS file.
 class FormulaParser
 {
  public:

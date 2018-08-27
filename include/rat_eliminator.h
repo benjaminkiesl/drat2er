@@ -15,6 +15,10 @@ class Clause;
 class RupClause;
 class RatClause;
 
+// Performs the most important step of the transformation from DRAT
+// to extended resolution: It takes the input proof (in the LRAT format) and
+// replaces all proper RAT additions by a sequence of definition clauses and
+// RUP additions. It also eliminates all deletion steps from the DRAT proof.
 class RatEliminator : public ProofTransformer
 {
  public:

@@ -30,16 +30,15 @@ struct Reason {
 using OccurrenceList = std::vector<std::shared_ptr<Clause>>;
 using WatchList = std::vector<Watch>;
 
+// Represents a propostional formula in CNF. Can also maintain a truth
+// assignment to its variables and perform unit propagation using the member
+// function Propagate(). A resolution proof can be returned if unit 
+// propagation derives a conflict.
 class Formula
 {
-  //friend void swap(Formula& lhs, Formula& rhs);
 
  public:
   Formula(int number_of_variables = 0, int number_of_clauses = 0);
-  //Formula(const Formula& other);
-  //Formula(Formula&& other);
-  //~Formula();
-  //Formula& operator=(Formula other);
   void AddClause(const Clause& clause);
   void AddClauses(const std::vector<Clause>& clauses);
   std::shared_ptr<Clause> GetClause(const int clause_index) const;
@@ -69,8 +68,6 @@ class Formula
   std::unordered_map<int, WatchList> watch_table_;
   std::unordered_map<int, int> assignment_;
   std::shared_ptr<Clause> conflict_;
-  //std::unordered_map<std::shared_ptr<Clause>, std::vector<Reason>> 
-  //  resolution_graph_;
   std::stack<Reason> resolution_stack_;
   const OccurrenceList empty_occurrence_list_;
   int next_clause_index_;

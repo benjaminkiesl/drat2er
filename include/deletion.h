@@ -5,6 +5,9 @@
 
 namespace drat2er {
 
+// Represents a deletion statement in an LRAT proof.
+// A single deletion statement can consist of several indices of clauses
+// that are all supposed to be deleted by the statement.
 class Deletion{
   public:
     int GetIndex() const;

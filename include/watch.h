@@ -7,6 +7,8 @@
 namespace drat2er
 {
 
+// Represents the watch object required for efficient unit propagation
+// within the Formula class.
 class Watch
 {
  public:

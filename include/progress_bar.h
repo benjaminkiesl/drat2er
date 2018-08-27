@@ -3,6 +3,8 @@
 
 namespace drat2er {
 
+// A ProgressBar can be used to print the current progress of a running
+// process to the standard output.
 class ProgressBar {
   public:
     ProgressBar(int overall_number_of_items=1, int width=22);
