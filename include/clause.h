@@ -16,7 +16,7 @@ namespace drat2er
 class Clause
 {
   friend void swap(Clause& lhs, Clause& rhs);
-  friend std::ostream& operator<< (std::ostream& stream, const Clause& matrix); 
+  friend std::ostream& operator<< (std::ostream& stream, const Clause& clause); 
   
  public:
   Clause();
