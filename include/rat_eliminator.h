@@ -35,6 +35,12 @@ class RatClause;
 // Instead, we maintain a mapping that "encodes" the renaming: 
 // Whenever we encounter a new instruction in the proof, we first apply this 
 // mapping and then process the instruction. This improves the performance. 
+//
+// We also maintain a renaming for clauses because new instructions in
+// the LRAT proof might refer to previous clauses of the proof by their index.
+// Since we replace previous clauses in the proof by new ones, we have to make
+// sure that the later instructions refer to the new clauses and not the
+// previous ones.
 class RatEliminator : public ProofTransformer
 {
  public:
@@ -43,8 +49,16 @@ class RatEliminator : public ProofTransformer
                 int max_instruction,
                 bool print_progress=false);
 
+  // LratParserObserver interface: Processes proper RAT additions.
   virtual void HandleProperRatAddition(const RatClause& rat) override;
+  
+  // LratParserObserver interface: Processes proper RUP Additions.
+  // RUP additions are just written to the output after applying the current
+  // renaming.
   virtual void HandleRupAddition(const RupClause& rup) override;
+
+  // LratParserObserver interface: Processes deletions. By doing nothing,
+  // it eliminates all deletion steps from the proof.
   virtual void HandleDeletion(const Deletion& deletion) override;
 
   // Performs the real meat of the transformation: Takes a RAT clause
@@ -58,31 +72,46 @@ class RatEliminator : public ProofTransformer
                                               const int new_variable);
 
   // Returns the first definition clause corresponding to a given RAT:
-  // Given a clause p | c_1 | ... | c_k and a new variable x, this function
-  // returns the clause x | c_1 | ... | c_k.
+  // Given a clause (p | c_1 | ... | c_k) and a new variable x, this function
+  // returns the clause (x | c_1 | ... | c_k).
   Clause FirstDefinitionClause(const RatClause& rat, 
                                const int new_variable) const;
 
 
   // Returns the first definition clause corresponding to a given RAT:
-  // Given a clause p | c_1 | ... | c_k and a new variable x, this function
-  // returns the clause x | -p.
+  // Given a clause (p | c_1 | ... | c_k) and a new variable x, this function
+  // returns the clause (x | -p).
   Clause SecondDefinitionClause(const RatClause& rat, 
                                 const int new_variable);
 
   // Returns the third block of definition clauses corresponding to a given
-  // RAT: Given a clause p | c_1 | ... | c_k and a new variable x, this 
-  // function returns the clauses {-x | p | -c_1, ..., -x | p | -c_k}.
+  // RAT: Given a clause (p | c_1 | ... | c_k) and a new variable x, this 
+  // function returns the clauses {(-x | p | -c_1),..., (-x | p | -c_k)}.
   std::vector<Clause> ThirdBlockOfDefinitionClauses(const RatClause& rat,
                                               const int new_variable);
-  template<typename T>
-  T RenameLiterals(const T& clause) const;
+
+  // Applies the current renaming (see class comment) to a given RUP clause.
   RupClause RenameRup(const RupClause& clause) const;
+
+  // Applies the current renaming (see class comment) to a given RAT clause.
   RatClause RenameRat(const RatClause& clause) const;
+
+  // Applies the current renaming of clause indices (see class comment) to
+  // a given deletion instruction.
   Deletion RenameDeletion(const Deletion& deletion) const;
+
+  // Takes a clause index and returns a new index obtained by applying the
+  // current clause-index renaming.
   int RenameClauseIndex(const int clause_index) const;
+
+  // Takes a literal and returns a new literal obtained by applying the current
+  // literal renaming.
   int RenameLiteral(const int literal) const;
+
+  // Updates the mapping that maintains the current renaming of literals.
   void UpdateLiteralRenaming(const int old_literal, const int new_literal);
+
+  // Updates the mapping that maintains the current renaming of clause indices.
   void UpdateClauseRenaming(const int old_index, const int new_index);
 
  private:
