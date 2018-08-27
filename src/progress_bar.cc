@@ -12,6 +12,9 @@ ProgressBar::ProgressBar(int overall_number_of_items, int width)
   : overall_number_of_items_{overall_number_of_items},
     width_{width} {}
 
+ProgressBar::~ProgressBar(){
+  cout.flush();
+}
 
 void ProgressBar::PrintProgress(int number_of_items_processed){
   PrintProgress(static_cast<double>(number_of_items_processed) 

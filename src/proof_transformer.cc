@@ -116,9 +116,7 @@ void ProofTransformer::WriteClausesToOutput(const vector<Clause>& clauses) {
 }
 
 void ProofTransformer::PrintVerboseMessage() const {
-  if(print_progress_){
-    cout << "c drat2er: " << verbose_message_ << endl;
-  } 
+  cout << "c drat2er: " << verbose_message_ << endl;
 }
 
 void ProofTransformer::InitProgressBar(const std::string& input_file){

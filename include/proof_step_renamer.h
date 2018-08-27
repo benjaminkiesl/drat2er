@@ -15,8 +15,7 @@ class RupClause;
 class ProofStepRenamer : public ProofTransformer {
 
  public:
-  ProofStepRenamer(int index_of_first_proof_step = 1, 
-                   bool print_progress=false);
+  ProofStepRenamer(int index_of_first_proof_step = 1, bool is_verbose=false);
 
  protected:
   virtual void HandleRupAddition(const RupClause& rup) override;

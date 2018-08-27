@@ -12,10 +12,10 @@ namespace drat2er
 {
 
 ProofStepRenamer::ProofStepRenamer(int index_of_first_proof_step, 
-                                   bool print_progress) 
+                                   bool is_verbose) 
                            : ProofTransformer(
                                "Renaming proof steps incrementally.", 
-                               print_progress),
+                               is_verbose),
                              clause_renaming_{},
                              index_of_next_step_{index_of_first_proof_step}{}
 

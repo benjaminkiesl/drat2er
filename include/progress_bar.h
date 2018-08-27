@@ -6,6 +6,7 @@ namespace drat2er {
 class ProgressBar {
   public:
     ProgressBar(int overall_number_of_items=1, int width=22);
+    ~ProgressBar();
     int GetOverallNumberOfItems(int overall_number_of_items);
     void SetOverallNumberOfItems(int overall_number_of_items);
     void PrintProgress(int number_of_items_processed);
