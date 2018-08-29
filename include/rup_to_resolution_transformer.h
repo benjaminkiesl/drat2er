@@ -60,6 +60,6 @@ class RupToResolutionTransformer : public ProofTransformer
   bool found_empty_clause_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

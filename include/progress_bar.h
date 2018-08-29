@@ -47,6 +47,6 @@ class ProgressBar {
     int width_;
 };
 
-}
+} // namespace drat2er
 
 #endif

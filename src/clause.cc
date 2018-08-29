@@ -171,4 +171,4 @@ std::ostream& operator<< (std::ostream& stream, const Clause& clause){
   return stream;
 } 
 
-} // namespace
+} // namespace drat2er

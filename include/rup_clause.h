@@ -54,6 +54,6 @@ class RupClause : public Clause
   std::vector<int> positive_hints_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

@@ -64,6 +64,6 @@ class ProofStatCollector : public LratParserObserver
   int number_of_deletions_;
 };
 
-}// namespace
+} // namespace drat2er
 
 #endif

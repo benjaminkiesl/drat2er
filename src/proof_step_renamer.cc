@@ -81,4 +81,4 @@ RupClause ProofStepRenamer::RenamePositiveHints(const RupClause& clause){
   return renamed_clause;
 }
 
-} // namespace
+} // namespace drat2er

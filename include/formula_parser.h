@@ -65,6 +65,6 @@ class FormulaParser
   FormulaProperties ParseHeader(const std::string& header_line);
 };
 
-} //namespace
+} //namespace drat2er
 
 #endif

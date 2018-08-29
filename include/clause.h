@@ -80,6 +80,6 @@ inline void SwapLiteralToSecondPosition(const int literal, Clause& clause){
   clause.GetLiterals()[1] = literal;
 }
 
-} // namespace
+} // namespace drat2er
 
 #endif

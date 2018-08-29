@@ -125,6 +125,6 @@ class LratParser
   LratParserObserver* observer_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

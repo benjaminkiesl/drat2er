@@ -44,6 +44,6 @@ class Watch
   int blocking_literal_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

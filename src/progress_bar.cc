@@ -59,4 +59,4 @@ void ProgressBar::SetOverallNumberOfItems(int overall_number_of_items){
   overall_number_of_items_ = overall_number_of_items;
 }
 
-}
+} // namespace drat2er

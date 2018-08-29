@@ -206,4 +206,4 @@ void LratParser::ParseClausePart(Clause& clause, stringstream& line_stream)
   }
 }
 
-} // namespace
+} // namespace drat2er

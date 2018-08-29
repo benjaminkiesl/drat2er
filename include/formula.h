@@ -115,6 +115,6 @@ class Formula
   int next_clause_index_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

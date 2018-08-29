@@ -73,4 +73,4 @@ void RupToResolutionTransformer::HandleRupAddition(const RupClause& rup){
   }
 }
 
-} // namespace
+} // namespace drat2er

@@ -143,4 +143,4 @@ Clause FormulaParser::ParseClause(const string& clause_line)
   return clause;
 }
 
-} // namespace
+} // namespace drat2er

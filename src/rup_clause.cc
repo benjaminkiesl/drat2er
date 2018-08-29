@@ -76,4 +76,4 @@ string RupClause::ToLrat() const
   return ss.str();
 }
 
-} // namespace
+} // namespace drat2er

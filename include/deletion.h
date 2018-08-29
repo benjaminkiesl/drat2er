@@ -42,6 +42,6 @@ class Deletion{
     int index_;
 };
 
-}
+} // namespace drat2er
 
 #endif

@@ -50,5 +50,5 @@ const vector<int>& Deletion::GetClauseIndices() const{
   return clause_indices_;
 }
 
-}
+} // namespace drat2er
 

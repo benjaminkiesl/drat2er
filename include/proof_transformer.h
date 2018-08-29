@@ -94,6 +94,6 @@ class ProofTransformer : public LratParserObserver
   ProgressBar progress_bar_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

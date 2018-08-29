@@ -60,6 +60,6 @@ class RatClause : public Clause
   std::map<int, std::vector<int>> negative_hints_;
 };
 
-} // namespace
+} // namespace drat2er
 
 #endif

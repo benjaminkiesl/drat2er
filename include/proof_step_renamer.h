@@ -57,6 +57,6 @@ class ProofStepRenamer : public ProofTransformer {
   int index_of_next_step_;
 };
 
-}
+} // namespace drat2er
 
 #endif

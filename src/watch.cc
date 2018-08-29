@@ -50,4 +50,4 @@ void Watch::SetBlockingLiteral(const int blocking_literal){
   blocking_literal_ = blocking_literal;
 }
 
-} // namespace
+} // namespace drat2er

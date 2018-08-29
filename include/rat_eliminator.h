@@ -164,6 +164,6 @@ class RatEliminator : public ProofTransformer
   std::unordered_map<int,int> new_to_old_clause_;
 };
 
-}// namespace
+} // namespace drat2er
 
 #endif

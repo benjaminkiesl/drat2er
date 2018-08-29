@@ -160,4 +160,4 @@ void ProofTransformer::PrintProgress(bool increment_number_of_lines_processed){
   }
 }
 
-} // namespace
+} // namespace drat2er

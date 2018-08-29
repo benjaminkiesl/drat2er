@@ -330,4 +330,4 @@ void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
   }
 }
 
-} // namespace
+} // namespace drat2er

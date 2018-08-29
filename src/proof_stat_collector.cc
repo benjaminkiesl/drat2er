@@ -102,4 +102,4 @@ void ProofStatCollector::ObserveComment(const string& comment_line){
   // do nothing
 }
 
-} // namespace
+} // namespace drat2er
