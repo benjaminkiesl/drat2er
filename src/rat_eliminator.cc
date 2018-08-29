@@ -48,7 +48,6 @@ void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup){
 void RatEliminator::HandleDeletion(const Deletion& unrenamed_deletion){
   auto deletion = RenameDeletion(unrenamed_deletion);
   formula_->DeleteClauses(deletion.GetClauseIndices());
-  //WriteDeletionToOutput(deletion);
 } 
 
 void RatEliminator::ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat){
