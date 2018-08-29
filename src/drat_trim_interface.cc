@@ -57,6 +57,6 @@ int check_and_convert_to_lrat(string input_formula_path,
   return run_drat_trim(args_c_strings.size(), args_c_strings.data());
 }
 
-}
+} // namespace drat_trim
 
 } // namespace drat2er
