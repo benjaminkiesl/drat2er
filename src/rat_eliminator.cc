@@ -310,8 +310,8 @@ void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition)
 {
   if(is_output_lrat_) {
     for(auto clause : definition) {
-      OutputStream() << clause.GetIndex() << " e "
-      << clause.ToDimacs() << endl;
+      OutputStream() << clause.GetIndex() << " e " 
+                     << clause.ToDimacs() << endl;
     }
   } else {
     for(auto clause : definition) {
@@ -323,8 +323,7 @@ void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition)
 void RatEliminator::WriteDeletionToOutput(const Deletion& deletion)
 {
   if(is_output_lrat_) {
-    OutputStream() << deletion.GetIndex() << ' ';
-    OutputStream() << "d ";
+    OutputStream() << deletion.GetIndex() << " d ";
     for(auto index : deletion.GetClauseIndices()) {
       OutputStream() << index << " ";
     }
@@ -332,7 +331,8 @@ void RatEliminator::WriteDeletionToOutput(const Deletion& deletion)
   } else {
     for(auto index : deletion.GetClauseIndices()) {
       if(formula_->GetClause(index) != nullptr) {
-        OutputStream() << "d " << formula_->GetClause(index)->ToDimacs() << endl;
+        OutputStream() << "d " 
+                       << formula_->GetClause(index)->ToDimacs() << endl;
       }
     }
   }
