@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <cmath>
 #include <initializer_list>
+#include <cassert>
 
 using std::string;
 using std::stringstream;
@@ -174,16 +175,21 @@ std::ostream& operator<< (std::ostream& stream, const Clause& clause)
   return stream;
 }
 
-Clause Resolve(const Clause& first, const Clause& second, const int pivot)
+Clause Resolve(const Clause& first, 
+               const Clause& second,
+               const int pivot_literal)
 {
+  assert(first.ContainsLiteral(pivot_literal));
+  assert(second.ContainsLiteral(-pivot_literal));
+
   unordered_set<int> resolvent_literals;
   for(auto it = first.cbegin(); it != first.cend(); ++it) {
-    if(*it != pivot) {
+    if(*it != pivot_literal) {
       resolvent_literals.insert(*it);
     }
   }
   for(auto it = second.cbegin(); it != second.cend(); ++it) {
-    if(*it != -pivot) {
+    if(*it != -pivot_literal) {
       resolvent_literals.insert(*it);
     }
   }

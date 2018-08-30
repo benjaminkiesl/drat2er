@@ -73,7 +73,12 @@ class Clause
   int index_;
 };
 
-Clause Resolve(const Clause& first, const Clause& second, const int pivot);
+// Returns the resolvent of the clauses 'first' and 'second' upon the literal
+// 'pivot_literal'. The clause 'first' must contain the pivot literal and the
+// clause 'second' must contain the complement of the pivot literal.
+Clause Resolve(const Clause& first, 
+               const Clause& second, 
+               const int pivot_literal);
 
 inline void SwapLiteralToSecondPosition(const int literal, Clause& clause){
   const int other = clause.GetLiterals()[0]^clause.GetLiterals()[1]^literal;
