@@ -3,21 +3,21 @@
 // Copyright (c) 2018 Benjamin Kiesl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the 
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #include "lrat_parser.h"
@@ -43,20 +43,21 @@ using std::endl;
 namespace drat2er
 {
 
-void LratParser::ParseFile(const string& proof_file_path){
-  if(observer_ == nullptr){
+void LratParser::ParseFile(const string& proof_file_path)
+{
+  if(observer_ == nullptr) {
     return;
   }
   ifstream input_stream {proof_file_path, ifstream::in};
   string proof_line;
   while(getline(input_stream, proof_line)) {
-    if(IsDeletion(proof_line)){
+    if(IsDeletion(proof_line)) {
       observer_->ObserveDeletion(ParseDeletion(proof_line));
-    } else if(IsExtension(proof_line)){
+    } else if(IsExtension(proof_line)) {
       observer_->ObserveExtension(ParseExtension(proof_line));
-    } else if(IsProperRatAddition(proof_line)){
+    } else if(IsProperRatAddition(proof_line)) {
       observer_->ObserveProperRatAddition(ParseProperRat(proof_line));
-    } else if(IsComment(proof_line)){
+    } else if(IsComment(proof_line)) {
       observer_->ObserveComment(proof_line);
     } else {
       observer_->ObserveRupAddition(ParseRup(proof_line));
@@ -64,13 +65,14 @@ void LratParser::ParseFile(const string& proof_file_path){
   }
 }
 
-void LratParser::RegisterObserver(LratParserObserver* observer){
+void LratParser::RegisterObserver(LratParserObserver* observer)
+{
   observer_ = observer;
 }
 
 bool LratParser::IsProperRatAddition(const string& proof_line)
 {
-  if(proof_line.front() == '0' || ContainsNoLiterals(proof_line)){
+  if(proof_line.front() == '0' || ContainsNoLiterals(proof_line)) {
     return false;
   }
 
@@ -79,8 +81,8 @@ bool LratParser::IsProperRatAddition(const string& proof_line)
     auto index_of_first_nonspace_after_0 =
         proof_line.find_first_not_of(" ", index_of_0 + 2);
     return index_of_first_nonspace_after_0 != string::npos &&
-          (proof_line[index_of_first_nonspace_after_0] == '0' ||
-           proof_line.find("-", index_of_0 + 2) != string::npos);
+           (proof_line[index_of_first_nonspace_after_0] == '0' ||
+            proof_line.find("-", index_of_0 + 2) != string::npos);
   }
   return false;
 }
@@ -100,12 +102,13 @@ bool LratParser::IsComment(const string& proof_line)
   return proof_line.front() == 'c';
 }
 
-bool LratParser::ContainsNoLiterals(const string& proof_line){
+bool LratParser::ContainsNoLiterals(const string& proof_line)
+{
   int index_of_first_space = proof_line.find(' ');
-  if(index_of_first_space != string::npos){
-    int index_of_first_number_after_0 = 
-      proof_line.find_first_not_of(' ', index_of_first_space + 1);
-    if(index_of_first_number_after_0 != string::npos){
+  if(index_of_first_space != string::npos) {
+    int index_of_first_number_after_0 =
+        proof_line.find_first_not_of(' ', index_of_first_space + 1);
+    if(index_of_first_number_after_0 != string::npos) {
       return proof_line[index_of_first_number_after_0] == '0';
     }
   }
@@ -136,11 +139,11 @@ Deletion LratParser::ParseDeletion(const string& proof_line)
 RupClause LratParser::ParseRup(const string& proof_line)
 {
   stringstream line_stream {proof_line};
-  RupClause rup; 
+  RupClause rup;
   ParseClausePart(rup, line_stream);
   int hint = 0;
   line_stream >> hint;
-  while(hint != 0){
+  while(hint != 0) {
     rup.AddPositiveHint(hint);
     line_stream >> hint;
   }
@@ -151,13 +154,13 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
 {
   assert(IsProperRatAddition(proof_line));
   stringstream line_stream {proof_line};
-  RatClause rat{};
+  RatClause rat {};
   ParseClausePart(rat, line_stream);
 
   // Parse positive hints partners
   int token = 0;
   line_stream >> token;
-  while(token > 0){
+  while(token > 0) {
     rat.AddPositiveHint(token);
     line_stream >> token;
   }
@@ -165,7 +168,7 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
   // Parse negative hints
   while(token != 0) {
     int resolution_partner = -token;
-    vector<int> hints{};
+    vector<int> hints {};
     line_stream >> token;
     while(token > 0) {
       hints.emplace_back(token);
@@ -177,19 +180,21 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
   return rat;
 }
 
-string LratParser::RemoveE(const string& proof_line){
+string LratParser::RemoveE(const string& proof_line)
+{
   assert(IsExtension(proof_line));
   int index_of_first_space = proof_line.find(" ");
-  int index_of_e = proof_line.find("e"); 
-  int index_of_first_literal = proof_line.find_first_not_of(" ", index_of_e+1); 
-  return proof_line.substr(0, index_of_first_space + 1) + 
-    proof_line.substr(index_of_first_literal);
+  int index_of_e = proof_line.find("e");
+  int index_of_first_literal = proof_line.find_first_not_of(" ", index_of_e+1);
+  return proof_line.substr(0, index_of_first_space + 1) +
+         proof_line.substr(index_of_first_literal);
 }
 
-Clause LratParser::ParseExtension(const string& proof_line){
+Clause LratParser::ParseExtension(const string& proof_line)
+{
   assert(IsExtension(proof_line));
   Clause clause;
-  stringstream line_stream{RemoveE(proof_line)};
+  stringstream line_stream {RemoveE(proof_line)};
   ParseClausePart(clause, line_stream);
   return clause;
 }

@@ -3,21 +3,21 @@
 // Copyright (c) 2018 Benjamin Kiesl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the 
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #include "formula_parser.h"
@@ -97,30 +97,24 @@ FormulaProperties FormulaParser::ParseHeader(const string& header_line)
   string token;
   header_stream >> token; // 'p'
   header_stream >> token;
-  if(header_stream.fail() || token != "cnf"){
+  if(header_stream.fail() || token != "cnf") {
     cerr << "Parsing error: Could not parse header of formula." << endl;
   }
 
   FormulaProperties formula_properties;
 
   header_stream >> formula_properties.number_of_variables;
-  if(header_stream.fail()){
+  if(header_stream.fail()) {
     cerr << "Parsing error: Could not parse number of variables in header "
-            "of formula." << endl;
+         "of formula." << endl;
   }
 
   header_stream >> formula_properties.number_of_clauses;
-  if(header_stream.fail()){
+  if(header_stream.fail()) {
     cerr << "Parsing error: Could not parse number of clauses in header "
-            "of formula." << endl;
+         "of formula." << endl;
   }
-  //for(int i=1; getline(header_stream, token, ' '); i++) {
-  //  if(i==3) {
-  //    formula_properties.number_of_variables = stoi(token);
-  //  } else if(i==4) {
-  //    formula_properties.number_of_clauses = stoi(token);
-  //  }
-  //}
+
   return formula_properties;
 }
 
@@ -135,7 +129,7 @@ Clause FormulaParser::ParseClause(const string& clause_line)
     line_stream >> literal;
   }
 
-  if(line_stream.fail()){
+  if(line_stream.fail()) {
     cerr << "Parsing error: Could not parse clause in formula." << endl;
     // TODO: maybe throw exception;
   }

@@ -3,21 +3,21 @@
 // Copyright (c) 2018 Benjamin Kiesl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the 
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #include "rat_clause.h"
@@ -41,21 +41,25 @@ using std::endl;
 namespace drat2er
 {
 
-void swap(RatClause& lhs, RatClause& rhs){
+void swap(RatClause& lhs, RatClause& rhs)
+{
   using std::swap;
   swap(static_cast<Clause&>(lhs), static_cast<Clause&>(rhs));
   swap(lhs.positive_hints_, rhs.positive_hints_);
   swap(lhs.negative_hints_, rhs.negative_hints_);
 }
 
-RatClause::RatClause(initializer_list<int> literals) : Clause(literals) {
+RatClause::RatClause(initializer_list<int> literals) : Clause(literals)
+{
 }
 
-RatClause::RatClause(RatClause&& other) : RatClause(){
+RatClause::RatClause(RatClause&& other) : RatClause()
+{
   swap(*this, other);
 }
 
-RatClause& RatClause::operator=(RatClause other){
+RatClause& RatClause::operator=(RatClause other)
+{
   swap(*this, other);
   return *this;
 }
@@ -68,28 +72,34 @@ int RatClause::GetPivot() const
   return 0;
 }
 
-void RatClause::AddPositiveHint(int hint){
+void RatClause::AddPositiveHint(int hint)
+{
   positive_hints_.emplace_back(hint);
 }
 
-const std::vector<int>& RatClause::GetPositiveHints() const{
+const std::vector<int>& RatClause::GetPositiveHints() const
+{
   return positive_hints_;
 }
 
-void RatClause::ClearPositiveHints() {
+void RatClause::ClearPositiveHints()
+{
   positive_hints_.clear();
 }
 
-void RatClause::AddNegativeHint(int resolution_partner, 
-                                const vector<int>& hints){
+void RatClause::AddNegativeHint(int resolution_partner,
+                                const vector<int>& hints)
+{
   negative_hints_[resolution_partner] = hints;
 }
 
-const map<int, vector<int>>& RatClause::GetNegativeHints() const {
+const map<int, vector<int>>& RatClause::GetNegativeHints() const
+{
   return negative_hints_;
 }
 
-void RatClause::ClearNegativeHints() {
+void RatClause::ClearNegativeHints()
+{
   negative_hints_.clear();
 }
 
@@ -97,12 +107,12 @@ string RatClause::ToLrat() const
 {
   stringstream ss;
   ss << GetIndex() << ' ' << Clause::ToDimacs() << ' ';
-  for(auto hint : positive_hints_){
+  for(auto hint : positive_hints_) {
     ss << hint << ' ';
   }
-  for(auto hint : negative_hints_){
+  for(auto hint : negative_hints_) {
     ss << -hint.first << ' ';
-    for(auto sub_hint : hint.second){
+    for(auto sub_hint : hint.second) {
       ss << sub_hint << ' ';
     }
   }

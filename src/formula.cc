@@ -3,21 +3,21 @@
 // Copyright (c) 2018 Benjamin Kiesl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the 
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #include "formula.h"
@@ -54,32 +54,16 @@ using std::endl;
 namespace drat2er
 {
 
-//void swap(Formula& lhs, Formula& rhs){
-//
-//}
-
-Formula::Formula(int number_of_variables, int number_of_clauses) :
-clauses_(number_of_clauses),
-unit_clauses_ {},
-              occurrences_(2*number_of_variables),
-              watch_table_(2*number_of_variables),
-              assignment_ {},
-              conflict_{nullptr},
-              resolution_stack_{},
-              empty_occurrence_list_ {},
-              next_clause_index_ {std::numeric_limits<int>::max()}
-{ }
-
-//Formula::Formula(Formula&& other) : Formula()
-//{
-//  swap(*this, other);
-//}
-//
-//Formula& Formula::operator=(Formula other)
-//{
-//  swap(*this, other);
-//  return *this;
-//}
+Formula::Formula(int number_of_variables, int number_of_clauses) 
+          : clauses_(number_of_clauses),
+            unit_clauses_ {},
+            occurrences_(2*number_of_variables),
+            watch_table_(2*number_of_variables),
+            assignment_ {},
+            conflict_ {nullptr},
+            resolution_stack_ {},
+            empty_occurrence_list_ {},
+            next_clause_index_ {std::numeric_limits<int>::max()} {}
 
 void Formula::AddClauses(const vector<Clause>& clauses)
 {
@@ -227,20 +211,21 @@ auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)
   return clause.end();
 }
 
-Clause Resolve(const Clause& first, const Clause& second, const int pivot){
+Clause Resolve(const Clause& first, const Clause& second, const int pivot)
+{
   unordered_set<int> resolvent_literals;
-  for(auto it = first.cbegin(); it != first.cend(); ++it){
-    if(*it != pivot){
+  for(auto it = first.cbegin(); it != first.cend(); ++it) {
+    if(*it != pivot) {
       resolvent_literals.insert(*it);
     }
   }
-  for(auto it = second.cbegin(); it != second.cend(); ++it){
-    if(*it != -pivot){
+  for(auto it = second.cbegin(); it != second.cend(); ++it) {
+    if(*it != -pivot) {
       resolvent_literals.insert(*it);
     }
   }
-  Clause resolvent{};
-  resolvent.GetLiterals().assign(resolvent_literals.begin(), 
+  Clause resolvent {};
+  resolvent.GetLiterals().assign(resolvent_literals.begin(),
                                  resolvent_literals.end());
   return resolvent;
 }
@@ -253,7 +238,7 @@ bool Formula::Propagate()
     auto unit_clause = unit_clauses_.back();
     auto literal = -unit_clause->GetLiterals().front();
     unit_clauses_.pop_back();
-    if(TruthValue(literal) == kFalse){
+    if(TruthValue(literal) == kFalse) {
       continue;
     }
     assert(TruthValue(literal) == kUnassigned);
@@ -287,7 +272,7 @@ bool Formula::Propagate()
         } else if(TruthValue(*it_unfalsified_unwatched_literal) == kTrue) {
           watch.SetBlockingLiteral(*it_unfalsified_unwatched_literal);
         } else {
-          std::swap(*it_unfalsified_unwatched_literal, 
+          std::swap(*it_unfalsified_unwatched_literal,
                     clause->GetLiterals()[1]);
           Watches(clause->GetLiterals()[1]).emplace_back(watch);
         }
@@ -297,33 +282,35 @@ bool Formula::Propagate()
   return conflict_ == nullptr;
 }
 
-int Formula::GetUnusedClauseIndex() {
-  while(clauses_.find(next_clause_index_) != clauses_.end()){
+int Formula::GetUnusedClauseIndex()
+{
+  while(clauses_.find(next_clause_index_) != clauses_.end()) {
     next_clause_index_--;
   }
   return next_clause_index_;
 }
 
-unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup){
-  for(auto literal : rup.GetLiteralsConst()){
-    Clause negated_unit{-literal};
+unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup)
+{
+  for(auto literal : rup.GetLiteralsConst()) {
+    Clause negated_unit {-literal};
     negated_unit.SetIndex(GetUnusedClauseIndex());
     AddClause(negated_unit);
-  } 
+  }
 
-  if(!Propagate()){
+  if(!Propagate()) {
     RupClause subsuming_rup;
     subsuming_rup.SetIndex(rup.GetIndex());
     subsuming_rup.SetLiterals(conflict_->GetLiterals());
     subsuming_rup.AddPositiveHint(conflict_->GetIndex());
-    
-    while(!resolution_stack_.empty()){
+
+    while(!resolution_stack_.empty()) {
       auto current = resolution_stack_.top();
       resolution_stack_.pop();
       if(!rup.ContainsLiteral(current.literal) &&
-          subsuming_rup.ContainsLiteral(current.literal)){
-        subsuming_rup.SetLiterals(Resolve(subsuming_rup, 
-                                          *current.clause, 
+      subsuming_rup.ContainsLiteral(current.literal)) {
+        subsuming_rup.SetLiterals(Resolve(subsuming_rup,
+                                          *current.clause,
                                           current.literal).GetLiterals());
 
         subsuming_rup.AddPositiveHint(current.clause->GetIndex());

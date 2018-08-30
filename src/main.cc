@@ -3,21 +3,21 @@
 // Copyright (c) 2018 Benjamin Kiesl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the 
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
 #include <iostream>
@@ -54,7 +54,7 @@ const string kTempFileER = "temp_unrenamed.er";
 auto ParseFormula(const string& formula_file, bool is_verbose)
 {
   cout << "c drat2er: Parsing input formula..." << endl;
-  FormulaParser parser{};
+  FormulaParser parser {};
   auto formula = parser.ParseFormula(formula_file);
   if(formula == nullptr) {
     throw std::runtime_error(
@@ -63,12 +63,12 @@ auto ParseFormula(const string& formula_file, bool is_verbose)
   return formula;
 }
 
-// Takes a DRAT proof and calls drat-trim to turn the DRAT proof into an 
+// Takes a DRAT proof and calls drat-trim to turn the DRAT proof into an
 // LRAT proof. The resulting proof is written to the file 'output_proof_file'
 void TransformDRATToLRAT(const string& input_formula_file,
-                            const string& input_proof_file,
-                            const string& output_proof_file,
-                            bool is_verbose)
+                         const string& input_proof_file,
+                         const string& output_proof_file,
+                         bool is_verbose)
 {
   cout << "c drat2er: Verifying DRAT proof and converting it to"
        " LRAT format using drat-trim." << endl;
@@ -104,8 +104,8 @@ void TransformRUPsToResolutions(const string& input_formula_file,
                                 const string& output_proof_file,
                                 bool is_output_drat, bool is_verbose)
 {
-  shared_ptr<Formula> original_formula = 
-    ParseFormula(input_formula_file, is_verbose);
+  shared_ptr<Formula> original_formula =
+      ParseFormula(input_formula_file, is_verbose);
   RupToResolutionTransformer
   rup_to_resolution_transformer(original_formula,
                                 is_output_drat, is_verbose);
@@ -123,7 +123,7 @@ void RenameProofStepsIncrementally(const string& input_proof_file,
                                    bool is_verbose)
 {
   auto write_to_standard_output = output_proof_file == "";
-  ProofStepRenamer proof_step_renamer(size_of_original_formula, 
+  ProofStepRenamer proof_step_renamer(size_of_original_formula,
                                       is_verbose && !write_to_standard_output);
   if(write_to_standard_output) {
     proof_step_renamer.Transform(input_proof_file, cout);
@@ -134,7 +134,7 @@ void RenameProofStepsIncrementally(const string& input_proof_file,
   std::remove(input_proof_file.c_str());
 }
 
-// Takes as input a DIMACS file (input_formula_file) and a DRAT proof file 
+// Takes as input a DIMACS file (input_formula_file) and a DRAT proof file
 // (input_proof_file) and transforms the DRAT proof into an extended-resolution
 // proof. The resulting proof is written to the path 'output_file'.
 // The transformation is described in the paper "Extended Resolution Simulates
@@ -144,7 +144,7 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
                                        const string& output_file,
                                        bool is_output_drat, bool is_verbose)
 {
-  TransformDRATToLRAT(input_formula_file, input_proof_file, 
+  TransformDRATToLRAT(input_formula_file, input_proof_file,
                       kTempFileLRAT, is_verbose);
 
   shared_ptr<Formula> formula = ParseFormula(input_formula_file, is_verbose);
@@ -152,10 +152,10 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
 
   EliminateProperRATs(formula, kTempFileLRAT, kTempFileERUP, is_verbose);
 
-  TransformRUPsToResolutions(input_formula_file, kTempFileERUP, kTempFileER, 
+  TransformRUPsToResolutions(input_formula_file, kTempFileERUP, kTempFileER,
                              is_output_drat, is_verbose);
 
-  if(!is_output_drat){
+  if(!is_output_drat) {
     RenameProofStepsIncrementally(kTempFileER, output_file,
                                   size_of_original_formula, is_verbose);
   }
@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
 
   try {
     TransformDRATToExtendedResolution(input_formula_path, input_proof_path,
-                              output_file_path, is_output_drat, is_verbose);
+                                      output_file_path, is_output_drat, is_verbose);
     cout << "c drat2er: Proof successfully transformed." << endl;
     return 0;
   } catch(const std::exception& ex) {
