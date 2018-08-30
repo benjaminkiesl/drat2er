@@ -72,8 +72,8 @@ void TransformDRATToLRAT(const string& input_formula_file,
 {
   cout << "c drat2er: Verifying DRAT proof and converting it to"
        " LRAT format using drat-trim." << endl;
-  if(drat_trim::check_and_convert_to_lrat(input_formula_file, input_proof_file,
-                                          output_proof_file, is_verbose)) {
+  if(drat_trim::CheckAndConvertToLRAT(input_formula_file, input_proof_file,
+                                      output_proof_file, is_verbose)) {
     throw std::runtime_error(
         "Could not parse the input proof with drat-trim.");
   }

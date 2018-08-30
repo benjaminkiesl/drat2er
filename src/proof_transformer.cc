@@ -164,7 +164,7 @@ void ProofTransformer::InitProgressBar(const std::string& input_file)
     progress_bar_.SetOverallNumberOfItems(1);
     PrintProgress(false);
     progress_bar_.SetOverallNumberOfItems(
-        file_helper::get_number_of_lines(input_file));
+        file_helper::GetNumberOfLines(input_file));
     number_of_lines_processed_ = 0;
   }
 }

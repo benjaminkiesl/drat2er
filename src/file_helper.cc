@@ -42,7 +42,7 @@ namespace drat2er
 namespace file_helper
 {
 
-string get_current_working_directory()
+string GetCurrentWorkingDirectory()
 {
   char c_current_path[FILENAME_MAX];
 
@@ -53,7 +53,7 @@ string get_current_working_directory()
   return c_current_path;
 }
 
-int get_number_of_lines(const string& file_path)
+int GetNumberOfLines(const string& file_path)
 {
   ifstream input_file(file_path);
   if(input_file.is_open()) {

@@ -32,10 +32,10 @@ namespace file_helper
 {
 
 // Returns the current working directory.
-std::string get_current_working_directory();
+std::string GetCurrentWorkingDirectory();
 
 // Returns the number of lines in the file at the given path.
-int get_number_of_lines(const std::string& file_path);
+int GetNumberOfLines(const std::string& file_path);
 
 } // namespace file_helper
 
