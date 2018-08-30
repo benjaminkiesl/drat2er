@@ -100,6 +100,11 @@ string ToTRACECHECKExtension(const Clause& definition_clause)
   return ToLRAT(definition_clause);
 }
 
+string ToTRACECHECKOriginalClause(const Clause& clause)
+{
+  return ToLRAT(clause);
+}
+
 string ToTRACECHECK(const RupClause& rup)
 {
   return ToLRAT(rup);

@@ -7,6 +7,7 @@
 #include <stack>
 #include <unordered_map>
 #include <unordered_set>
+#include <ostream>
 #include "watch.h"
 
 namespace drat2er
@@ -51,6 +52,9 @@ class Formula
   // Returns the clause with the given index and nullptr if this clause
   // is not contained.
   std::shared_ptr<Clause> GetClause(const int clause_index) const;
+
+  // Returns the map to the clauses contained in the formula.
+  const std::unordered_map<int, std::shared_ptr<Clause>>& GetClauseMap() const;
 
   // Returns the number of clauses contained in the formula.
   size_t GetNumberOfClauses() const;
@@ -113,6 +117,9 @@ class Formula
   const OccurrenceList empty_occurrence_list_;
   int next_clause_index_;
 };
+
+void WriteToOutputStreamInTRACECHECKFormat(const Formula& formula, 
+                                           std::ostream& output_stream);
 
 } // namespace drat2er
 

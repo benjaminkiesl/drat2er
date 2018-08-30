@@ -41,6 +41,7 @@ namespace drat2er
 
   std::string ToTRACECHECK(const RupClause& rup);
   std::string ToTRACECHECKExtension(const Clause& clause);
+  std::string ToTRACECHECKOriginalClause(const Clause& clause);
 
   std::string ToDRAT(const Clause& clause);
 

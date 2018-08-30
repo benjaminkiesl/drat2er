@@ -24,6 +24,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <set>
 #include <iostream>
 #include <algorithm>
 #include <utility>
@@ -32,6 +33,7 @@
 #include "clause.h"
 #include "rup_clause.h"
 #include "watch.h"
+#include "instruction_serialization.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -39,6 +41,7 @@ using std::make_shared;
 using std::make_unique;
 using std::vector;
 using std::unordered_map;
+using std::set;
 using std::find;
 using std::copy_if;
 using std::for_each;
@@ -114,6 +117,11 @@ shared_ptr<Clause> Formula::GetClause(const int clause_index) const
     return clauses_.at(clause_index);
   }
   return nullptr;
+}
+
+const unordered_map<int, shared_ptr<Clause>>& Formula::GetClauseMap() const
+{
+  return clauses_;
 }
 
 size_t Formula::GetNumberOfClauses() const
@@ -317,6 +325,24 @@ unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup)
     return make_unique<RupClause>(subsuming_rup);
   } else {
     return nullptr;
+  }
+}
+
+void WriteToOutputStreamInTRACECHECKFormat(const Formula& formula, 
+                                           std::ostream& output_stream)
+{
+  auto clause_compare = [](const shared_ptr<Clause>& lhs, 
+                           const shared_ptr<Clause>& rhs){
+                          return lhs->GetIndex() < rhs->GetIndex();
+                        };
+  set<shared_ptr<Clause>, decltype(clause_compare)> 
+    ordered_clause_set(clause_compare);
+  for(auto index_clause : formula.GetClauseMap()){
+    ordered_clause_set.insert(index_clause.second);
+  }
+
+  for(auto clause : ordered_clause_set){
+    output_stream << ToTRACECHECKOriginalClause(*clause) << endl;
   }
 }
 

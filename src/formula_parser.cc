@@ -46,12 +46,12 @@ using std::endl;
 namespace drat2er
 {
 
-unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name) const
+Formula FormulaParser::ParseFormula(const string& file_name) const
 {
   ifstream file_stream {file_name, ifstream::in};
 
   if(file_stream.fail()) {
-    return nullptr;
+    throw std::runtime_error("Could not open formula file" + file_name + ".");
   }
 
   string line;
@@ -70,7 +70,7 @@ unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name) const
     number_of_clauses = formula_properties.number_of_clauses;
   }
 
-  auto formula = make_unique<Formula>(number_of_variables, number_of_clauses);
+  Formula formula(number_of_variables, number_of_clauses);
 
   int clause_index = 1;
   while(getline(file_stream, line)) {
@@ -79,7 +79,7 @@ unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name) const
     } else {
       auto clause = ParseClause(line);
       clause.SetIndex(clause_index++);
-      formula->AddClause(clause);
+      formula.AddClause(clause);
     }
   }
 
@@ -100,21 +100,21 @@ FormulaParser::FormulaProperties
   header_stream >> token; // 'p'
   header_stream >> token;
   if(header_stream.fail() || token != "cnf") {
-    cerr << "Parsing error: Could not parse header of formula." << endl;
+    throw std::runtime_error("Could not parse header of formula.");
   }
 
   FormulaProperties formula_properties;
 
   header_stream >> formula_properties.number_of_variables;
   if(header_stream.fail()) {
-    cerr << "Parsing error: Could not parse number of variables in header "
-         "of formula." << endl;
+    throw std::runtime_error(
+        "Could not parse number of variables in header of formula.");
   }
 
   header_stream >> formula_properties.number_of_clauses;
   if(header_stream.fail()) {
-    cerr << "Parsing error: Could not parse number of clauses in header "
-         "of formula." << endl;
+    throw std::runtime_error(
+        "Could not parse number of clauses in header of formula.");
   }
 
   return formula_properties;
@@ -132,8 +132,7 @@ Clause FormulaParser::ParseClause(const string& clause_line) const
   }
 
   if(line_stream.fail()) {
-    cerr << "Parsing error: Could not parse clause in formula." << endl;
-    // TODO: maybe throw exception;
+    throw std::runtime_error("Could not parse clause in formula.");
   }
 
   return clause;

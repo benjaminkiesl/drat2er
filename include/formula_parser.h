@@ -42,7 +42,7 @@ class FormulaParser
 
   // Parses the DIMACS file with the given file name and returns a pointer
   // to the resulting Formula object.
-  std::unique_ptr<Formula> ParseFormula(const std::string& file_name) const;
+  Formula ParseFormula(const std::string& file_name) const;
 
   // Parses a clause line in a DIMACS file and returns a Clause object
   // corresponding to that line.

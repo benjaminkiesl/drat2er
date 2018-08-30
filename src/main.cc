@@ -57,12 +57,7 @@ auto ParseFormula(const string& formula_file, bool is_verbose)
 {
   cout << "c drat2er: Parsing input formula." << endl;
   FormulaParser parser {};
-  auto formula = parser.ParseFormula(formula_file);
-  if(formula == nullptr) {
-    throw std::runtime_error(
-        "File '" + formula_file + "' could not be opened.");
-  }
-  return formula;
+  return parser.ParseFormula(formula_file);
 }
 
 // Takes a DRAT proof and calls drat-trim to turn the DRAT proof into an
@@ -84,16 +79,17 @@ void TransformDRATToLRAT(const string& input_formula_file,
 // Takes as input a formula and an LRAT proof and replaces all proper RAT
 // additions in the proof with extensions and RUP additions. In the course of
 // this, deletions are also eliminated from the LRAT proof.
-void EliminateProperRATs(shared_ptr<Formula> formula,
+void EliminateProperRATs(const Formula& original_formula,
                          const string& input_proof_file,
                          const string& output_proof_file, bool is_verbose)
 {
+  auto formula_copy = make_shared<Formula>(original_formula);
   LratParser lrat_parser {};
-  ProofStatCollector stat_collector(formula);
+  ProofStatCollector stat_collector(formula_copy);
   lrat_parser.RegisterObserver(&stat_collector);
   lrat_parser.ParseFile(input_proof_file);
 
-  RatEliminator rat_eliminator(formula, stat_collector.GetMaxVariable(),
+  RatEliminator rat_eliminator(formula_copy, stat_collector.GetMaxVariable(),
                                stat_collector.GetMaxInstruction(), is_verbose);
   rat_eliminator.Transform(input_proof_file, output_proof_file);
   std::remove(input_proof_file.c_str());
@@ -101,13 +97,13 @@ void EliminateProperRATs(shared_ptr<Formula> formula,
 
 // Takes as input an ERUP proof (i.e., a proof containing only extensions
 // and RUP additions) and transforms all RUP additions into resolution chains.
-void TransformRUPsToResolutions(shared_ptr<Formula> original_formula,
+void TransformRUPsToResolutions(const Formula& original_formula,
                                 const string& input_proof_file,
                                 const string& output_proof_file,
                                 bool is_output_drat, bool is_verbose)
 {
   RupToResolutionTransformer
-  rup_to_resolution_transformer(original_formula,
+  rup_to_resolution_transformer(make_shared<Formula>(original_formula),
                                 is_output_drat, is_verbose);
   rup_to_resolution_transformer.Transform(input_proof_file, output_proof_file);
   std::remove(input_proof_file.c_str());
@@ -117,19 +113,21 @@ void TransformRUPsToResolutions(shared_ptr<Formula> original_formula,
 // not necessarily numbered incrementally and renames the proof steps such
 // that the steps in the resulting proof (output_proof_file) are numbered
 // incrementally.
-void RenameProofStepsIncrementally(const string& input_proof_file,
+void RenameProofStepsIncrementally(const Formula& original_formula,
+                                   const string& input_proof_file,
                                    const string& output_proof_file,
-                                   int size_of_original_formula,
                                    bool is_verbose)
 {
   auto write_to_standard_output = output_proof_file == "";
-  ProofStepRenamer proof_step_renamer(size_of_original_formula,
+  ProofStepRenamer proof_step_renamer(original_formula.GetNumberOfClauses()+1,
                                       is_verbose && !write_to_standard_output);
   if(write_to_standard_output) {
+    WriteToOutputStreamInTRACECHECKFormat(original_formula, cout);
     proof_step_renamer.Transform(input_proof_file, cout);
   } else {
-    std::ofstream output_file_stream(output_proof_file);
-    proof_step_renamer.Transform(input_proof_file, output_file_stream);
+    std::ofstream output_stream(output_proof_file);
+    WriteToOutputStreamInTRACECHECKFormat(original_formula, output_stream);
+    proof_step_renamer.Transform(input_proof_file, output_stream);
   }
   std::remove(input_proof_file.c_str());
 }
@@ -149,18 +147,17 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
 
   auto formula = ParseFormula(input_formula_file, is_verbose);
 
-  EliminateProperRATs(make_shared<Formula>(*formula), 
-                      kTempFileLRAT, kTempFileERUP, is_verbose);
+  EliminateProperRATs(formula, kTempFileLRAT, kTempFileERUP, is_verbose);
 
-  TransformRUPsToResolutions(make_shared<Formula>(*formula), 
-                             kTempFileERUP, kTempFileER,
+  TransformRUPsToResolutions(formula, kTempFileERUP, kTempFileER, 
                              is_output_drat, is_verbose);
   
-  if(is_output_drat){ // We are already done
+  if(is_output_drat){ 
+    // We are already done, just rename the existing temp file.
     std::rename(kTempFileER.c_str(), output_file.c_str());
   } else {
-    RenameProofStepsIncrementally(kTempFileER, output_file,
-                                  formula->GetNumberOfClauses(), is_verbose);
+    RenameProofStepsIncrementally(formula, kTempFileER, 
+                                  output_file, is_verbose);
   }
 }
 
