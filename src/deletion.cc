@@ -35,17 +35,17 @@ int Deletion::GetIndex() const
   return index_;
 }
 
-void Deletion::SetIndex(int index)
+void Deletion::SetIndex(const int index)
 {
   index_ = index;
 }
 
-void Deletion::AddClauseIndex(int clause_index)
+void Deletion::AddClauseIndex(const int clause_index)
 {
   clause_indices_.emplace_back(clause_index);
 }
 
-void Deletion::RemoveClauseIndex(int clause_index)
+void Deletion::RemoveClauseIndex(const int clause_index)
 {
   clause_indices_.erase(
       find(clause_indices_.begin(), clause_indices_.end(), clause_index));

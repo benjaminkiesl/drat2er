@@ -54,62 +54,77 @@ ProofStatCollector::ProofStatCollector(shared_ptr<Formula> formula) :
          number_of_deletions_ {0}
 { }
 
-int ProofStatCollector::GetMaxVariable()
+int ProofStatCollector::GetMaxVariable() const
 {
   return max_variable_;
 }
 
-int ProofStatCollector::GetMaxInstruction()
+int ProofStatCollector::GetMaxInstruction() const
 {
   return max_instruction_;
 }
 
-int ProofStatCollector::GetNumberOfInstructions()
+int ProofStatCollector::GetNumberOfInstructions() const
 {
   return number_of_instructions_;
 }
 
-int ProofStatCollector::GetNumberOfProperRatAdditions()
+int ProofStatCollector::GetNumberOfProperRatAdditions() const
 {
   return number_of_proper_rat_additions_;
 }
 
-int ProofStatCollector::GetNumberOfRupAdditions()
+int ProofStatCollector::GetNumberOfRupAdditions() const
 {
   return number_of_rup_additions_;
 }
 
-int ProofStatCollector::GetNumberOfDeletions()
+int ProofStatCollector::GetNumberOfDeletions() const
 {
   return number_of_deletions_;
+}
+
+int ProofStatCollector::GetNumberOfExtensionClauses() const
+{
+  return number_of_extension_clauses_;
 }
 
 void ProofStatCollector::ObserveDeletion(const Deletion& deletion)
 {
   max_instruction_ = max(max_instruction_, deletion.GetIndex());
-  number_of_deletions_++;
   number_of_instructions_++;
+  number_of_deletions_++;
 }
 
 void ProofStatCollector::ObserveProperRatAddition(const RatClause& rat)
 {
-  max_variable_ = max(max_variable_, rat.GetMaxVariable());
-  max_instruction_ = max(max_instruction_, rat.GetIndex());
+  UpdateInstructionAndMaxVariableStats(rat);
   number_of_proper_rat_additions_++;
-  number_of_instructions_++;
 }
 
 void ProofStatCollector::ObserveRupAddition(const RupClause& rup)
 {
-  max_variable_ = max(max_variable_, rup.GetMaxVariable());
-  max_instruction_ = max(max_instruction_, rup.GetIndex());
+  UpdateInstructionAndMaxVariableStats(rup);
   number_of_rup_additions_++;
-  number_of_instructions_++;
 }
 
 void ProofStatCollector::ObserveComment(const string& comment_line)
 {
   // do nothing
+}
+
+void ProofStatCollector::ObserveExtension(const Clause& definition_clause)
+{
+  UpdateInstructionAndMaxVariableStats(definition_clause);
+  number_of_extension_clauses_++;
+}
+
+void ProofStatCollector::UpdateInstructionAndMaxVariableStats(
+                                                          const Clause& clause)
+{
+  max_instruction_ = max(max_instruction_, clause.GetIndex());
+  max_variable_ = max(max_variable_, clause.GetMaxVariable());
+  number_of_instructions_++;
 }
 
 } // namespace drat2er

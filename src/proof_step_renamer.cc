@@ -33,8 +33,8 @@ using std::endl;
 namespace drat2er
 {
 
-ProofStepRenamer::ProofStepRenamer(int index_of_first_proof_step,
-                                   bool is_verbose)
+ProofStepRenamer::ProofStepRenamer(const int index_of_first_proof_step,
+                                   const bool is_verbose)
                       : ProofTransformer("Renaming proof steps incrementally.",
                                          is_verbose),
                         clause_renaming_ {},
@@ -76,7 +76,7 @@ void ProofStepRenamer::UpdateRenaming(const int old_clause_index,
   clause_renaming_[old_clause_index] = new_clause_index;
 }
 
-RupClause ProofStepRenamer::RenamePositiveHints(const RupClause& clause)
+RupClause ProofStepRenamer::RenamePositiveHints(const RupClause& clause) const
 {
   RupClause renamed_clause(clause);
   renamed_clause.ClearPositiveHints();

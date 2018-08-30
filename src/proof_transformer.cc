@@ -46,7 +46,7 @@ namespace drat2er
 {
 
 ProofTransformer::ProofTransformer(const std::string& verbose_message,
-                                   bool print_progress)
+                                   const bool print_progress)
                                         : output_stream_ {nullptr},
                                           verbose_message_ {verbose_message},
                                           is_output_lrat_ {true},

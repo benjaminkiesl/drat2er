@@ -48,7 +48,7 @@ class LratParserObserver
   virtual void ObserveProperRatAddition(const RatClause& rat) = 0;
   virtual void ObserveRupAddition(const RupClause& rup) = 0;
   virtual void ObserveComment(const std::string& comment_line) = 0;
-  virtual void ObserveExtension(const Clause& definition_clause){};
+  virtual void ObserveExtension(const Clause& definition_clause) = 0;
 };
 
 

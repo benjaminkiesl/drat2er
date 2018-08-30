@@ -38,10 +38,10 @@ class ProgressBar {
     // the progress bar as displayed in the standard output.
     ProgressBar(int overall_number_of_items=1, int width=22);
     ~ProgressBar();
-    int GetOverallNumberOfItems(int overall_number_of_items);
+    int GetOverallNumberOfItems() const;
     void SetOverallNumberOfItems(int overall_number_of_items);
-    void PrintProgress(int number_of_items_processed);
-    void PrintProgress(double percentage);
+    void PrintProgress(int number_of_items_processed) const;
+    void PrintProgress(double percentage) const;
   private:
     int overall_number_of_items_;
     int width_;

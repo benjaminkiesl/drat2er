@@ -48,8 +48,8 @@ class RupToResolutionTransformer : public ProofTransformer
   // TRACECHECK format. If print_progress is true, a status bar will be
   // printed on the standard output to indicate the progress.
   RupToResolutionTransformer(std::shared_ptr<Formula> formula,
-                             bool is_output_drat = false,
-                             bool print_progress = false);
+                             const bool is_output_drat = false,
+                             const bool print_progress = false);
 
  protected:
   virtual void HandleRupAddition(const RupClause& rup) override;

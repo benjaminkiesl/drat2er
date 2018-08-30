@@ -54,7 +54,11 @@ using std::endl;
 namespace drat2er
 {
 
-Formula::Formula(int number_of_variables, int number_of_clauses) 
+Reason::Reason(std::shared_ptr<Clause> clause, const int literal) 
+        : clause(clause), 
+          literal(literal) {}
+
+Formula::Formula(const int number_of_variables, const int number_of_clauses) 
           : clauses_(number_of_clauses),
             unit_clauses_ {},
             occurrences_(2*number_of_variables),
@@ -136,7 +140,7 @@ void Formula::DeleteClauses(const vector<int>& clause_indices)
   }
 }
 
-const OccurrenceList& Formula::Occurrences(const int literal)
+const OccurrenceList& Formula::Occurrences(const int literal) const
 {
   if(occurrences_.find(literal) != occurrences_.end()) {
     return occurrences_.at(literal);
@@ -181,9 +185,12 @@ inline int Sign(const int number)
   return (number > 0) - (0 > number);
 }
 
-int Formula::TruthValue(const int literal)
+int Formula::TruthValue(const int literal) const
 {
-  return Sign(literal) * assignment_[abs(literal)];
+  if(assignment_.find(abs(literal)) != assignment_.end()){
+    return Sign(literal) * assignment_.at(abs(literal));
+  }
+  return kUnassigned;
 }
 
 void Formula::Satisfy(const int literal)
@@ -198,7 +205,7 @@ void Formula::Falsify(const int literal)
 
 void Formula::Unassign(const int literal)
 {
-  assignment_[abs(literal)] = 0;
+  assignment_[abs(literal)] = kUnassigned;
 }
 
 auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)
@@ -210,26 +217,6 @@ auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)
   }
   return clause.end();
 }
-
-Clause Resolve(const Clause& first, const Clause& second, const int pivot)
-{
-  unordered_set<int> resolvent_literals;
-  for(auto it = first.cbegin(); it != first.cend(); ++it) {
-    if(*it != pivot) {
-      resolvent_literals.insert(*it);
-    }
-  }
-  for(auto it = second.cbegin(); it != second.cend(); ++it) {
-    if(*it != -pivot) {
-      resolvent_literals.insert(*it);
-    }
-  }
-  Clause resolvent {};
-  resolvent.GetLiterals().assign(resolvent_literals.begin(),
-                                 resolvent_literals.end());
-  return resolvent;
-}
-
 
 bool Formula::Propagate()
 {

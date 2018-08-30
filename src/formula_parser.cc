@@ -46,7 +46,7 @@ using std::endl;
 namespace drat2er
 {
 
-unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name)
+unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name) const
 {
   ifstream file_stream {file_name, ifstream::in};
 
@@ -62,13 +62,15 @@ unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name)
     }
   }
 
-  FormulaProperties formula_properties;
+  int number_of_variables = 0;
+  int number_of_clauses = 0;
   if(line.front() == 'p') {
-    formula_properties = ParseHeader(line);
+    auto formula_properties = ParseHeader(line);
+    number_of_variables = formula_properties.number_of_variables;
+    number_of_clauses = formula_properties.number_of_clauses;
   }
 
-  auto formula = make_unique<Formula>(formula_properties.number_of_variables,
-                                      formula_properties.number_of_clauses);
+  auto formula = make_unique<Formula>(number_of_variables, number_of_clauses);
 
   int clause_index = 1;
   while(getline(file_stream, line)) {
@@ -84,12 +86,13 @@ unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name)
   return formula;
 }
 
-void FormulaParser::ParseComment(const string& comment_line)
+void FormulaParser::ParseComment(const string& comment_line) const
 {
   // Do nothing
 }
 
-FormulaProperties FormulaParser::ParseHeader(const string& header_line)
+FormulaParser::FormulaProperties 
+               FormulaParser::ParseHeader(const string& header_line) const
 {
   assert(header_line.front() == 'p');
   stringstream header_stream {header_line};
@@ -117,7 +120,7 @@ FormulaProperties FormulaParser::ParseHeader(const string& header_line)
   return formula_properties;
 }
 
-Clause FormulaParser::ParseClause(const string& clause_line)
+Clause FormulaParser::ParseClause(const string& clause_line) const
 {
   Clause clause;
   stringstream line_stream {clause_line};

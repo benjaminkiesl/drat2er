@@ -33,9 +33,9 @@ namespace drat2er {
 class Deletion{
   public:
     int GetIndex() const;
-    void SetIndex(int index);
-    void AddClauseIndex(int clause_index);
-    void RemoveClauseIndex(int clause_index);
+    void SetIndex(const int index);
+    void AddClauseIndex(const int clause_index);
+    void RemoveClauseIndex(const int clause_index);
     const std::vector<int>& GetClauseIndices() const;
   private:
     std::vector<int> clause_indices_;

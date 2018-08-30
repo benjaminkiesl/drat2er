@@ -41,7 +41,8 @@ class RupClause;
 class ProofStepRenamer : public ProofTransformer {
 
  public:
-  ProofStepRenamer(int index_of_first_proof_step = 1, bool is_verbose=false);
+  ProofStepRenamer(const int index_of_first_proof_step = 1, 
+                   const bool is_verbose=false);
 
  protected:
   virtual void HandleRupAddition(const RupClause& rup) override;
@@ -51,7 +52,7 @@ class ProofStepRenamer : public ProofTransformer {
   int GetNextClauseIndex();
   int RenameClauseIndex(const int clause_index) const;
   void UpdateRenaming(const int old_clause_index, const int new_clause_index); 
-  RupClause RenamePositiveHints(const RupClause& clause);
+  RupClause RenamePositiveHints(const RupClause& clause) const;
 
   std::unordered_map<int, int> clause_renaming_;
   int index_of_next_step_;

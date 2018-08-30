@@ -32,7 +32,7 @@ namespace drat2er
 Watch::Watch() : clause_(nullptr), 
                  blocking_literal_{0} { }
 
-Watch::Watch(shared_ptr<Clause> clause, int blocking_literal) 
+Watch::Watch(shared_ptr<Clause> clause, const int blocking_literal) 
   : clause_(clause),
     blocking_literal_{blocking_literal} { }
 
@@ -41,7 +41,7 @@ shared_ptr<Clause> Watch::GetClause()
   return clause_;
 }
 
-int Watch::GetBlockingLiteral()
+int Watch::GetBlockingLiteral() const
 {
   return blocking_literal_;
 }

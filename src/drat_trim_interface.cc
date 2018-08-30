@@ -39,9 +39,10 @@ namespace drat2er
 namespace drat_trim
 {
 
-int check_and_convert_to_lrat(string input_formula_path,
-                              string input_proof_path,
-                              string output_proof_path, bool is_verbose)
+int check_and_convert_to_lrat(const string& input_formula_path,
+                              const string& input_proof_path,
+                              const string& output_proof_path, 
+                              const bool is_verbose)
 {
   vector<string> args;
   args.push_back("");

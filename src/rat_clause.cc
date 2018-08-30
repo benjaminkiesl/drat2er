@@ -87,7 +87,7 @@ void RatClause::ClearPositiveHints()
   positive_hints_.clear();
 }
 
-void RatClause::AddNegativeHint(int resolution_partner,
+void RatClause::AddNegativeHint(const int resolution_partner,
                                 const vector<int>& hints)
 {
   negative_hints_[resolution_partner] = hints;

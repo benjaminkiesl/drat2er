@@ -23,9 +23,7 @@ class RupClause;
 // during unit propagation. Reasons are used to obtain a resolution
 // derivation after unit propagation has derived a conflict.
 struct Reason {
-  Reason(std::shared_ptr<Clause> clause=nullptr, 
-         int literal=0) : clause(clause), 
-                          literal(literal) {}
+  Reason(std::shared_ptr<Clause> clause=nullptr, const int literal=0); 
   std::shared_ptr<Clause> clause;
   int literal;
 };
@@ -41,7 +39,7 @@ class Formula
 {
 
  public:
-  Formula(int number_of_variables = 0, int number_of_clauses = 0);
+  Formula(const int number_of_variables = 0, const int number_of_clauses = 0);
 
   // Adds a clause to the formula.
   void AddClause(const Clause& clause);
@@ -65,7 +63,7 @@ class Formula
   void DeleteClauses(const std::vector<int>& clause_indices);
 
   // Returns a list of all clauses in which the given literal is contained.
-  const OccurrenceList& Occurrences(const int literal);
+  const OccurrenceList& Occurrences(const int literal) const;
 
   // Deletes the given clause from the occurrence list of the given literal.
   void DeleteClauseFromOccurrenceList(std::shared_ptr<Clause> clause, 
@@ -89,7 +87,7 @@ class Formula
   std::unique_ptr<RupClause> DeriveSubsumingClause(const Clause& rup);
 
   // Returns the truth value of the given literal.
-  int TruthValue(const int literal);
+  int TruthValue(const int literal) const;
 
   // Sets the truth value of the given literal to TRUE.
   void Satisfy(const int literal);

@@ -58,7 +58,7 @@ RupClause& RupClause::operator=(RupClause other)
   return *this;
 }
 
-void RupClause::AddPositiveHint(int hint)
+void RupClause::AddPositiveHint(const int hint)
 {
   positive_hints_.emplace_back(hint);
 }

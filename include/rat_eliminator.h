@@ -67,9 +67,9 @@ class RatEliminator : public ProofTransformer
 {
  public:
   RatEliminator(std::shared_ptr<Formula> formula, 
-                int max_variable,
-                int max_instruction,
-                bool print_progress=false);
+                const int max_variable,
+                const int max_instruction,
+                const bool print_progress=false);
 
   // LratParserObserver interface: Processes proper RAT additions.
   virtual void HandleProperRatAddition(const RatClause& rat) override;

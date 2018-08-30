@@ -35,7 +35,7 @@ namespace file_helper
 std::string get_current_working_directory();
 
 // Returns the number of lines in the file at the given path.
-int get_number_of_lines(std::string file_path);
+int get_number_of_lines(const std::string& file_path);
 
 } // namespace file_helper
 

@@ -83,7 +83,7 @@ int Clause::GetIndex() const
   return index_;
 }
 
-void Clause::SetIndex(int index)
+void Clause::SetIndex(const int index)
 {
   index_ = index;
 }
@@ -109,12 +109,6 @@ void Clause::SetLiterals(const vector<int>& literals)
 void Clause::AddLiteral(const int literal)
 {
   literals_.emplace_back(literal);
-}
-
-bool Clause::ContainsLiteral(int literal)
-{
-  return find(literals_.begin(), literals_.end(), literal) !=
-         literals_.end();
 }
 
 bool Clause::IsUnit() const
@@ -145,7 +139,8 @@ int Clause::GetMaxVariable() const
 
 bool Clause::ContainsLiteral(const int literal) const
 {
-  return find(literals_.begin(), literals_.end(), literal) != literals_.end();
+  return find(literals_.cbegin(), literals_.cend(), literal) 
+         != literals_.cend();
 }
 
 string Clause::ToDimacs() const
@@ -177,6 +172,25 @@ std::ostream& operator<< (std::ostream& stream, const Clause& clause)
     stream << '}';
   }
   return stream;
+}
+
+Clause Resolve(const Clause& first, const Clause& second, const int pivot)
+{
+  unordered_set<int> resolvent_literals;
+  for(auto it = first.cbegin(); it != first.cend(); ++it) {
+    if(*it != pivot) {
+      resolvent_literals.insert(*it);
+    }
+  }
+  for(auto it = second.cbegin(); it != second.cend(); ++it) {
+    if(*it != -pivot) {
+      resolvent_literals.insert(*it);
+    }
+  }
+  Clause resolvent {};
+  resolvent.GetLiterals().assign(resolvent_literals.begin(),
+                                 resolvent_literals.end());
+  return resolvent;
 }
 
 } // namespace drat2er

@@ -45,9 +45,9 @@ namespace drat2er
 {
 
 RatEliminator::RatEliminator(shared_ptr<Formula> formula,
-                             int max_variable,
-                             int max_instruction,
-                             bool print_progress)
+                             const int max_variable,
+                             const int max_instruction,
+                             const bool print_progress)
           : ProofTransformer("Eliminating proper RAT additions and deletions.",
                              print_progress),
             formula_ {formula},

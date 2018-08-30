@@ -35,9 +35,9 @@ class Watch
 {
  public:
   Watch();
-  Watch(std::shared_ptr<Clause>, int blocking_literal=0);
+  Watch(std::shared_ptr<Clause>, const int blocking_literal=0);
   std::shared_ptr<Clause> GetClause();
-  int GetBlockingLiteral();
+  int GetBlockingLiteral() const;
   void SetBlockingLiteral(const int blocking_literal);
  private:
   std::shared_ptr<Clause> clause_;

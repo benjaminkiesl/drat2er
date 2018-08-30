@@ -48,16 +48,15 @@ class Clause
   Clause& operator=(Clause other);
   
   int GetIndex() const;
-  void SetIndex(int index);
+  void SetIndex(const int index);
   std::vector<int>& GetLiterals();
   const std::vector<int>& GetLiteralsConst() const;
   void SetLiterals(const std::vector<int>& literals);
-  void AddLiteral(int literal);
-  bool ContainsLiteral(int literal);
+  void AddLiteral(const int literal);
   bool IsUnit() const;
   bool IsSubclauseOf(const Clause& other) const;
   int GetMaxVariable() const;
-  bool ContainsLiteral(int literal) const;
+  bool ContainsLiteral(const int literal) const;
   std::string ToDimacs() const;
   virtual std::string ToLrat() const;
   auto size() const { return literals_.size(); }
@@ -73,6 +72,8 @@ class Clause
  private:
   int index_;
 };
+
+Clause Resolve(const Clause& first, const Clause& second, const int pivot);
 
 inline void SwapLiteralToSecondPosition(const int literal, Clause& clause){
   const int other = clause.GetLiterals()[0]^clause.GetLiterals()[1]^literal;
