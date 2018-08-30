@@ -24,8 +24,8 @@
 #include "clause.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
-#include "lrat_parser.h"
 #include "deletion.h"
+#include "instruction_serialization.h"
 
 using std::string;
 using std::endl;
@@ -45,7 +45,7 @@ void ProofStepRenamer::HandleExtension(const Clause& extension)
   Clause renamed_extension(extension);
   renamed_extension.SetIndex(GetNextClauseIndex());
   UpdateRenaming(extension.GetIndex(), renamed_extension.GetIndex());
-  WriteClauseToOutput(renamed_extension);
+  OutputStream() << ToTRACECHECKExtension(renamed_extension) << endl;
 }
 
 void ProofStepRenamer::HandleRupAddition(const RupClause& rup)
@@ -54,7 +54,7 @@ void ProofStepRenamer::HandleRupAddition(const RupClause& rup)
   int old_index = rup.GetIndex();
   renamed_rup.SetIndex(GetNextClauseIndex());
   UpdateRenaming(old_index, renamed_rup.GetIndex());
-  WriteClauseToOutput(renamed_rup);
+  OutputStream() << ToTRACECHECK(renamed_rup) << endl;
 }
 
 int ProofStepRenamer::GetNextClauseIndex()

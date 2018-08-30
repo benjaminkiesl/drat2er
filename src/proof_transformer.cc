@@ -49,7 +49,6 @@ ProofTransformer::ProofTransformer(const std::string& verbose_message,
                                    const bool print_progress)
                                         : output_stream_ {nullptr},
                                           verbose_message_ {verbose_message},
-                                          is_output_lrat_ {true},
                                           print_progress_ {print_progress},
                                           number_of_lines_processed_ {0},
                                           progress_bar_ {} { }
@@ -131,26 +130,6 @@ void ProofTransformer::HandleComment(const string& comment_line)
 void ProofTransformer::HandleExtension(const Clause& extension)
 {
   // Does nothing by default. Provide functionality in subclasses.
-}
-
-void ProofTransformer::WriteClauseToOutput(const Clause& clause)
-{
-  if(output_stream_ == nullptr) {
-    return;
-  }
-  if(is_output_lrat_) {
-    *output_stream_ << clause.ToLrat() << endl;
-  } else {
-    cout << "Writing a clause in non-lrat." << endl;
-    *output_stream_ << clause.ToDimacs() << endl;
-  }
-}
-
-void ProofTransformer::WriteClausesToOutput(const vector<Clause>& clauses)
-{
-  for(auto& clause : clauses) {
-    WriteClauseToOutput(clause);
-  }
 }
 
 void ProofTransformer::PrintVerboseMessage() const

@@ -77,13 +77,9 @@ class ProofTransformer : public LratParserObserver
   virtual void HandleComment(const std::string& comment_line);
   virtual void HandleExtension(const Clause& extension);
   std::ostream& OutputStream();
-  void WriteClausesToOutput(const std::vector<Clause>& clauses);
-  void WriteClauseToOutput(const Clause& clause);
   void PrintVerboseMessage() const;
   void InitProgressBar(const std::string& input_file);
   void PrintProgress(bool increment_number_of_lines_processed=true);
-
-  bool is_output_lrat_;
 
  private:
 

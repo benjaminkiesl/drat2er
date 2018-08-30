@@ -32,6 +32,7 @@
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
+#include "instruction_serialization.h"
 
 using std::string;
 using std::stringstream;
@@ -65,7 +66,7 @@ void RatEliminator::HandleRupAddition(const RupClause& unrenamed_rup)
 {
   auto rup = RenameRup(unrenamed_rup);
   formula_->AddClause(rup);
-  WriteClauseToOutput(rup);
+  WriteRupClauseToOutput(rup);
 }
 
 void RatEliminator::HandleDeletion(const Deletion& unrenamed_deletion)
@@ -159,7 +160,7 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
     }
     rup.AddPositiveHint(clause->GetIndex());
     rup.AddPositiveHint(definition[1].GetIndex());
-    WriteClauseToOutput(rup);
+    WriteRupClauseToOutput(rup);
     formula_->AddClause(rup);
     UpdateClauseRenaming(clause->GetIndex(), rup.GetIndex());
   }
@@ -189,7 +190,7 @@ void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
         rup.AddPositiveHint(hint);
       }
     }
-    WriteClauseToOutput(rup);
+    WriteRupClauseToOutput(rup);
     formula_->AddClause(rup);
     UpdateClauseRenaming(resolution_partner->GetIndex(), rup.GetIndex());
   }
@@ -306,53 +307,32 @@ void RatEliminator::UpdateMapping(unordered_map<int,int>& mapping,
   inverse_mapping[-new_value] = -original_value;
 }
 
+void RatEliminator::WriteRupClauseToOutput(const RupClause& rup)
+{
+  OutputStream() << ToLRAT(rup) << endl;
+}
+
 void RatEliminator::WriteDefinitionToOutput(const vector<Clause>& definition)
 {
-  if(is_output_lrat_) {
-    for(auto clause : definition) {
-      OutputStream() << clause.GetIndex() << " e " 
-                     << clause.ToDimacs() << endl;
-    }
-  } else {
-    for(auto clause : definition) {
-      OutputStream() << clause.ToDimacs() << endl;
-    }
+  for(auto clause : definition) {
+    OutputStream() << ToLRATExtension(clause) << endl;
   }
 }
 
 void RatEliminator::WriteDeletionToOutput(const Deletion& deletion)
 {
-  if(is_output_lrat_) {
-    OutputStream() << deletion.GetIndex() << " d ";
-    for(auto index : deletion.GetClauseIndices()) {
-      OutputStream() << index << " ";
-    }
-    OutputStream() << "0" << endl;
-  } else {
-    for(auto index : deletion.GetClauseIndices()) {
-      if(formula_->GetClause(index) != nullptr) {
-        OutputStream() << "d " 
-                       << formula_->GetClause(index)->ToDimacs() << endl;
-      }
-    }
-  }
+  OutputStream() << ToLRAT(deletion) << endl;
 }
 
 void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
                                           int instruction_index)
 {
-  if(is_output_lrat_) {
-    OutputStream() << instruction_index << ' ';
-    OutputStream() << "d ";
-    for(auto clause : clauses) {
-      OutputStream() << clause.GetIndex() << " ";
-    }
-    OutputStream() << "0" << endl;
-  } else {
-    for(auto clause : clauses) {
-      OutputStream() << "d " << clause.ToDimacs() << endl;
-    }
+  Deletion deletion;
+  deletion.SetIndex(instruction_index);
+  for(auto clause : clauses){
+    deletion.AddClauseIndex(clause.GetIndex());
   }
+  WriteDeletionToOutput(deletion);
 }
 
 } // namespace drat2er

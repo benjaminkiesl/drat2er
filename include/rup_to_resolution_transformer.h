@@ -57,6 +57,7 @@ class RupToResolutionTransformer : public ProofTransformer
 
  private:
   std::shared_ptr<Formula> formula_;
+  bool is_output_drat_;
   bool found_empty_clause_;
 };
 

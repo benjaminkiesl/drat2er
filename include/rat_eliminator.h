@@ -147,6 +147,7 @@ class RatEliminator : public ProofTransformer
   void DeleteClausesWithOldVariable(const int old_variable,
                                     const std::vector<Clause>& definition);
 
+  void WriteRupClauseToOutput(const RupClause& rup);
   void WriteDefinitionToOutput(const std::vector<Clause>& definition);
   void WriteDeletionToOutput(const Deletion& deletion);
   void WriteDeletionToOutput(const std::vector<Clause>& clauses,
