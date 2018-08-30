@@ -28,7 +28,6 @@
 #include <sstream>
 #include <iostream>
 #include <initializer_list>
-#include "clause.h"
 
 using std::vector;
 using std::string;
