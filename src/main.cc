@@ -26,6 +26,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <cstdio>
 #include "CLI11.hpp"
 #include "formula.h"
 #include "formula_parser.h"
@@ -38,6 +39,7 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -53,12 +55,12 @@ const string kTempFileER = "temp_unrenamed.er";
 // a formula object. Returns a pointer to the formula object.
 auto ParseFormula(const string& formula_file, bool is_verbose)
 {
-  cout << "c drat2er: Parsing input formula..." << endl;
+  cout << "c drat2er: Parsing input formula." << endl;
   FormulaParser parser {};
   auto formula = parser.ParseFormula(formula_file);
   if(formula == nullptr) {
     throw std::runtime_error(
-        "Error: File '" + formula_file + "' could not be opened.");
+        "File '" + formula_file + "' could not be opened.");
   }
   return formula;
 }
@@ -99,13 +101,11 @@ void EliminateProperRATs(shared_ptr<Formula> formula,
 
 // Takes as input an ERUP proof (i.e., a proof containing only extensions
 // and RUP additions) and transforms all RUP additions into resolution chains.
-void TransformRUPsToResolutions(const string& input_formula_file,
+void TransformRUPsToResolutions(shared_ptr<Formula> original_formula,
                                 const string& input_proof_file,
                                 const string& output_proof_file,
                                 bool is_output_drat, bool is_verbose)
 {
-  shared_ptr<Formula> original_formula =
-      ParseFormula(input_formula_file, is_verbose);
   RupToResolutionTransformer
   rup_to_resolution_transformer(original_formula,
                                 is_output_drat, is_verbose);
@@ -147,17 +147,20 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
   TransformDRATToLRAT(input_formula_file, input_proof_file,
                       kTempFileLRAT, is_verbose);
 
-  shared_ptr<Formula> formula = ParseFormula(input_formula_file, is_verbose);
-  auto size_of_original_formula = formula->GetNumberOfClauses();
+  auto formula = ParseFormula(input_formula_file, is_verbose);
 
-  EliminateProperRATs(formula, kTempFileLRAT, kTempFileERUP, is_verbose);
+  EliminateProperRATs(make_shared<Formula>(*formula), 
+                      kTempFileLRAT, kTempFileERUP, is_verbose);
 
-  TransformRUPsToResolutions(input_formula_file, kTempFileERUP, kTempFileER,
+  TransformRUPsToResolutions(make_shared<Formula>(*formula), 
+                             kTempFileERUP, kTempFileER,
                              is_output_drat, is_verbose);
-
-  if(!is_output_drat) {
+  
+  if(is_output_drat){ // We are already done
+    std::rename(kTempFileER.c_str(), output_file.c_str());
+  } else {
     RenameProofStepsIncrementally(kTempFileER, output_file,
-                                  size_of_original_formula, is_verbose);
+                                  formula->GetNumberOfClauses(), is_verbose);
   }
 }
 
@@ -194,13 +197,15 @@ int main (int argc, char *argv[])
   string output_format = "tracecheck";
   app.add_set("-f,--format", output_format, {"drat", "tracecheck"},
               "Format of the output proof (default: tracecheck).");
-  bool is_output_drat = output_format == "drat";
 
   CLI11_PARSE(app, argc, argv);
 
   try {
-    TransformDRATToExtendedResolution(input_formula_path, input_proof_path,
-                                      output_file_path, is_output_drat, is_verbose);
+    TransformDRATToExtendedResolution(input_formula_path, 
+                                      input_proof_path,
+                                      output_file_path, 
+                                      output_format == "drat", 
+                                      is_verbose);
     cout << "c drat2er: Proof successfully transformed." << endl;
     return 0;
   } catch(const std::exception& ex) {

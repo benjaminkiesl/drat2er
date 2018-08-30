@@ -133,7 +133,6 @@ void ProofTransformer::HandleExtension(const Clause& extension)
   // Does nothing by default. Provide functionality in subclasses.
 }
 
-
 void ProofTransformer::WriteClauseToOutput(const Clause& clause)
 {
   if(output_stream_ == nullptr) {
@@ -142,6 +141,7 @@ void ProofTransformer::WriteClauseToOutput(const Clause& clause)
   if(is_output_lrat_) {
     *output_stream_ << clause.ToLrat() << endl;
   } else {
+    cout << "Writing a clause in non-lrat." << endl;
     *output_stream_ << clause.ToDimacs() << endl;
   }
 }
