@@ -18,20 +18,20 @@ The build.sh script simply creates a directory 'build' within the main directory
 
 To run drat2er, just execute the following command from the shell: 
 
-./drat2er INPUT_FORMULA_PATH INPUT_PROOF_PATH [OUTPUT_PROOF_PATH]
+`./drat2er INPUT_FORMULA_PATH INPUT_PROOF_PATH [OUTPUT_PROOF_PATH]`
 
-* 'INPUT_FORMULA_PATH' is the path of a DIMACS file containing a propositional formula.
-* 'INPUT_PROOF_PATH' is the path of a DRAT file containing a DRAT proof of the formula.
-* 'OUTPUT_PROOF_PATH' is the path of the resulting extended-resolution proof. If 'OUTPUT_PROOF_PATH' is not specified, the proof is written to the standard output.
+* `INPUT_FORMULA_PATH` is the path of a DIMACS file containing a propositional formula.
+* `INPUT_PROOF_PATH` is the path of a DRAT file containing a DRAT proof of the formula.
+* `OUTPUT_PROOF_PATH` is the path of the resulting extended-resolution proof. If 'OUTPUT_PROOF_PATH' is not specified, the proof is written to the standard output.
 
 For example, if your formula is in the DIMACS file 'formula.cnf' (located in the directory from which you call drat2er) and your DRAT proof is in the file 'proof.drat', then the following command writes its output to the file 'proof.er':
 
-./drat2er formula.cnf proof.cnf proof.er 
+`./drat2er formula.cnf proof.cnf proof.er`
 
-Further arguments can be passed. For details call './drat2er --help'.
+Further arguments can be passed. For details call `./drat2er --help`.
 You might want to pass the parameter '-v' because it prints a progress bar to the standard output. For example:
 
-./drat2er formula.cnf proof.cnf -v proof.er
+`./drat2er formula.cnf proof.cnf -v proof.er`
 
 Finally, make sure you have write access to the directory from which you call drat2er because drat2er produces temporary files in that directory.
 
