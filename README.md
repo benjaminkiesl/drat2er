@@ -22,7 +22,7 @@ To run drat2er, just execute the following command from the shell:
 
 * `INPUT_FORMULA_PATH` is the path of a DIMACS file containing a propositional formula.
 * `INPUT_PROOF_PATH` is the path of a DRAT file containing a DRAT proof of the formula.
-* `OUTPUT_PROOF_PATH` is the path of the resulting extended-resolution proof. If 'OUTPUT_PROOF_PATH' is not specified, the proof is written to the standard output.
+* `OUTPUT_PROOF_PATH` is the path of the resulting extended-resolution proof. If `OUTPUT_PROOF_PATH` is not specified, the proof is written to the standard output.
 
 For example, if your formula is in the DIMACS file 'formula.cnf' (located in the directory from which you call drat2er) and your DRAT proof is in the file 'proof.drat', then the following command writes its output to the file 'proof.er':
 
