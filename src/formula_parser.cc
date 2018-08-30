@@ -46,8 +46,7 @@ using std::endl;
 namespace drat2er
 {
 
-unique_ptr<Formula> FormulaParser::ParseFormula(
-    const string& file_name)
+unique_ptr<Formula> FormulaParser::ParseFormula(const string& file_name)
 {
   ifstream file_stream {file_name, ifstream::in};
 

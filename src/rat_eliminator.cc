@@ -88,7 +88,7 @@ void RatEliminator::ReplaceByDefinitionRUPsAndDeletions(const RatClause& rat)
 }
 
 vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
-    const int new_variable)
+                                                      const int new_variable)
 {
   vector<Clause> definition {};
 
@@ -108,7 +108,7 @@ vector<Clause> RatEliminator::CorrespondingDefinition(const RatClause& rat,
 }
 
 Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
-    const int new_variable) const
+                                            const int new_variable) const
 {
   Clause clause;
   clause.SetIndex(rat.GetIndex());
@@ -120,7 +120,7 @@ Clause RatEliminator::FirstDefinitionClause(const RatClause& rat,
 }
 
 Clause RatEliminator::SecondDefinitionClause(const RatClause& rat,
-    const int new_variable)
+                                             const int new_variable)
 {
   Clause second_clause {new_variable, -rat.GetPivot()};
   second_clause.SetIndex(++max_instruction_);
@@ -141,14 +141,14 @@ vector<Clause> RatEliminator::ThirdBlockOfDefinitionClauses(
 }
 
 void RatEliminator::ReplaceOldPivotByNew(const RatClause& rat,
-    const vector<Clause>& definition)
+                                         const vector<Clause>& definition)
 {
   ReplacePositivePivot(rat, definition);
   ReplaceNegativePivot(rat, definition);
 }
 
 void RatEliminator::ReplacePositivePivot(const RatClause& rat,
-    const vector<Clause>& definition)
+                                         const vector<Clause>& definition)
 {
   int new_literal = *definition.front().cbegin();
   for(auto& clause : formula_->Occurrences(rat.GetPivot())) {
@@ -166,7 +166,7 @@ void RatEliminator::ReplacePositivePivot(const RatClause& rat,
 }
 
 void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
-    const vector<Clause>& definition)
+                                         const vector<Clause>& definition)
 {
   int new_literal = *definition.front().cbegin();
   for(auto& resolution_partner : formula_->Occurrences(-rat.GetPivot())) {
@@ -196,7 +196,7 @@ void RatEliminator::ReplaceNegativePivot(const RatClause& rat,
 }
 
 void RatEliminator::DeleteClausesWithOldVariable(const int old_variable,
-    const vector<Clause>& definition)
+                                        const vector<Clause>& definition)
 {
   vector<Clause> clauses_to_delete {};
   for(auto clause : formula_->Occurrences(old_variable)) {
@@ -279,14 +279,14 @@ int RatEliminator::RenameLiteral(const int literal) const
 }
 
 void RatEliminator::UpdateLiteralRenaming(const int old_literal,
-    const int new_literal)
+                                          const int new_literal)
 {
   UpdateMapping(old_to_new_literal_, new_to_old_literal_,
                 old_literal, new_literal);
 }
 
 void RatEliminator::UpdateClauseRenaming(const int old_index,
-    const int new_index)
+                                         const int new_index)
 {
   UpdateMapping(old_to_new_clause_, new_to_old_clause_,
                 old_index, new_index);
@@ -339,7 +339,7 @@ void RatEliminator::WriteDeletionToOutput(const Deletion& deletion)
 }
 
 void RatEliminator::WriteDeletionToOutput(const vector<Clause>& clauses,
-    int instruction_index)
+                                          int instruction_index)
 {
   if(is_output_lrat_) {
     OutputStream() << instruction_index << ' ';

@@ -31,12 +31,13 @@
 
 using std::string;
 using std::endl;
+using std::shared_ptr;
 
 namespace drat2er
 {
 
 RupToResolutionTransformer::RupToResolutionTransformer(
-    std::shared_ptr<Formula> formula,
+    shared_ptr<Formula> formula,
     bool is_output_drat,
     bool print_progress)
     : ProofTransformer("Transforming RUPs to resolution chains.",
