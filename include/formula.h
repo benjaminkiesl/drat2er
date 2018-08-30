@@ -40,6 +40,7 @@ class Formula
 
  public:
   Formula(const int number_of_variables = 0, const int number_of_clauses = 0);
+  Formula(const Formula& other);
 
   // Adds a clause to the formula.
   void AddClause(const Clause& clause);

@@ -23,9 +23,7 @@
 #include "formula.h"
 #include <memory>
 #include <vector>
-#include <unordered_set>
 #include <unordered_map>
-#include <queue>
 #include <iostream>
 #include <algorithm>
 #include <utility>
@@ -40,9 +38,7 @@ using std::unique_ptr;
 using std::make_shared;
 using std::make_unique;
 using std::vector;
-using std::unordered_set;
 using std::unordered_map;
-using std::priority_queue;
 using std::find;
 using std::copy_if;
 using std::for_each;
@@ -68,6 +64,21 @@ Formula::Formula(const int number_of_variables, const int number_of_clauses)
             resolution_stack_ {},
             empty_occurrence_list_ {},
             next_clause_index_ {std::numeric_limits<int>::max()} {}
+
+Formula::Formula(const Formula& other) 
+    : clauses_(other.clauses_.size()), 
+      unit_clauses_{},
+      assignment_{other.assignment_},
+      conflict_ {nullptr},
+      resolution_stack_ {},
+      empty_occurrence_list_{},
+      next_clause_index_{other.next_clause_index_}
+{
+  for(auto index_clause : other.clauses_){
+    AddClause(*index_clause.second);
+  }
+}
+
 
 void Formula::AddClauses(const vector<Clause>& clauses)
 {
