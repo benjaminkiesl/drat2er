@@ -306,7 +306,7 @@ unique_ptr<RupClause> Formula::DeriveSubsumingClause(const Clause& rup)
       auto current = resolution_stack_.top();
       resolution_stack_.pop();
       if(!rup.ContainsLiteral(current.literal) &&
-      subsuming_rup.ContainsLiteral(current.literal)) {
+         subsuming_rup.ContainsLiteral(current.literal)) {
         subsuming_rup.SetLiterals(Resolve(subsuming_rup,
                                           *current.clause,
                                           current.literal).GetLiterals());
