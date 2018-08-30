@@ -110,9 +110,4 @@ string ToDRAT(const Clause& clause)
   return ToDIMACS(clause);
 }
 
-string ToDRAT(const Deletion& deletion)
-{
-  // TODO: Implement this function.
-}
-
 } // namespace drat2er

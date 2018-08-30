@@ -43,7 +43,6 @@ namespace drat2er
   std::string ToTRACECHECKExtension(const Clause& clause);
 
   std::string ToDRAT(const Clause& clause);
-  std::string ToDRAT(const Deletion& deletion);
 
 } // namespace drat2er
 
