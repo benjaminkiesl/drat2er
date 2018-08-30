@@ -144,37 +144,6 @@ bool Clause::ContainsLiteral(const int literal) const
          != literals_.cend();
 }
 
-string Clause::ToDimacs() const
-{
-  stringstream ss;
-  for(auto literal : literals_) {
-    ss << literal << ' ';
-  }
-  ss << '0';
-  return ss.str();
-}
-
-string Clause::ToLrat() const
-{
-  stringstream ss;
-  ss << index_ << ' ' << ToDimacs() << " 0";
-  return ss.str();
-}
-
-std::ostream& operator<< (std::ostream& stream, const Clause& clause)
-{
-  if(clause.size() == 0) {
-    stream << "{}";
-  } else {
-    stream << '{' << *clause.cbegin();
-    for(auto it = clause.cbegin()+1; it != clause.cend(); ++it) {
-      stream << ' ' << *it;
-    }
-    stream << '}';
-  }
-  return stream;
-}
-
 Clause Resolve(const Clause& first, 
                const Clause& second,
                const int pivot_literal)

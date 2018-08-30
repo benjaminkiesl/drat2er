@@ -58,7 +58,8 @@ set(TEST_SOURCES ${TEST_DIRECTORY}/tests_main.cc
 				 ${TEST_DIRECTORY}/test_lrat_parser.cc
 				 ${TEST_DIRECTORY}/test_rup_clause.cc
 				 ${TEST_DIRECTORY}/test_rat_clause.cc
-				 ${TEST_DIRECTORY}/test_rat_eliminator.cc)
+				 ${TEST_DIRECTORY}/test_rat_eliminator.cc
+				 ${TEST_DIRECTORY}/test_instruction_serialization.cc)
 add_executable(unit_tests ${TEST_SOURCES})
 target_link_libraries(unit_tests catch lib_drat2er)
 

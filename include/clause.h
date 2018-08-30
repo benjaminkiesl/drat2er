@@ -38,7 +38,6 @@ namespace drat2er
 class Clause
 {
   friend void swap(Clause& lhs, Clause& rhs);
-  friend std::ostream& operator<< (std::ostream& stream, const Clause& clause); 
   
  public:
   Clause();
@@ -57,8 +56,6 @@ class Clause
   bool IsSubclauseOf(const Clause& other) const;
   int GetMaxVariable() const;
   bool ContainsLiteral(const int literal) const;
-  std::string ToDimacs() const;
-  virtual std::string ToLrat() const;
   auto size() const { return literals_.size(); }
   auto empty() const { return literals_.empty(); }
   auto begin() { return literals_.begin(); }

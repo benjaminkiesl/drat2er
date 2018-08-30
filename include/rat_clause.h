@@ -54,7 +54,6 @@ class RatClause : public Clause
                        const std::vector<int>& hints);
   const std::map<int, std::vector<int>>& GetNegativeHints() const; 
   void ClearNegativeHints();
-  virtual std::string ToLrat() const override;
 
  private:
   std::vector<int> positive_hints_;

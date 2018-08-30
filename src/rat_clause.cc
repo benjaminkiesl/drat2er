@@ -103,21 +103,4 @@ void RatClause::ClearNegativeHints()
   negative_hints_.clear();
 }
 
-string RatClause::ToLrat() const
-{
-  stringstream ss;
-  ss << GetIndex() << ' ' << Clause::ToDimacs() << ' ';
-  for(auto hint : positive_hints_) {
-    ss << hint << ' ';
-  }
-  for(auto hint : negative_hints_) {
-    ss << -hint.first << ' ';
-    for(auto sub_hint : hint.second) {
-      ss << sub_hint << ' ';
-    }
-  }
-  ss << '0';
-  return ss.str();
-}
-
 } // namespace drat2er

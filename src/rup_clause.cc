@@ -73,15 +73,4 @@ const std::vector<int>& RupClause::GetPositiveHints() const
   return positive_hints_;
 }
 
-string RupClause::ToLrat() const
-{
-  stringstream ss;
-  ss << GetIndex() << ' ' << Clause::ToDimacs() << ' ';
-  for(auto hint : positive_hints_) {
-    ss << hint << ' ';
-  }
-  ss << '0';
-  return ss.str();
-}
-
 } // namespace drat2er

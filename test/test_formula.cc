@@ -5,6 +5,7 @@
 #include "formula.h"
 #include "clause.h"
 #include "rup_clause.h"
+#include "instruction_serialization.h"
 
 using namespace drat2er;
 using std::vector;
@@ -397,7 +398,7 @@ TEST_CASE("Formula::DeriveSubsumingClause"
   rup.SetIndex(4403);
   auto subsuming = formula.DeriveSubsumingClause(rup);
   REQUIRE(subsuming != nullptr);
-  INFO("RUP is '" + rup.ToDimacs() + "', " 
-       "subsuming is '" + subsuming->ToDimacs() + "'");
+  INFO("RUP is '" + ToDIMACS(rup) + "', " 
+       "subsuming is '" + ToDIMACS(*subsuming) + "'");
   REQUIRE(subsuming->IsSubclauseOf(rup));
 }

@@ -48,7 +48,6 @@ class RupClause : public Clause
   void AddPositiveHint(const int hint);
   void ClearPositiveHints();
   const std::vector<int>& GetPositiveHints() const;
-  virtual std::string ToLrat() const override;
 
  protected:
   std::vector<int> positive_hints_;
