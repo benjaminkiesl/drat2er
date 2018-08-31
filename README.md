@@ -10,7 +10,7 @@ To build drat2er, you need to have [CMake](https://cmake.org/) and [Make](https:
 
 ### Installation
 
-The easiest way to build drat2er is to just execute the script 'build.sh' in the root directory. After this, the executable 'drat2er' is located at 'build/bin/drat2er'.
+The easiest way to build drat2er is to just execute the script 'build.sh' in the main directory. After this, the executable 'drat2er' is located at 'build/bin/drat2er'.
 
 The build.sh script simply creates a directory 'build' within the main directory and then executes 'cmake ..' followed by 'make' from within that build directory. If you don't want to use Make, and are familiar with CMake, you can also build the project for any platform you want using the CMake file CMakeLists.txt.
 
