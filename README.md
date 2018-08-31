@@ -35,6 +35,12 @@ You might want to pass the parameter '-v' because it prints a progress bar to th
 
 Finally, make sure you have write access to the directory from which you call drat2er because drat2er produces temporary files in that directory.
 
+### Output Formats
+
+By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.at/tracecheck/README.tracecheck) format. The TRACECHECK format allows for a compact representation of resolution proofs as well as extended-resolution proof. It does not contain a line for every single resolvent but instead often combines several resolution steps into a single "resolution chain".
+
+For instance, if a clause `1 | 2` (with 1 and 2 being literals) is obtained by first resolving the clause `1 | 3` with `-3 | 4` and then resolving the resulting clause (`1 | 4`) with `-4 | 2`, then a TRACECHECK proof might encode this as one statement that basically says "the clause `1 | 2` can be derived via a resolution chain from `1 | 3`, `-3 | 4`, and `-4 | 2`" without mentioning the intermediate resolvent `1 | 4`.
+
 ## Built With
 
 * [drat-trim](https://github.com/marijnheule/drat-trim) - Used for performing one step of the transformation.
