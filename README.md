@@ -41,10 +41,10 @@ By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.
 
 For instance, if the clause `1 | 2` (with 1 and 2 being literals) is obtained by first resolving the clause `1 | 3` with `-3 | 4` and then resolving the resulting clause (`1 | 4`) with `-4 | 2`, a TRACECHECK proof might encode this as one statement that basically says "the clause `1 | 2` can be derived via a resolution chain from `1 | 3`, `-3 | 4`, and `-4 | 2`", without mentioning the intermediate resolvent `1 | 4`. If the clauses `1 | 3`, `-3 | 4`, and `-4 | 2` are contained in the original formula, then this derivation can be represented in a TRACECHECK proof as follows:
 
-`1 1 3 0 0`
-`2 -3 4 0 0`
-`3 -4 2 0 0`
-`4 1 2 0 1 2 3 0`
+	1 1 3 0 0
+	2 -3 4 0 0
+	3 -4 2 0 0
+	4 1 2 0 1 2 3 0
 
 The first number of a statement indicates the index of the clause (for instance, the clause `1 | 3` above has the index 1). The clause index is followed by a list of literals contained in the clause. This list ends with a 0. After the first 0, the indices of the clauses used for deriving the clause via a resolution chain are listed (the clause `1 |2` above is derived via a resolution chain from the clauses with the indices 1, 2, and 3). If a clause is contained in the original formula or if it is a definition clause (in an extended-resolution proof) then this list of indices is empty. Finally, a second 0 indicates the end of a statement.
 
