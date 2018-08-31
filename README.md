@@ -26,12 +26,12 @@ To run drat2er, just execute the following command from the shell:
 
 For example, if your formula is in the DIMACS file 'formula.cnf' (located in the directory from which you call drat2er) and your DRAT proof is in the file 'proof.drat', then the following command writes its output to the file 'proof.er':
 
-`./drat2er formula.cnf proof.cnf proof.er`
+`./drat2er formula.cnf proof.drat proof.er`
 
 Further arguments can be passed. For details call `./drat2er --help`.
 You might want to pass the parameter '-v' because it prints a progress bar to the standard output. For example:
 
-`./drat2er formula.cnf proof.cnf -v proof.er`
+`./drat2er formula.cnf proof.drat -v proof.er`
 
 Finally, make sure you have write access to the directory from which you call drat2er because drat2er produces temporary files in that directory.
 
