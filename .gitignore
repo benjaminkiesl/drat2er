@@ -1,4 +1,5 @@
 build/*
+test/examples
 *.vscode
 *.swp
 .fuse_hidden*
