@@ -54,7 +54,7 @@ void RupToResolutionTransformer::HandleExtension(const Clause& extension)
     if(is_output_drat_) {
       OutputStream() << ToDRAT(extension) << endl;
     } else {
-      OutputStream() << ToTRACECHECKExtension(extension) << endl;
+      OutputStream() << ToLRATExtension(extension) << endl;
     }
   }
 }

@@ -26,6 +26,7 @@
 #include "rup_clause.h"
 #include "deletion.h"
 #include "instruction_serialization.h"
+#include <iostream>
 
 using std::string;
 using std::endl;
