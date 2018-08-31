@@ -35,11 +35,20 @@ You might want to pass the parameter '-v' because it prints a progress bar to th
 
 Finally, make sure you have write access to the directory from which you call drat2er because drat2er produces temporary files in that directory.
 
-### Output Formats
+### Output Format
 
-By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.at/tracecheck/README.tracecheck) format. The TRACECHECK format allows for a compact representation of resolution proofs and extended-resolution proofs. A TRACECHECK proof often does not contain a line for every single resolvent but instead combines several resolution steps into a single "resolution chain".
+By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.at/tracecheck/README.tracecheck) format. The TRACECHECK format allows for a compact representation of resolution proofs and extended-resolution proofs. There exists also a proof checker for TRACECHECK proofs that can be downloaded [here](http://fmv.jku.at/tracecheck/). A TRACECHECK proof most of the time doesn't contain a line for every single resolvent but instead combines several resolution steps into a single "resolution chain".
 
-For instance, if a clause `1 | 2` (with 1 and 2 being literals) is obtained by first resolving the clause `1 | 3` with `-3 | 4` and then resolving the resulting clause (`1 | 4`) with `-4 | 2`, then a TRACECHECK proof might encode this as one statement that basically says "the clause `1 | 2` can be derived via a resolution chain from `1 | 3`, `-3 | 4`, and `-4 | 2`" without mentioning the intermediate resolvent `1 | 4`.
+For instance, if the clause `1 | 2` (with 1 and 2 being literals) is obtained by first resolving the clause `1 | 3` with `-3 | 4` and then resolving the resulting clause (`1 | 4`) with `-4 | 2`, a TRACECHECK proof might encode this as one statement that basically says "the clause `1 | 2` can be derived via a resolution chain from `1 | 3`, `-3 | 4`, and `-4 | 2`", without mentioning the intermediate resolvent `1 | 4`. If the clauses `1 | 3`, `-3 | 4`, and `-4 | 2` are contained in the original formula, then this derivation can be represented in a TRACECHECK proof as follows:
+
+`1 1 3 0 0`
+`2 -3 4 0 0`
+`3 -4 2 0 0`
+`4 1 2 0 1 2 3 0`
+
+The first number of a statement indicates the index of the clause (for instance, the clause `1 | 3` above has the index 1). The clause index is followed by a list of literals contained in the clause. This list ends with a 0. After the first 0, the indices of the clauses used for deriving the clause via a resolution chain are listed (the clause `1 |2` above is derived via a resolution chain from the clauses with the indices 1, 2, and 3). If a clause is contained in the original formula or if it is a definition clause (in an extended-resolution proof) then this list of indices is empty. Finally, a second 0 indicates the end of a statement.
+
+By passing the parameter `-f drat` (or, alternatively `--format=drat`) to drat2er, it outputs the extended-resolution proof in the [DRAT](https://arxiv.org/pdf/1610.06229.pdf) format. This might seem confusing at first, since the whole purpose of drat2er is to transform DRAT proofs into another form. The explanation is as follows: The resulting proof is in fact an extended-resolution proof, meaning that all clauses of the proof are either definition clauses or can be derived from previous clauses via resolution chains. It is only the output format that is still DRAT. The resulting proof can thus be checked with a DRAT proof checker.
 
 ## Built With
 
