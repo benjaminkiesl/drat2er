@@ -29,7 +29,7 @@ For example, if your formula is in the DIMACS file 'formula.cnf' (located in the
 `./drat2er formula.cnf proof.drat proof.er`
 
 Further arguments can be passed. For details call `./drat2er --help`.
-You might want to pass the parameter '-v' because it prints a progress bar to the standard output. For example:
+You might want to pass the parameter `-v` because it tells drat2er to print a progress bar. For example:
 
 `./drat2er formula.cnf proof.drat -v proof.er`
 
