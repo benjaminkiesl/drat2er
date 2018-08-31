@@ -37,7 +37,7 @@ Finally, make sure you have write access to the directory from which you call dr
 
 ### Output Format
 
-By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.at/tracecheck/README.tracecheck) format. The TRACECHECK format allows for a compact representation of resolution proofs and extended-resolution proofs. There exists also a proof checker for TRACECHECK proofs that can be downloaded [here](http://fmv.jku.at/tracecheck/). A TRACECHECK proof most of the time doesn't contain a line for every single resolvent but instead combines several resolution steps into a single "resolution chain".
+By default, drat2er outputs proofs in the so-called [TRACECHECK](http://fmv.jku.at/tracecheck/README.tracecheck) format. The TRACECHECK format allows for a compact representation of resolution proofs and extended-resolution proofs. There exists also a proof checker for TRACECHECK proofs that can be downloaded [here](http://fmv.jku.at/tracecheck/). A TRACECHECK proof does not contain a separate line for every single resolvent but instead combines several resolution steps into a single "resolution chain".
 
 For instance, if the clause `1 | 2` (with 1 and 2 being literals) is obtained by first resolving the clause `1 | 3` with `-3 | 4` and then resolving the resulting clause (`1 | 4`) with `-4 | 2`, a TRACECHECK proof might encode this as one statement that basically says "the clause `1 | 2` can be derived via a resolution chain from `1 | 3`, `-3 | 4`, and `-4 | 2`", without mentioning the intermediate resolvent `1 | 4`. If the clauses `1 | 3`, `-3 | 4`, and `-4 | 2` are contained in the original formula, then this derivation can be represented in a TRACECHECK proof as follows:
 
