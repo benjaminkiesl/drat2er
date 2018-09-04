@@ -23,19 +23,10 @@
 #include "rat_clause.h"
 #include <vector>
 #include <map>
-#include <memory>
-#include <string>
-#include <sstream>
-#include <iostream>
 #include <initializer_list>
 
 using std::vector;
-using std::string;
-using std::stringstream;
 using std::map;
-using std::initializer_list;
-using std::cout;
-using std::endl;
 
 namespace drat2er
 {
@@ -48,7 +39,7 @@ void swap(RatClause& lhs, RatClause& rhs)
   swap(lhs.negative_hints_, rhs.negative_hints_);
 }
 
-RatClause::RatClause(initializer_list<int> literals) : Clause(literals)
+RatClause::RatClause(std::initializer_list<int> literals) : Clause(literals)
 {
 }
 
@@ -76,7 +67,7 @@ void RatClause::AddPositiveHint(int hint)
   positive_hints_.emplace_back(hint);
 }
 
-const std::vector<int>& RatClause::GetPositiveHints() const
+const vector<int>& RatClause::GetPositiveHints() const
 {
   return positive_hints_;
 }

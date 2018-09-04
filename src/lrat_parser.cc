@@ -21,13 +21,11 @@
 // IN THE SOFTWARE.
 
 #include "lrat_parser.h"
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <iostream>
 #include <vector>
-#include <memory>
-#include <cassert>
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
@@ -35,10 +33,7 @@
 using std::string;
 using std::stringstream;
 using std::vector;
-using std::shared_ptr;
 using std::ifstream;
-using std::cout;
-using std::endl;
 
 namespace drat2er
 {

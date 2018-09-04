@@ -21,18 +21,16 @@
 // IN THE SOFTWARE.
 
 #include "rup_to_resolution_transformer.h"
-#include <string>
-#include <memory>
 #include <cassert>
+#include <memory>
 #include "formula.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
 #include "instruction_serialization.h"
 
-using std::string;
-using std::endl;
 using std::shared_ptr;
+using std::endl;
 
 namespace drat2er
 {

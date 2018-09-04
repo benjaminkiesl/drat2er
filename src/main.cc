@@ -26,7 +26,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <cstdio>
 #include "CLI11.hpp"
 #include "formula.h"
 #include "formula_parser.h"
@@ -38,7 +37,6 @@
 #include "drat_trim_interface.h"
 
 using std::string;
-using std::shared_ptr;
 using std::make_shared;
 using std::cout;
 using std::cerr;

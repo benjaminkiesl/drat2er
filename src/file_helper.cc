@@ -21,17 +21,17 @@
 // IN THE SOFTWARE.
 
 #include "file_helper.h"
-#include <string>
-#include <fstream>
-#include <algorithm>
-#include <stdio.h>
+#include <cstdio>
 #ifdef WINDOWS
-#include <direct.h>
+#include <cdirect>
 #define get_current_dir _getcwd
 #else
 #include <unistd.h>
 #define get_current_dir getcwd
 #endif
+#include <string>
+#include <fstream>
+#include <algorithm>
 
 using std::string;
 using std::ifstream;

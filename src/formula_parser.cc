@@ -21,27 +21,19 @@
 // IN THE SOFTWARE.
 
 #include "formula_parser.h"
-
-#include <fstream>
-#include <utility>
-#include <iostream>
-#include <sstream>
-#include <cstring>
-#include <memory>
 #include <cassert>
+#include <fstream>
+#include <sstream>
+#include <memory>
 #include "formula.h"
 #include "clause.h"
 
+using std::unique_ptr;
+using std::make_unique;
 using std::string;
-using std::stoi;
 using std::stringstream;
 using std::getline;
 using std::ifstream;
-using std::unique_ptr;
-using std::make_unique;
-using std::cout;
-using std::cerr;
-using std::endl;
 
 namespace drat2er
 {

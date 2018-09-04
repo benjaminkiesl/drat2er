@@ -22,16 +22,10 @@
 
 #include "rup_clause.h"
 #include <vector>
-#include <memory>
-#include <string>
-#include <sstream>
 #include <initializer_list>
 #include "clause.h"
 
-using std::string;
-using std::stringstream;
-using std::initializer_list;
-using std::endl;
+using std::vector;
 
 namespace drat2er
 {
@@ -43,7 +37,7 @@ void swap(RupClause& lhs, RupClause& rhs)
   swap(lhs.positive_hints_, rhs.positive_hints_);
 }
 
-RupClause::RupClause(initializer_list<int> literals) : Clause(literals)
+RupClause::RupClause(std::initializer_list<int> literals) : Clause(literals)
 {
 }
 
@@ -68,7 +62,7 @@ void RupClause::ClearPositiveHints()
   positive_hints_.clear();
 }
 
-const std::vector<int>& RupClause::GetPositiveHints() const
+const vector<int>& RupClause::GetPositiveHints() const
 {
   return positive_hints_;
 }

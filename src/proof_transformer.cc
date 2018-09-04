@@ -21,13 +21,11 @@
 // IN THE SOFTWARE.
 
 #include "proof_transformer.h"
+#include <cassert>
 #include <string>
-#include <vector>
 #include <memory>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
-#include <cassert>
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "clause.h"
@@ -35,12 +33,9 @@
 #include "file_helper.h"
 
 using std::string;
-using std::vector;
 using std::cout;
 using std::endl;
-using std::make_shared;
 using std::ofstream;
-using std::ifstream;
 
 namespace drat2er
 {

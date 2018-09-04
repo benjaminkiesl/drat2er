@@ -21,14 +21,13 @@
 // IN THE SOFTWARE.
 
 #include "formula.h"
+#include <cassert>
 #include <memory>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <set>
-#include <iostream>
 #include <algorithm>
-#include <utility>
-#include <cassert>
 #include <limits>
 #include "clause.h"
 #include "rup_clause.h"
@@ -42,12 +41,6 @@ using std::make_unique;
 using std::vector;
 using std::unordered_map;
 using std::set;
-using std::find;
-using std::copy_if;
-using std::for_each;
-using std::back_inserter;
-using std::cout;
-using std::cerr;
 using std::endl;
 
 namespace drat2er
@@ -171,8 +164,8 @@ void Formula::DeleteClauseFromOccurrenceList(shared_ptr<Clause> clause,
     const int literal)
 {
   if(occurrences_.find(literal) != occurrences_.end()) {
-    auto iterator_to_clause = find(occurrences_[literal].begin(),
-                                   occurrences_[literal].end(), clause);
+    auto iterator_to_clause = std::find(occurrences_[literal].begin(),
+                                        occurrences_[literal].end(), clause);
     if(iterator_to_clause != occurrences_[literal].end()) {
       occurrences_[literal].erase(iterator_to_clause);
     }

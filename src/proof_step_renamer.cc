@@ -21,12 +21,12 @@
 // IN THE SOFTWARE.
 
 #include "proof_step_renamer.h"
+#include <iostream>
 #include "clause.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
 #include "instruction_serialization.h"
-#include <iostream>
 
 using std::string;
 using std::endl;

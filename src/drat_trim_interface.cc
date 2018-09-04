@@ -21,8 +21,8 @@
 // IN THE SOFTWARE.
 
 #include "drat_trim_interface.h"
-#include <string>
 #include <cstring>
+#include <string>
 #include <vector>
 
 using std::string;

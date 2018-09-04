@@ -25,7 +25,6 @@
 #include <algorithm>
 
 using std::vector;
-using std::find;
 
 namespace drat2er
 {
@@ -48,7 +47,7 @@ void Deletion::AddClauseIndex(const int clause_index)
 void Deletion::RemoveClauseIndex(const int clause_index)
 {
   clause_indices_.erase(
-      find(clause_indices_.begin(), clause_indices_.end(), clause_index));
+      std::find(clause_indices_.begin(), clause_indices_.end(), clause_index));
 }
 
 const vector<int>& Deletion::GetClauseIndices() const

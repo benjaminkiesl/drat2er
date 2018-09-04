@@ -21,28 +21,18 @@
 // IN THE SOFTWARE.
 
 #include "clause.h"
-
+#include <cassert>
+#include <cmath>
 #include <utility>
 #include <vector>
 #include <unordered_set>
-#include <iostream>
-#include <sstream>
 #include <algorithm>
-#include <cmath>
 #include <initializer_list>
-#include <cassert>
 
-using std::string;
-using std::stringstream;
 using std::vector;
 using std::unordered_set;
-using std::cout;
-using std::endl;
 using std::max;
-using std::find;
-using std::max_element;
 using std::abs;
-using std::initializer_list;
 
 namespace drat2er
 {
@@ -58,7 +48,7 @@ void swap(Clause& lhs, Clause& rhs)
 Clause::Clause() : index_ {-1}, 
                    literals_ {} {}
 
-Clause::Clause(initializer_list<int> literals) : Clause()
+Clause::Clause(std::initializer_list<int> literals) : Clause()
 {
   for(auto literal : literals) {
     AddLiteral(literal);
@@ -140,7 +130,7 @@ int Clause::GetMaxVariable() const
 
 bool Clause::ContainsLiteral(const int literal) const
 {
-  return find(literals_.cbegin(), literals_.cend(), literal) 
+  return std::find(literals_.cbegin(), literals_.cend(), literal) 
          != literals_.cend();
 }
 

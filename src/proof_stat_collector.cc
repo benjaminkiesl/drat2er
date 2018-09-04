@@ -22,9 +22,6 @@
 
 #include "proof_stat_collector.h"
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
 #include <algorithm>
 #include <memory>
 #include "formula.h"
@@ -35,11 +32,8 @@
 #include "lrat_parser.h"
 
 using std::string;
-using std::vector;
 using std::shared_ptr;
 using std::max;
-using std::endl;
-using std::cout;
 
 namespace drat2er
 {
