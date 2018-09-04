@@ -116,7 +116,7 @@ void RenameProofStepsIncrementally(const Formula& original_formula,
                                    const string& output_proof_file,
                                    bool is_verbose)
 {
-  auto write_to_standard_output = output_proof_file == "";
+  bool write_to_standard_output = output_proof_file == "";
   ProofStepRenamer proof_step_renamer(original_formula.GetNumberOfClauses()+1,
                                       is_verbose && !write_to_standard_output);
   if(write_to_standard_output) {
