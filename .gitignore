@@ -1,5 +1,8 @@
 build/*
 test/examples
+test/run_drat2er_on_examples.sh
+test/drat-trim
+test/tracecheck
 *.vscode
 *.swp
 .fuse_hidden*

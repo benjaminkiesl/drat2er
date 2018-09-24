@@ -26,6 +26,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 #include "CLI11.hpp"
 #include "formula.h"
 #include "formula_parser.h"
@@ -38,6 +39,7 @@
 
 using std::string;
 using std::make_shared;
+using std::max;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -86,8 +88,10 @@ void EliminateProperRATs(const Formula& original_formula,
   ProofStatCollector stat_collector(formula_copy);
   lrat_parser.RegisterObserver(&stat_collector);
   lrat_parser.ParseFile(input_proof_file);
+  auto max_variable = max(original_formula.GetMaxVariable(), 
+                          stat_collector.GetMaxVariable());
 
-  RatEliminator rat_eliminator(formula_copy, stat_collector.GetMaxVariable(),
+  RatEliminator rat_eliminator(formula_copy, max_variable,
                                stat_collector.GetMaxInstruction(), is_verbose);
   rat_eliminator.Transform(input_proof_file, output_proof_file);
   std::remove(input_proof_file.c_str());

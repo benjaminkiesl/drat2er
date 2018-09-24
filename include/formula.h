@@ -103,6 +103,9 @@ class Formula
   // Sets the truth value of the given literal to UNASSIGNED.
   void Unassign(const int literal);
 
+  // Returns the variable with the highest index contained in the formula.
+  int GetMaxVariable() const;
+
  private:
   auto IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause);
   int GetUnusedClauseIndex();

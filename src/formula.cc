@@ -41,6 +41,7 @@ using std::make_unique;
 using std::vector;
 using std::unordered_map;
 using std::set;
+using std::max;
 using std::endl;
 
 namespace drat2er
@@ -218,6 +219,16 @@ void Formula::Falsify(const int literal)
 void Formula::Unassign(const int literal)
 {
   assignment_[abs(literal)] = kUnassigned;
+}
+
+int Formula::GetMaxVariable() const
+{
+  int max_variable = 0;
+  for(auto index_clause : clauses_){
+    auto& clause = index_clause.second;
+    max_variable = max(max_variable, clause->GetMaxVariable());
+  }
+  return max_variable;
 }
 
 auto Formula::IteratorToUnfalsifiedUnwatchedLiteral(Clause& clause)

@@ -3,6 +3,7 @@ project (ci)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE RELEASE)
+#set(CMAKE_BUILD_TYPE DEBUG)
 
 # General options
 include_directories(include)
