@@ -35,6 +35,7 @@ class Clause;
 class RupClause;
 class RatClause;
 class Deletion;
+class FileReader;
 
 // LratParserObserver defines the interface for all classes that want to
 // act as observers for the LratParser. These classes can register themselves
@@ -67,10 +68,12 @@ class LratParser
  public:
 
   // Takes as input the path to an LRAT file and then parses the file.
-  // For every occurrence of a certain object (like a deletion, RUP addition,
-  // etc.) it calls its observer and passes the object to the observer, who
-  // can in turn process it.
-  void ParseFile(const std::string& proof_file_path);
+  // If the parameter parse_backwards is set to true, then the file is read
+  // backwards. For every occurrence of a certain object (like a deletion, 
+  // RUP addition, etc.) it calls its observer and passes the object to the 
+  // observer, who can in turn process it.
+  void ParseFile(const std::string& proof_file_path, 
+                 bool parse_backwards = false);
 
   // Registers an observer of the LratParser. An observer is called for every
   // object (e.g., a deletion, RUP addition, etc.) that is encountered during
@@ -120,6 +123,9 @@ class LratParser
   static std::string RemoveE(const std::string& proof_line);
 
  private:
+  std::unique_ptr<FileReader> CreateFileReader(const std::string& file_path,
+                                               bool parse_backwards) const;
+
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 
   LratParserObserver* observer_;

@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5.1)
 project (ci)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_BUILD_TYPE RELEASE)
-#set(CMAKE_BUILD_TYPE DEBUG)
+#set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_BUILD_TYPE DEBUG)
 
 # General options
 include_directories(include)
@@ -33,6 +33,8 @@ add_library(lib_drat2er STATIC
 	src/rup_to_resolution_transformer.cc
 	src/proof_step_renamer.cc
 	src/file_helper.cc
+	src/forward_file_reader.cc
+	src/backward_file_reader.cc
 	src/drat_trim_interface.cc
 	src/progress_bar.cc
 	)

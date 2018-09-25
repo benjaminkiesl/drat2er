@@ -26,6 +26,9 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <memory>
+#include "forward_file_reader.h"
+#include "backward_file_reader.h"
 #include "rat_clause.h"
 #include "rup_clause.h"
 #include "deletion.h"
@@ -34,18 +37,22 @@ using std::string;
 using std::stringstream;
 using std::vector;
 using std::ifstream;
+using std::unique_ptr;
+using std::make_unique;
 
 namespace drat2er
 {
 
-void LratParser::ParseFile(const string& proof_file_path)
+void LratParser::ParseFile(const string& proof_file_path, bool parse_backwards)
 {
   if(observer_ == nullptr) {
     return;
   }
-  ifstream input_stream {proof_file_path, ifstream::in};
+
+  auto file_reader = CreateFileReader(proof_file_path, parse_backwards);
+
   string proof_line;
-  while(getline(input_stream, proof_line)) {
+  while(file_reader->GetLine(proof_line)) {
     if(IsDeletion(proof_line)) {
       observer_->ObserveDeletion(ParseDeletion(proof_line));
     } else if(IsExtension(proof_line)) {
@@ -175,6 +182,15 @@ RatClause LratParser::ParseProperRat(const string& proof_line)
   return rat;
 }
 
+Clause LratParser::ParseExtension(const string& proof_line)
+{
+  assert(IsExtension(proof_line));
+  Clause clause;
+  stringstream line_stream {RemoveE(proof_line)};
+  ParseClausePart(clause, line_stream);
+  return clause;
+}
+
 string LratParser::RemoveE(const string& proof_line)
 {
   assert(IsExtension(proof_line));
@@ -185,13 +201,14 @@ string LratParser::RemoveE(const string& proof_line)
          proof_line.substr(index_of_first_literal);
 }
 
-Clause LratParser::ParseExtension(const string& proof_line)
+unique_ptr<FileReader> LratParser::CreateFileReader(const string& file_path,
+                                                    bool parse_backwards) const 
 {
-  assert(IsExtension(proof_line));
-  Clause clause;
-  stringstream line_stream {RemoveE(proof_line)};
-  ParseClausePart(clause, line_stream);
-  return clause;
+  if(parse_backwards){
+    return make_unique<BackwardFileReader>(file_path);
+  } else {
+    return make_unique<ForwardFileReader>(file_path);
+  }
 }
 
 void LratParser::ParseClausePart(Clause& clause, stringstream& line_stream)
