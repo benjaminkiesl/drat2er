@@ -36,7 +36,6 @@
 #include "lrat_parser.h"
 #include "proof_stat_collector.h"
 #include "drat_trim_interface.h"
-#include "backward_file_reader.h" // TODO: remove this line
 
 using std::string;
 using std::make_shared;
@@ -166,15 +165,6 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
 
 int main (int argc, char *argv[])
 {
-  cout << "Starting to output the file:" << endl;
-  BackwardFileReader file_reader("/home/benjamin/Documents/forward_file.txt");
-  string line;
-  while(file_reader.GetLine(line)){
-    cout << line << std::endl;
-  }
-  cout << "Finished" << endl;
-  return 0;
-
   CLI::App app {
     "drat2er transforms DRAT proofs into extended-resolution proofs.\n"
     "It takes as input a propositional formula (specified in the DIMCAS\n"

@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5.1)
 project (ci)
 
 set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_BUILD_TYPE RELEASE)
-set(CMAKE_BUILD_TYPE DEBUG)
+set(CMAKE_BUILD_TYPE RELEASE)
+#set(CMAKE_BUILD_TYPE DEBUG)
 
 # General options
 include_directories(include)
