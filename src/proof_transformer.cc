@@ -41,12 +41,16 @@ namespace drat2er
 {
 
 ProofTransformer::ProofTransformer(const std::string& verbose_message,
-                                   const bool print_progress)
-                                        : output_stream_ {nullptr},
-                                          verbose_message_ {verbose_message},
-                                          print_progress_ {print_progress},
-                                          number_of_lines_processed_ {0},
-                                          progress_bar_ {} { }
+                                   const bool print_progress,
+                                   const bool is_parse_backwards)
+                                    : output_stream_{nullptr},
+                                      verbose_message_{verbose_message},
+                                      print_progress_{print_progress},
+                                      is_parse_backwards_{is_parse_backwards},
+                                      number_of_lines_processed_{0},
+                                      progress_bar_{}
+{
+}
 
 void ProofTransformer::Transform(const std::string& input_file,
                                  std::ostream& output_stream)
@@ -56,7 +60,7 @@ void ProofTransformer::Transform(const std::string& input_file,
   output_stream_ = &output_stream;
   LratParser lrat_parser;
   lrat_parser.RegisterObserver(this);
-  lrat_parser.ParseFile(input_file);
+  lrat_parser.ParseFile(input_file, is_parse_backwards_);
 }
 
 void ProofTransformer::Transform(const string& input_file,

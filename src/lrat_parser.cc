@@ -43,13 +43,14 @@ using std::make_unique;
 namespace drat2er
 {
 
-void LratParser::ParseFile(const string& proof_file_path, bool parse_backwards)
+void LratParser::ParseFile(const string& proof_file_path, 
+                           const bool is_parse_backwards)
 {
   if(observer_ == nullptr) {
     return;
   }
 
-  auto file_reader = CreateFileReader(proof_file_path, parse_backwards);
+  auto file_reader = CreateFileReader(proof_file_path, is_parse_backwards);
 
   string proof_line;
   while(file_reader->GetLine(proof_line)) {
@@ -201,10 +202,11 @@ string LratParser::RemoveE(const string& proof_line)
          proof_line.substr(index_of_first_literal);
 }
 
-unique_ptr<FileReader> LratParser::CreateFileReader(const string& file_path,
-                                                    bool parse_backwards) const 
+unique_ptr<FileReader> 
+LratParser::CreateFileReader(const string& file_path,
+                             const bool is_parse_backwards) const 
 {
-  if(parse_backwards){
+  if(is_parse_backwards){
     return make_unique<BackwardFileReader>(file_path);
   } else {
     return make_unique<ForwardFileReader>(file_path);

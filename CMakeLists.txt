@@ -29,6 +29,8 @@ add_library(lib_drat2er STATIC
 	src/lrat_parser.cc
 	src/proof_transformer.cc
 	src/rat_eliminator.cc
+	src/proof_reverser.cc
+	src/unused_clause_eliminator.cc
   	src/proof_stat_collector.cc
 	src/rup_to_resolution_transformer.cc
 	src/proof_step_renamer.cc

@@ -51,7 +51,8 @@ class ProofTransformer : public LratParserObserver
   // 'print_progress' indicates if a progress bar should print the current
   // progress of the proof transformation.
   ProofTransformer(const std::string& verbose_message, 
-                   const bool print_progress);
+                   const bool print_progress,
+                   const bool is_parse_backwards = false);
 
   // Takes a path to an input file and transforms this input file, thereby
   // writing the result to the given output stream.
@@ -86,6 +87,7 @@ class ProofTransformer : public LratParserObserver
   std::ostream* output_stream_;
   std::string verbose_message_;
   bool print_progress_;
+  bool is_parse_backwards_;
   int number_of_lines_processed_;
   ProgressBar progress_bar_;
 };

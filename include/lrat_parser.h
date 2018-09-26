@@ -68,12 +68,12 @@ class LratParser
  public:
 
   // Takes as input the path to an LRAT file and then parses the file.
-  // If the parameter parse_backwards is set to true, then the file is read
+  // If the parameter is_parse_backwards is set to true, then the file is read
   // backwards. For every occurrence of a certain object (like a deletion, 
   // RUP addition, etc.) it calls its observer and passes the object to the 
   // observer, who can in turn process it.
   void ParseFile(const std::string& proof_file_path, 
-                 bool parse_backwards = false);
+                 const bool is_parse_backwards = false);
 
   // Registers an observer of the LratParser. An observer is called for every
   // object (e.g., a deletion, RUP addition, etc.) that is encountered during
@@ -123,8 +123,9 @@ class LratParser
   static std::string RemoveE(const std::string& proof_line);
 
  private:
-  std::unique_ptr<FileReader> CreateFileReader(const std::string& file_path,
-                                               bool parse_backwards) const;
+  std::unique_ptr<FileReader> 
+    CreateFileReader(const std::string& file_path,
+                     const bool is_parse_backwards) const;
 
   static void ParseClausePart(Clause& clause, std::stringstream& line_stream);
 

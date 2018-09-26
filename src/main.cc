@@ -31,6 +31,8 @@
 #include "formula.h"
 #include "formula_parser.h"
 #include "rat_eliminator.h"
+#include "proof_reverser.h"
+#include "unused_clause_eliminator.h"
 #include "rup_to_resolution_transformer.h"
 #include "proof_step_renamer.h"
 #include "lrat_parser.h"
@@ -49,6 +51,7 @@ using namespace drat2er;
 // File names for temp files used during the transformation.
 const string kTempFileLRAT = "temp.lrat";
 const string kTempFileERUP = "temp.erup";
+const string kTempFileERUPShrinked = "temp.erups";
 const string kTempFileER = "temp_unrenamed.er";
 
 // Takes as input the path to a DIMACS file, parses the file and creates
@@ -67,8 +70,7 @@ void TransformDRATToLRAT(const string& input_formula_file,
                          const string& output_proof_file,
                          bool is_verbose)
 {
-  cout << "c drat2er: Verifying DRAT proof and converting it to"
-       " LRAT format using drat-trim." << endl;
+  cout << "c drat2er: Converting DRAT proof to LRAT using drat-trim." << endl;
   if(drat_trim::CheckAndConvertToLRAT(input_formula_file, input_proof_file,
                                       output_proof_file, is_verbose)) {
     throw std::runtime_error(
@@ -94,6 +96,23 @@ void EliminateProperRATs(const Formula& original_formula,
   RatEliminator rat_eliminator(formula_copy, max_variable,
                                stat_collector.GetMaxInstruction(), is_verbose);
   rat_eliminator.Transform(input_proof_file, output_proof_file);
+  std::remove(input_proof_file.c_str());
+}
+
+// Takes as input a an LRAT proof and deletes all clauses that are not used
+// in later proof steps.
+void EliminateUnusedClauses(const string& input_proof_file,
+                            const string& output_proof_file, bool is_verbose)
+{
+  const string kTempProofFile = "temp_unused.erup";
+
+  UnusedClauseEliminator eliminator(is_verbose);
+  eliminator.Transform(input_proof_file, kTempProofFile);
+
+  ProofReverser reverser(is_verbose);
+  reverser.Transform(kTempProofFile, output_proof_file);
+
+  std::remove(kTempProofFile.c_str());
   std::remove(input_proof_file.c_str());
 }
 
@@ -142,7 +161,9 @@ void RenameProofStepsIncrementally(const Formula& original_formula,
 void TransformDRATToExtendedResolution(const string& input_formula_file,
                                        const string& input_proof_file,
                                        const string& output_file,
-                                       bool is_output_drat, bool is_verbose)
+                                       bool is_output_drat, 
+                                       bool is_verbose,
+                                       bool is_compressed)
 {
   TransformDRATToLRAT(input_formula_file, input_proof_file,
                       kTempFileLRAT, is_verbose);
@@ -151,7 +172,12 @@ void TransformDRATToExtendedResolution(const string& input_formula_file,
 
   EliminateProperRATs(formula, kTempFileLRAT, kTempFileERUP, is_verbose);
 
-  TransformRUPsToResolutions(formula, kTempFileERUP, kTempFileER, 
+  if(is_compressed){
+    EliminateUnusedClauses(kTempFileERUP, kTempFileERUPShrinked, is_verbose);
+  }
+
+  auto input_proof = is_compressed ? kTempFileERUPShrinked : kTempFileERUP;
+  TransformRUPsToResolutions(formula, input_proof, kTempFileER, 
                              is_output_drat, is_verbose);
   
   if(is_output_drat){ 
@@ -193,6 +219,10 @@ int main (int argc, char *argv[])
   app.add_flag("-v,--verbose", is_verbose,
                "Print information about the progress.");
 
+  bool is_compressed = false;
+  app.add_flag("-c,--compress", is_compressed, 
+               "Reduce proof size (increases runtime).");
+
   string output_format = "tracecheck";
   app.add_set("-f,--format", output_format, {"drat", "tracecheck"},
               "Format of the output proof (default: tracecheck).");
@@ -204,7 +234,8 @@ int main (int argc, char *argv[])
                                       input_proof_path,
                                       output_file_path, 
                                       output_format == "drat", 
-                                      is_verbose);
+                                      is_verbose,
+                                      is_compressed);
     cout << "c drat2er: Proof successfully transformed." << endl;
     return 0;
   } catch(const std::exception& ex) {
