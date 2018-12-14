@@ -28,8 +28,7 @@
 namespace drat2er
 {
 
-// Takes an LRAT proof and removes all clauses that are not used in later
-// proof steps
+// Takes an LRAT proof and reverses the order of the proof steps
 class ProofReverser : public ProofTransformer
 {
 
