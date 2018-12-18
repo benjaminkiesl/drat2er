@@ -257,7 +257,7 @@ bool Formula::Propagate()
     auto& watches = Watches(literal);
     for(auto& watch : watches) {
       auto clause = watch.GetClause();
-      if(TruthValue(watch.GetBlockingLiteral()) != 0) {
+      if(TruthValue(watch.GetBlockingLiteral()) != kUnassigned) {
         continue;
       } else if(clause->size() == 1) {
         conflict_ = clause;
