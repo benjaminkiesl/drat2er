@@ -53,5 +53,5 @@ By passing the parameter `-f drat` (or, alternatively, `--format=drat`) to drat2
 ## Built With
 
 * [drat-trim](https://github.com/marijnheule/drat-trim) - Proof checker for DRAT proofs.
-* [Catch2](https://github.com/catchorg/Catch2) - Framework for unit testing.
+* [Catch2](https://github.com/catchorg/Catch2) - Unit test framework.
 * [CLI11](https://github.com/CLIUtils/CLI11) - Command line parser for C++11.
