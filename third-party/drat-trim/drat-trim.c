@@ -1139,6 +1139,7 @@ int init (struct solver *S)
           if ((_clause[0] == -clause[0]) && !_clause[1]) break;
         }
         fprintf (S->lratFile, "%li 0 %i %i 0\n", S->nClauses + 1, j + 1, i + 1);
+        fclose (S->lratFile);
       }
       return UNSAT;
     } else if (!S->falseA[ -clause[0] ]) {
