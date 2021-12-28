@@ -213,7 +213,7 @@ int main (int argc, char *argv[])
 
   string output_file_path = "";
   app.add_option("output_proof", output_file_path,
-                 "Path for the output proof.", false)->type_name("FILE");
+                 "Path for the output proof.")->type_name("FILE");
 
   bool is_verbose = false;
   app.add_flag("-v,--verbose", is_verbose,
@@ -224,8 +224,9 @@ int main (int argc, char *argv[])
                "Reduce proof size (increases runtime).");
 
   string output_format = "tracecheck";
-  app.add_set("-f,--format", output_format, {"drat", "tracecheck"},
-              "Format of the output proof (default: tracecheck).");
+  app.add_option("-f,--format", output_format,
+              "Format of the output proof (default: tracecheck)."
+              )->check(CLI::IsMember({"drat", "tracecheck"}));
 
   CLI11_PARSE(app, argc, argv);
 
